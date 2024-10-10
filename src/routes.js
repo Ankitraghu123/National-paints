@@ -17,6 +17,9 @@ import {
   RocketIcon,
   SupportIcon,
 } from "components/Icons/Icons";
+import AddEmployee from 'views/Pages/AddEmployee';
+import AllEmployee from 'views/Pages/AllEmployee';
+import AttendanceTable from 'views/Pages/AttendanceTable';
 
 var dashRoutes = [
   {
@@ -83,6 +86,30 @@ var dashRoutes = [
         layout: "/auth",
       },
     ],
+  },
+  {
+    path: "/add-employee",
+    name: "AddEmployee",
+    rtlName: "لوحة القيادة",
+    icon: <HomeIcon color='inherit' />,
+    component: AddEmployee,
+    layout: "/admin",
+  },
+  {
+    path: "/all-employee",
+    name: "AllEmployee",
+    rtlName: "لوحة القيادة",
+    icon: <HomeIcon color='inherit' />,
+    component: AllEmployee,
+    layout: "/admin",
+  },
+  {
+    path: "/attendance-table",
+    name: "Attendance Table",
+    rtlName: "لوحة القيادة",
+    icon: <HomeIcon color='inherit' />,
+    component: AttendanceTable,
+    layout: "/admin",
   },
 ];
 export default dashRoutes;

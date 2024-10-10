@@ -1,0 +1,13 @@
+
+table > thead >tr > th{
+    border: 2px solid #AEAEAE !important;
+    background-color: #3182CE;
+    color: white !important;
+    font-size: 17px !important;
+}
+
+
+table > tbody >tr > td{
+    border: 2px solid #AEAEAE !important;
+    text-align: center !important;
+}

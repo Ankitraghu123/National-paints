@@ -51,6 +51,21 @@ const routes = [
     icon: "👤", // replace with your actual icon component
     path: "/admin/profile",
   },
+  {
+    name: "Add Employee",
+    icon: "👤", // replace with your actual icon component
+    path: "/admin/add-employee",
+  },
+  {
+    name: "All Employee",
+    icon: "👤", // replace with your actual icon component
+    path: "/admin/all-employee",
+  },
+  {
+    name: "Attendance Table",
+    icon: "👤", // replace with your actual icon component
+    path: "/admin/attendance-table",
+  },
 ];
 
 function Sidebar(props) {
