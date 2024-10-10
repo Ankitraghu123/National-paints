@@ -1,4 +1,4 @@
-/*eslint-disable*/
+/eslint-disable/
 import { Flex, Link, List, ListItem, Text } from "@chakra-ui/react";
 import React from "react";
 
@@ -27,23 +27,23 @@ export default function Footer(props) {
         <Text as='span'>
           {document.documentElement.dir === "rtl"
             ? " مصنوع من ❤️ بواسطة"
-            : "Made with ❤️ by "}
+            : "Made by "}
         </Text>
         <Link
           color='blue.400'
           href='https://www.creative-tim.com'
           target='_blank'>
           {document.documentElement.dir === "rtl"
-            ? " توقيت الإبداعية"
-            : "Creative Tim "}
+            ? " "
+            : "Skyinfogroup "}
         </Link>
-        &
+
         <Link color='blue.400' href='https://www.simmmple.com' target='_blank'>
-          {document.documentElement.dir === "rtl" ? "سيممبل " : " Simmmple"}
+          {document.documentElement.dir === "rtl" ? "سيممبل " : " "}
         </Link>
         {document.documentElement.dir === "rtl"
-          ? "للحصول على ويب أفضل"
-          : " for a better web"}
+          ? ""
+          : " "}
       </Text>
       <List display='flex'>
         <ListItem
@@ -54,7 +54,7 @@ export default function Footer(props) {
           <Link color='gray.400' href='https://www.creative-tim.com'>
             {document.documentElement.dir === "rtl"
               ? "توقيت الإبداعية"
-              : "Creative Tim"}
+              : ""}
           </Link>
         </ListItem>
         <ListItem
@@ -63,7 +63,7 @@ export default function Footer(props) {
             md: "44px",
           }}>
           <Link color='gray.400' href='https://www.simmmple.com'>
-            {document.documentElement.dir === "rtl" ? "سيممبل" : "Simmmple"}
+            {document.documentElement.dir === "rtl" ? "سيممبل" : ""}
           </Link>
         </ListItem>
         <ListItem
@@ -75,7 +75,7 @@ export default function Footer(props) {
             color='gray.400'
             href='#blog'
             href='https://creative-tim.com/blog'>
-            {document.documentElement.dir === "rtl" ? "مدونة" : "Blog"}
+            {document.documentElement.dir === "rtl" ? "مدونة" : ""}
           </Link>
         </ListItem>
         <ListItem>
@@ -83,7 +83,7 @@ export default function Footer(props) {
             color='gray.400'
             href='#license'
             href='https://www.creative-tim.com/license'>
-            {document.documentElement.dir === "rtl" ? "رخصة" : "License"}
+            {document.documentElement.dir === "rtl" ? "رخصة" : ""}
           </Link>
         </ListItem>
       </List>

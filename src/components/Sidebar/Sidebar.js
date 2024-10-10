@@ -24,38 +24,38 @@ import {
   renderViewRTL,
 } from "components/Scrollbar/Scrollbar";
 import { HSeparator } from "components/Separator/Separator";
-import { SidebarHelp } from "components/Sidebar/SidebarHelp";
+// import { SidebarHelp } from "components/Sidebar/SidebarHelp";
 import React from "react";
 import { Scrollbars } from "react-custom-scrollbars";
 import { NavLink, useLocation } from "react-router-dom";
 
 // Define your routes here
 const routes = [
-  {
-    name: "Dashboard",
-    icon: "🏠", // replace with your actual icon component
-    path: "/admin/dashboard",
-  },
-  {
-    name: "Billing",
-    icon: "💳", // replace with your actual icon component
-    path: "/admin/billing",
-  },
-  {
-    name: "Tables",
-    icon: "📊", // replace with your actual icon component
-    path: "/admin/tables",
-  },
-  {
-    name: "Profile",
-    icon: "👤", // replace with your actual icon component
-    path: "/admin/profile",
-  },
-  {
-    name: "Add Employee",
-    icon: "👤", // replace with your actual icon component
-    path: "/admin/add-employee",
-  },
+  // {
+  //   name: "Dashboard",
+  //   icon: "🏠", // replace with your actual icon component
+  //   path: "/admin/dashboard",
+  // },
+  // {
+  //   name: "Billing",
+  //   icon: "💳", // replace with your actual icon component
+  //   path: "/admin/billing",
+  // },
+  // {
+  //   name: "Tables",
+  //   icon: "📊", // replace with your actual icon component
+  //   path: "/admin/tables",
+  // },
+  // {
+  //   name: "Profile",
+  //   icon: "👤", // replace with your actual icon component
+  //   path: "/admin/profile",
+  // },
+  // {
+  //   name: "Add Employee",
+  //   icon: "👤", // replace with your actual icon component
+  //   path: "/admin/add-employee",
+  // },
   {
     name: "All Employee",
     icon: "👤", // replace with your actual icon component
@@ -223,7 +223,7 @@ function Sidebar(props) {
             <Stack direction="column" mb="40px">
               <Box>{links}</Box>
             </Stack>
-            <SidebarHelp sidebarVariant={props.sidebarVariant} />
+            {/* <SidebarHelp sidebarVariant={props.sidebarVariant} /> */}
           </Scrollbars>
         </Box>
       </Box>
@@ -324,7 +324,7 @@ export function SidebarResponsive(props) {
               <Stack direction="column" mb="40px">
                 <Box>{links}</Box>
               </Stack>
-              <SidebarHelp />
+              {/* <SidebarHelp /> */}
             </Box>
           </DrawerBody>
         </DrawerContent>

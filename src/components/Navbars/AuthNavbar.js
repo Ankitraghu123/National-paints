@@ -125,80 +125,81 @@ export default function AuthNavbar(props) {
     </HStack>
   );
   return (
-    <Flex
-      position={navbarPosition}
-      top="16px"
-      left="50%"
-      transform="translate(-50%, 0px)"
-      background={navbarBg}
-      border={navbarBorder}
-      boxShadow={navbarShadow}
-      filter={navbarFilter}
-      backdropFilter={navbarBackdrop}
-      borderRadius="15px"
-      px="16px"
-      py="22px"
-      mx="auto"
-      width="1044px"
-      maxW="90%"
-      alignItems="center"
-      zIndex="3"
-    >
-      <Flex w="100%" justifyContent={{ sm: "start", lg: "space-between" }}>
-        {brand}
-        <Box
-          ms={{ base: "auto", lg: "0px" }}
-          display={{ base: "flex", lg: "none" }}
-        >
-          <SidebarResponsive
-            hamburgerColor={hamburgerColor}
-            logoText={props.logoText}
-            secondary={props.secondary}
-            routes={routes}
-            logo={
-              <Stack
-                direction="row"
-                spacing="12px"
-                align="center"
-                justify="center"
-              >
-                {colorMode === "dark" ? (
-                  <ArgonLogoLight w="74px" h="27px" />
-                ) : (
-                  <ArgonLogoDark w="74px" h="27px" />
-                )}
-                <Box
-                  w="1px"
-                  h="20px"
-                  bg={colorMode === "dark" ? "white" : "gray.700"}
-                />
-                {colorMode === "dark" ? (
-                  <ChakraLogoLight w="82px" h="21px" />
-                ) : (
-                  <ChakraLogoDark w="82px" h="21px" />
-                )}
-              </Stack>
-            }
-            {...rest}
-          />
-        </Box>
-        {linksAuth}
-        <Link href="https://creative-tim.com/product/argon-dashboard-chakra">
-          <Button
-            bg={bgButton}
-            color={colorButton}
-            fontSize="xs"
-            variant="no-hover"
-            px="30px"
-            display={{
-              sm: "none",
-              lg: "flex",
-            }}
-          >
-            Free Download
-          </Button>
-        </Link>
-      </Flex>
-    </Flex>
+    <></>
+    // <Flex
+    //   position={navbarPosition}
+    //   top="16px"
+    //   left="50%"
+    //   transform="translate(-50%, 0px)"
+    //   background={navbarBg}
+    //   border={navbarBorder}
+    //   boxShadow={navbarShadow}
+    //   filter={navbarFilter}
+    //   backdropFilter={navbarBackdrop}
+    //   borderRadius="15px"
+    //   px="16px"
+    //   py="22px"
+    //   mx="auto"
+    //   width="1044px"
+    //   maxW="90%"
+    //   alignItems="center"
+    //   zIndex="3"
+    // >
+    //   <Flex w="100%" justifyContent={{ sm: "start", lg: "space-between" }}>
+    //     {brand}
+    //     <Box
+    //       ms={{ base: "auto", lg: "0px" }}
+    //       display={{ base: "flex", lg: "none" }}
+    //     >
+    //       <SidebarResponsive
+    //         hamburgerColor={hamburgerColor}
+    //         logoText={props.logoText}
+    //         secondary={props.secondary}
+    //         routes={routes}
+    //         logo={
+    //           <Stack
+    //             direction="row"
+    //             spacing="12px"
+    //             align="center"
+    //             justify="center"
+    //           >
+    //             {colorMode === "dark" ? (
+    //               <ArgonLogoLight w="74px" h="27px" />
+    //             ) : (
+    //               <ArgonLogoDark w="74px" h="27px" />
+    //             )}
+    //             <Box
+    //               w="1px"
+    //               h="20px"
+    //               bg={colorMode === "dark" ? "white" : "gray.700"}
+    //             />
+    //             {colorMode === "dark" ? (
+    //               <ChakraLogoLight w="82px" h="21px" />
+    //             ) : (
+    //               <ChakraLogoDark w="82px" h="21px" />
+    //             )}
+    //           </Stack>
+    //         }
+    //         {...rest}
+    //       />
+    //     </Box>
+    //     {linksAuth}
+    //     <Link href="https://creative-tim.com/product/argon-dashboard-chakra">
+    //       <Button
+    //         bg={bgButton}
+    //         color={colorButton}
+    //         fontSize="xs"
+    //         variant="no-hover"
+    //         px="30px"
+    //         display={{
+    //           sm: "none",
+    //           lg: "flex",
+    //         }}
+    //       >
+    //         Free Download
+    //       </Button>
+    //     </Link>
+    //   </Flex>
+    // </Flex>
   );
 }

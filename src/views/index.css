@@ -11,3 +11,26 @@ table > tbody >tr > td{
     border: 2px solid #AEAEAE !important;
     text-align: center !important;
 }
+
+.logo {
+    font-family: 'Arial', sans-serif; /* A clean font for the main text */
+    font-weight: bold;
+    font-size: 17px;
+    color: #333; /* Dark grey for "National" */
+    text-transform: uppercase;
+    letter-spacing: 2px; /* Adds space between letters for a professional look */
+    display: inline-block;
+  }
+
+  .logo span {
+    color: #1e90ff; /* Dodger blue color for "Paints" */
+    font-family: 'Brush Script MT', cursive; /* A more artistic font for "Paints" */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Adds a slight shadow for depth */
+    font-size: 21px; /* Slightly larger font for emphasis */
+  }
+
+  .logo:hover span {
+    color: #4682b4; /* Steel blue on hover for a subtle change */
+    text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.4); /* Increases shadow on hover */
+    transition: 0.3s ease; /* Smooth transition effect */
+  }
