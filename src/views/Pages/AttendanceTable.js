@@ -51,22 +51,30 @@ const AttendanceTable = () => {
 
   const calculateTotalHours = (attendanceRecords) => {
     const totalHoursDecimal = daysInMonth.reduce((total, day) => {
+      // Create a date object for the day being processed
+      const currentDate = new Date(year, month, day);
+
+      
       // Find the attendance record for the specific day
       const attendanceRecord = attendanceRecords.find((record) => {
-        const recordDate = new Date(record.date).getDate();
+        const recordDate = new Date(record.date);
+
+        console.log(recordDate)
+        // Ensure both day, month, and year are compared correctly
         return (
-          recordDate === day &&
-          new Date(record.date).getFullYear() === year &&
-          new Date(record.date).getMonth() === month
+          recordDate.getDate() === currentDate.getDate() &&
+          recordDate.getFullYear() === currentDate.getFullYear() &&
+          recordDate.getMonth() === currentDate.getMonth()
         );
       });
 
+      console.log(attendanceRecord)
+      console.log(attendanceRecords)
+  
       // Calculate hours for the day
-      const hoursForDay = attendanceRecord
-        ? attendanceRecord.totalHours // Assuming you have this field for regular hours
-        : 0;
-
-      // Calculate overtime (check-in and check-out)
+      const hoursForDay = attendanceRecord ? attendanceRecord.totalHours : 0;
+  
+      // Calculate overtime
       const overtimeHours =
         attendanceRecord && attendanceRecord.checkIn && attendanceRecord.checkOut
           ? calculateOvertime(
@@ -74,15 +82,16 @@ const AttendanceTable = () => {
               attendanceRecord.checkOut
             )
           : 0;
-
+  
       // For Sundays, default to 8 hours plus any overtime
       if (isSunday(day)) {
         return total + 8 + overtimeHours; // 8 hours for Sunday plus overtime
       }
-
+  
       return total + hoursForDay + overtimeHours; // For other days, add regular and overtime hours
     }, 0);
-
+  
+    console.log("Total Hours Decimal:", totalHoursDecimal); // Debugging line
     return formatHours(totalHoursDecimal); // Format total hours for display
   };
 
@@ -169,7 +178,7 @@ const AttendanceTable = () => {
             <Tr>
               <Th>Employee Name</Th>
               {daysInMonth.map((day) => (
-                <Th key={day} style={isSunday(day) ? { color: 'red' } : {}}>{day} {isSunday(day) ? '(Sun)' : ''}</Th>
+                <Th key={day} style={isSunday(day) ? { color: 'red' } : {}}>{day}</Th>
               ))}
               <Th>Total Hours</Th>
             </Tr>
