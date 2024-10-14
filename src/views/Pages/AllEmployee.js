@@ -40,7 +40,13 @@ const AllEmployee = () => {
 
   // Handle check-in
   const handleCheckIn = (empId) => {
-    const selectedTime = time[empId] || "09:00"; // Default to "09:00" if no time selected
+    let selectedTime = time[empId];
+
+    if (!selectedTime) {
+      // Get the current time in HH:mm format
+      const now = new Date();
+      selectedTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+    }
     const dateWithTime = combineDateWithTime(selectedTime);
     dispatch(checkIn({ empId, setTime: dateWithTime.toISOString() }));
   };

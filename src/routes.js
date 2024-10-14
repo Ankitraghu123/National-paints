@@ -20,6 +20,7 @@ import {
 import AddEmployee from 'views/Pages/AddEmployee';
 import AllEmployee from 'views/Pages/AllEmployee';
 import AttendanceTable from 'views/Pages/AttendanceTable';
+import EmployeeMonthAttendanceTable from 'views/Pages/EmployeeMonthAttendanceTable';
 
 var dashRoutes = [
   {
@@ -109,6 +110,14 @@ var dashRoutes = [
     rtlName: "لوحة القيادة",
     icon: <HomeIcon color='inherit' />,
     component: AttendanceTable,
+    layout: "/admin",
+  },
+  {
+    path: "/employee-attendnace",
+    name: "Employee Wise Table",
+    rtlName: "لوحة القيادة",
+    icon: <HomeIcon color='inherit' />,
+    component: EmployeeMonthAttendanceTable,
     layout: "/admin",
   },
 ];

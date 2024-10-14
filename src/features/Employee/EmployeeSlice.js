@@ -18,6 +18,15 @@ export const allEmployee = createAsyncThunk('employee/all',async(thunkApi)=>{
 })
 
 
+export const getEmployeeAttendance = createAsyncThunk('employee/attendnace',async(data,thunkApi)=>{
+    try{
+        return await EmployeeService.GetEmployeeAttendance(data)
+    }catch(err){
+        return thunkApi.rejectWithValue(err)
+    }
+})
+
+
 
 const initialState = {
     employee:'',
@@ -62,6 +71,20 @@ export const EmployeeSlice = createSlice({
             state.isError=true
             state.isSuccess = false
             state.allEmployees = null
+        })
+        .addCase(getEmployeeAttendance.pending,(state)=>{
+            state.isLoading = true
+        })
+        .addCase(getEmployeeAttendance.fulfilled,(state,action)=>{
+            state.isLoading = false
+            state.isSuccess = true
+            state.employeeAttendnace = action.payload
+        })
+        .addCase(getEmployeeAttendance.rejected,(state,action)=>{
+            state.isLoading = false
+            state.isError=true
+            state.isSuccess = false
+            state.employeeAttendnace = null
         })
         
        

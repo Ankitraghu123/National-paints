@@ -11,6 +11,11 @@ const AllEmployee = async ()=>{
     return response.data
 }
 
-const EmployeeService = {AddEmployee,AllEmployee}
+const GetEmployeeAttendance = async (data) => {
+    const response = await axios.get(`${base_url}employee/${data.id}/${data.month}`)
+    return response.data
+}
+
+const EmployeeService = {AddEmployee,AllEmployee,GetEmployeeAttendance}
 
 export default EmployeeService

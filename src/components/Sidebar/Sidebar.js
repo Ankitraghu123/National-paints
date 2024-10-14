@@ -51,11 +51,11 @@ const routes = [
   //   icon: "👤", // replace with your actual icon component
   //   path: "/admin/profile",
   // },
-  // {
-  //   name: "Add Employee",
-  //   icon: "👤", // replace with your actual icon component
-  //   path: "/admin/add-employee",
-  // },
+  {
+    name: "Add Employee",
+    icon: "👤", // replace with your actual icon component
+    path: "/admin/add-employee",
+  },
   {
     name: "All Employee",
     icon: "👤", // replace with your actual icon component
@@ -65,6 +65,11 @@ const routes = [
     name: "Attendance Table",
     icon: "👤", // replace with your actual icon component
     path: "/admin/attendance-table",
+  },
+  {
+    name: "Employee Wise Attendance",
+    icon: "👤", // replace with your actual icon component
+    path: "/admin/employee-attendnace",
   },
 ];
 
