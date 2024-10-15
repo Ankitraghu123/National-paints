@@ -1,7 +1,8 @@
-import { HamburgerIcon } from "@chakra-ui/icons";
+import { HamburgerIcon, ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
+  Collapse,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
@@ -25,160 +26,230 @@ import {
 } from "components/Scrollbar/Scrollbar";
 import { HSeparator } from "components/Separator/Separator";
 // import { SidebarHelp } from "components/Sidebar/SidebarHelp";
-import React from "react";
+import React, { useState } from "react";
 import { Scrollbars } from "react-custom-scrollbars";
 import { NavLink, useLocation } from "react-router-dom";
 
 // Define your routes here
 const routes = [
+  {
+    name: "DashBoard",
+    icon: "👤",
+    path: "/admin/dashboard",
+  },
+  {
+    name: "Todays Attendance",
+    icon: "👤",
+    path: "/admin/employee-date-attendance",
+  },
   // {
-  //   name: "Dashboard",
-  //   icon: "🏠", // replace with your actual icon component
+  //   name: "Add Holiday",
+  //   icon: "👤",
   //   path: "/admin/dashboard",
-  // },
-  // {
-  //   name: "Billing",
-  //   icon: "💳", // replace with your actual icon component
-  //   path: "/admin/billing",
-  // },
-  // {
-  //   name: "Tables",
-  //   icon: "📊", // replace with your actual icon component
-  //   path: "/admin/tables",
-  // },
-  // {
-  //   name: "Profile",
-  //   icon: "👤", // replace with your actual icon component
-  //   path: "/admin/profile",
   // },
   {
     name: "Add Employee",
-    icon: "👤", // replace with your actual icon component
+    icon: "👤",
     path: "/admin/add-employee",
   },
-  {
-    name: "All Employee",
-    icon: "👤", // replace with your actual icon component
-    path: "/admin/all-employee",
-  },
+
   {
     name: "Attendance Table",
-    icon: "👤", // replace with your actual icon component
+    icon: "👤",
     path: "/admin/attendance-table",
   },
   {
-    name: "Employee Wise Attendance",
-    icon: "👤", // replace with your actual icon component
-    path: "/admin/employee-attendnace",
+    name: "Employee",
+    icon: "📂", // Icon for dropdown
+    path: null, // No path, it's a parent
+    subRoutes: [
+      {
+        name: "Add Attendance",
+        icon: "👤",
+        path: "/admin/all-employee",
+      },
+      {
+        name: "Date Wise Attendance",
+        icon: "👤", // replace with your actual icon component
+        path: "/admin/employee-date-attendance",
+      },
+      {
+        name: "Employee Wise Attendance",
+        icon: "👤",
+        path: "/admin/employee-attendnace",
+      },
+    ],
   },
 ];
 
 function Sidebar(props) {
-  // To check for active links
   let location = useLocation();
   const mainPanel = React.useRef();
   let variantChange = "0.2s linear";
 
-  // Verify if routeName is the one active (in browser input)
   const activeRoute = (routeName) => {
     return location.pathname === routeName ? "active" : "";
   };
 
-  // Chakra Color Mode
   const activeBg = useColorModeValue("white", "navy.700");
   const inactiveBg = useColorModeValue("white", "navy.700");
   const activeColor = useColorModeValue("gray.700", "white");
   const inactiveColor = useColorModeValue("gray.400", "gray.400");
   const sidebarActiveShadow = "0px 7px 11px rgba(0, 0, 0, 0.04)";
 
-  // Create the links for the sidebar
+  const [isDropdownOpen, setDropdownOpen] = useState(false);
+
+  const handleDropdownToggle = () => {
+    setDropdownOpen(!isDropdownOpen);
+  };
+
   const createLinks = () => {
-    return routes.map((prop, key) => (
-      <NavLink to={prop.path} key={key}>
-        {activeRoute(prop.path) === "active" ? (
-          <Button
-            boxSize="initial"
-            justifyContent="flex-start"
-            alignItems="center"
-            boxShadow={sidebarActiveShadow}
-            bg={activeBg}
-            transition={variantChange}
-            mb="6px"
-            mx="auto"
-            py="12px"
-            borderRadius="15px"
-            _hover="none"
-            w="100%"
-            _active={{
-              bg: "inherit",
-              transform: "none",
-              borderColor: "transparent",
-            }}
-            _focus={{
-              boxShadow: "0px 7px 11px rgba(0, 0, 0, 0.04)",
-            }}
-          >
-            <Flex>
-              <IconBox
-                bg="blue.500"
-                color="white"
-                h="30px"
-                w="30px"
-                me="12px"
-                transition={variantChange}
-              >
-                {prop.icon}
-              </IconBox>
-              <Text color={activeColor} my="auto" fontSize="sm">
-                {prop.name}
-              </Text>
-            </Flex>
-          </Button>
-        ) : (
-          <Button
-            boxSize="initial"
-            justifyContent="flex-start"
-            alignItems="center"
-            bg="transparent"
-            mb="6px"
-            mx="auto"
-            py="12px"
-            borderRadius="15px"
-            _hover="none"
-            w="100%"
-            _active={{
-              bg: "inherit",
-              transform: "none",
-              borderColor: "transparent",
-            }}
-            _focus={{
-              boxShadow: "none",
-            }}
-          >
-            <Flex>
-              <IconBox
-                bg={inactiveBg}
-                color="blue.500"
-                h="30px"
-                w="30px"
-                me="12px"
-                transition={variantChange}
-              >
-                {prop.icon}
-              </IconBox>
-              <Text color={inactiveColor} my="auto" fontSize="sm">
-                {prop.name}
-              </Text>
-            </Flex>
-          </Button>
-        )}
-      </NavLink>
-    ));
+    return routes.map((prop, key) => {
+      if (prop.subRoutes) {
+        return (
+          <Box key={key}>
+            <Button
+              onClick={handleDropdownToggle}
+              boxSize="initial"
+              justifyContent="flex-start"
+              alignItems="center"
+              bg="transparent"
+              mb="6px"
+              mx="auto"
+              py="12px"
+              borderRadius="15px"
+              _hover="none"
+              className="css-152ve90"
+              w="100%"
+              _focus={{ boxShadow: "none" }}
+            >
+              <Flex>
+                <IconBox
+                  bg={inactiveBg}
+                  color="blue.500"
+                  h="30px"
+                  w="30px"
+                  me="12px"
+                  transition={variantChange}
+                >
+                  {prop.icon}
+                </IconBox>
+                <Text color={inactiveColor} my="auto" fontSize="sm">
+                  {prop.name}
+                </Text>
+                {isDropdownOpen ? (
+                  <ChevronUpIcon ml="auto" />
+                ) : (
+                  <ChevronDownIcon ml="auto" />
+                )}
+              </Flex>
+            </Button>
+            <Collapse in={isDropdownOpen}>
+              {prop.subRoutes.map((subProp, subKey) => (
+                <NavLink to={subProp.path} key={subKey}>
+                  <Button
+                    boxSize="initial"
+                    justifyContent="flex-start"
+                    alignItems="center"
+                    bg="transparent"
+                    mb="6px"
+                    mx="auto"
+                    py="12px"
+                    borderRadius="15px"
+                    pl="40px" // Indent sub-items
+                    _hover="none"
+                     className="css-152ve90"
+                    w="100%"
+                    _focus={{ boxShadow: "none" }}
+                  >
+                    <Text color={inactiveColor} my="auto" fontSize="sm">
+                      {subProp.name}
+                    </Text>
+                  </Button>
+                </NavLink>
+              ))}
+            </Collapse>
+          </Box>
+        );
+      }
+
+      return (
+        <NavLink to={prop.path} key={key}>
+          {activeRoute(prop.path) === "active" ? (
+            <Button
+              boxSize="initial"
+              justifyContent="flex-start"
+              alignItems="center"
+              boxShadow={sidebarActiveShadow}
+              bg={activeBg}
+              transition={variantChange}
+              mb="6px"
+              mx="auto"
+              py="12px"
+              borderRadius="15px"
+              _hover="none"
+              w="100%"
+                className="css-152ve90"
+              _active={{ bg: "inherit", transform: "none", borderColor: "transparent" }}
+              _focus={{ boxShadow: "0px 7px 11px rgba(0, 0, 0, 0.04)" }}
+            >
+              <Flex>
+                <IconBox
+                  bg="blue.500"
+                  color="white"
+                  h="30px"
+                  w="30px"
+                  me="12px"
+                  transition={variantChange}
+                >
+                  {prop.icon}
+                </IconBox>
+                <Text color={activeColor} my="auto" fontSize="sm">
+                  {prop.name}
+                </Text>
+              </Flex>
+            </Button>
+          ) : (
+            <Button
+              boxSize="initial"
+              justifyContent="flex-start"
+              alignItems="center"
+              bg="transparent"
+              mb="6px"
+              mx="auto"
+              py="12px"
+              borderRadius="15px"
+              _hover="none"
+              w="100%"
+                className="css-152ve90"
+
+              _active={{ bg: "inherit", transform: "none", borderColor: "transparent" }}
+              _focus={{ boxShadow: "none" }}
+            >
+              <Flex>
+                <IconBox
+                  bg={inactiveBg}
+                  color="blue.500"
+                  h="30px"
+                  w="30px"
+                  me="12px"
+                  transition={variantChange}
+                >
+                  {prop.icon}
+                </IconBox>
+                <Text color={inactiveColor} my="auto" fontSize="sm">
+                  {prop.name}
+                </Text>
+              </Flex>
+            </Button>
+          )}
+        </NavLink>
+      );
+    });
   };
 
   const links = <>{createLinks()}</>;
 
-  // Sidebar Background and Brand
   const sidebarBg = useColorModeValue("white", "navy.800");
   const sidebarRadius = "20px";
   const sidebarMargins = "0px";
@@ -189,7 +260,6 @@ function Sidebar(props) {
     </Box>
   );
 
-  // SIDEBAR
   return (
     <Box ref={mainPanel}>
       <Box display={{ sm: "none", xl: "block" }} position="fixed">
@@ -209,26 +279,14 @@ function Sidebar(props) {
         >
           <Scrollbars
             autoHide
-            renderTrackVertical={
-              document.documentElement.dir === "rtl"
-                ? renderTrackRTL
-                : renderTrack
-            }
-            renderThumbVertical={useColorModeValue(
-              renderThumbLight,
-              renderThumbDark
-            )}
-            renderView={
-              document.documentElement.dir === "rtl"
-                ? renderViewRTL
-                : renderView
-            }
+            renderTrackVertical={document.documentElement.dir === "rtl" ? renderTrackRTL : renderTrack}
+            renderThumbVertical={useColorModeValue(renderThumbLight, renderThumbDark)}
+            renderView={document.documentElement.dir === "rtl" ? renderViewRTL : renderView}
           >
             <Box>{brand}</Box>
             <Stack direction="column" mb="40px">
               <Box>{links}</Box>
             </Stack>
-            {/* <SidebarHelp sidebarVariant={props.sidebarVariant} /> */}
           </Scrollbars>
         </Box>
       </Box>
@@ -236,106 +294,153 @@ function Sidebar(props) {
   );
 }
 
-// Responsive Sidebar component
 export function SidebarResponsive(props) {
-  // Check for active links
   let location = useLocation();
   const { logo, hamburgerColor, ...rest } = props;
   const mainPanel = React.useRef();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const activeRoute = (routeName) => location.pathname === routeName ? "active" : "";
 
-  const activeRoute = (routeName) => {
-    return location.pathname === routeName ? "active" : "";
-  };
-
-  // Color variables
   const sidebarBackgroundColor = useColorModeValue("white", "navy.800");
 
-  // Create the links for the responsive sidebar
-  const { isOpen, onOpen, onClose } = useDisclosure(); // Move useDisclosure here
+  const [isDropdownOpen, setDropdownOpen] = useState(false);
+
+  const handleDropdownToggle = () => setDropdownOpen(!isDropdownOpen);
 
   const createLinks = () => {
-    return routes.map((prop, key) => (
-      <NavLink to={prop.path} key={key} onClick={onClose}> {/* Call onClose here */}
-        <Button
-          justifyContent="flex-start"
-          alignItems="center"
-          bg={activeRoute(prop.path) === "active" ? "blue.500" : "transparent"}
-          color={activeRoute(prop.path) === "active" ? "white" : "gray.600"}
-          w="100%"
-          mb="6px"
-          borderRadius="15px"
-          py="12px"
-          _hover={{ bg: "blue.500", color: "white" }}
-          _focus={{ boxShadow: "none" }}
-        >
-          <Flex>
-            <IconBox
-              bg={activeRoute(prop.path) === "active" ? "blue.600" : "transparent"}
-              color={activeRoute(prop.path) === "active" ? "white" : "blue.500"}
-              h="30px"
-              w="30px"
-              me="12px"
+    return routes.map((prop, key) => {
+      if (prop.subRoutes) {
+        return (
+          <Box key={key}>
+            <Button
+              onClick={handleDropdownToggle}
+              boxSize="initial"
+              justifyContent="flex-start"
+              alignItems="center"
+              bg="transparent"
+              mb="6px"
+              mx="auto"
+              py="12px"
+              borderRadius="15px"
+              _hover="none"
+               className="css-152ve90"
+              w="100%"
+              _focus={{ boxShadow: "none" }}
             >
-              {prop.icon}
-            </IconBox>
-            <Text fontSize="sm">{prop.name}</Text>
-          </Flex>
-        </Button>
-      </NavLink>
-    ));
+              <Flex>
+                <IconBox
+                  bg="gray.100"
+                  color="blue.500"
+                  h="30px"
+                  w="30px"
+                  me="12px"
+                >
+                  {prop.icon}
+                </IconBox>
+                <Text color="gray.400" my="auto" fontSize="sm">
+                  {prop.name}
+                </Text>
+                {isDropdownOpen ? (
+                  <ChevronUpIcon ml="auto" />
+                ) : (
+                  <ChevronDownIcon ml="auto" />
+                )}
+              </Flex>
+            </Button>
+            <Collapse in={isDropdownOpen}>
+              {prop.subRoutes.map((subProp, subKey) => (
+                <NavLink to={subProp.path} key={subKey}>
+                  <Button
+                    boxSize="initial"
+                    justifyContent="flex-start"
+                    alignItems="center"
+                    bg="transparent"
+                    mb="6px"
+                    mx="auto"
+                    py="12px"
+                    borderRadius="15px"
+                    pl="40px"
+                    _hover="none"
+                    w="100%"
+                     className="css-152ve90"
+                    _focus={{ boxShadow: "none" }}
+                  >
+                    <Text color="gray.400" my="auto" fontSize="sm">
+                      {subProp.name}
+                    </Text>
+                  </Button>
+                </NavLink>
+              ))}
+            </Collapse>
+          </Box>
+        );
+      }
+
+      return (
+        <NavLink to={prop.path} key={key}>
+          <Button
+            boxSize="initial"
+            justifyContent="flex-start"
+            alignItems="center"
+            bg="transparent"
+            mb="6px"
+            mx="auto"
+            py="12px"
+            borderRadius="15px"
+             className="css-152ve90"
+            _hover="none"
+            w="100%"
+            _focus={{ boxShadow: "none" }}
+          >
+            <Flex>
+              <IconBox
+                bg="gray.100"
+                color="blue.500"
+                h="30px"
+                w="30px"
+                me="12px"
+              >
+                {prop.icon}
+              </IconBox>
+              <Text color="gray.400" my="auto" fontSize="sm">
+                {prop.name}
+              </Text>
+            </Flex>
+          </Button>
+        </NavLink>
+      );
+    });
   };
 
-  const links = <>{createLinks()}</>;
-
-  // Brand
-  const brand = (
-    <Box pt={"35px"} mb="8px">
-      {logo}
-      <HSeparator my="26px" />
-    </Box>
-  );
-
-  // SIDEBAR
-  const btnRef = React.useRef();
-
   return (
-    <Flex display={{ sm: "flex", xl: "none" }} ref={mainPanel} alignItems="center">
-      <HamburgerIcon
-        color={hamburgerColor}
-        w="18px"
-        h="18px"
-        ref={btnRef}
-        onClick={onOpen}
-      />
-      <Drawer
-        isOpen={isOpen}
-        onClose={onClose}
-        placement={document.documentElement.dir === "rtl" ? "right" : "left"}
-        size="full" // Keep full height for the drawer
-      >
+    <Box ref={mainPanel}>
+      <Button onClick={onOpen} p="0px" bg="transparent" color={hamburgerColor} _focus={{ boxShadow: "none" }}>
+        <HamburgerIcon w="24px" h="24px" />
+      </Button>
+      <Drawer isOpen={isOpen} onClose={onClose} placement="left">
         <DrawerOverlay />
-        <DrawerContent
-          transition="all 0.4s ease"
-          my={{ sm: "16px" }}
-          borderRadius="16px"
-          bg={sidebarBackgroundColor}
-          maxW="70%" // Set max width to 70%
-          mx="auto" // Center the drawer
-        >
-          <DrawerCloseButton _focus={{ boxShadow: "none" }} _hover={{ boxShadow: "none" }} />
-          <DrawerBody maxW="100%" px="1rem">
-            <Box maxW="100%" h="100vh">
-              <Box>{brand}</Box>
+        <DrawerContent bg={sidebarBackgroundColor}>
+          <DrawerCloseButton />
+          <DrawerBody>
+            <Scrollbars
+              autoHide
+              renderTrackVertical={document.documentElement.dir === "rtl" ? renderTrackRTL : renderTrack}
+              renderThumbVertical={useColorModeValue(renderThumbLight, renderThumbDark)}
+              renderView={document.documentElement.dir === "rtl" ? renderViewRTL : renderView}
+            >
+              <Box>
+                {logo}
+                <HSeparator my="26px" />
+              </Box>
               <Stack direction="column" mb="40px">
-                <Box>{links}</Box>
+                <Box>{createLinks()}</Box>
               </Stack>
-              {/* <SidebarHelp /> */}
-            </Box>
+            </Scrollbars>
           </DrawerBody>
         </DrawerContent>
       </Drawer>
-    </Flex>
+    </Box>
   );
 }
 
-export default Sidebar;
+export default Sidebar;

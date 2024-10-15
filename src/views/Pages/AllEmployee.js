@@ -47,7 +47,10 @@ const AllEmployee = () => {
       const now = new Date();
       selectedTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
     }
+
     const dateWithTime = combineDateWithTime(selectedTime);
+    
+    console.log(dateWithTime)
     dispatch(checkIn({ empId, setTime: dateWithTime.toISOString() }));
   };
 
@@ -72,7 +75,7 @@ const AllEmployee = () => {
 
       {/* Entries per page selector */}
       <Box mb={4}>
-        <Text mb={2}>Enteries Per Page </Text>
+        <Text mb={2}>Entries Per Page </Text>
         <Select
           value={entriesPerPage}
           onChange={(e) => setEntriesPerPage(Number(e.target.value))}
@@ -97,7 +100,6 @@ const AllEmployee = () => {
             {currentEmployees?.map((employee) => (
               <Tr key={employee._id}>
                 <Td>{employee.name}</Td>
-
                 <Td>
                   <input
                     type="time"
@@ -106,13 +108,12 @@ const AllEmployee = () => {
                     step="600" // 10 minutes interval
                   />
                 </Td>
-
                 <Td>
                   <Button
                     colorScheme={employee.check === 0 ? 'green' : 'red'}
                     onClick={() => employee.check === 0 ? handleCheckIn(employee._id) : handleCheckOut(employee._id)}
                   >
-                    {employee.check === 0 ? 'Check In' : 'Check Out'}
+                    {employee.check === 0 ? 'In' : 'Out'}
                   </Button>
                 </Td>
               </Tr>

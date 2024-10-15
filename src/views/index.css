@@ -34,3 +34,37 @@ table > tbody >tr > td{
     text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.4); /* Increases shadow on hover */
     transition: 0.3s ease; /* Smooth transition effect */
   }
+
+  .css-k008qs{
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  .css-2twrlq {
+    width: 2em !important;
+    height: 1.5em !important;
+  }
+
+  .css-11p5knp{
+    width: 89% !important;
+    margin-left: .2vmax !important;
+    /* background-color: blue !important; */
+  }
+
+
+
+  .css-152ve90 {
+    width: 89% !important;
+    margin-left: .2vmax !important;
+    box-shadow: 5px 5px 10px rgb(172, 170, 170) !important;
+    margin-bottom: 1rem !important;
+  }
+
+  .css-pzh1on {
+    width: 270px !important;
+    max-width: 270px !important;
+  }
+
+  .css-1b7i6v1 {
+    padding-left: 10px !important;
+  }

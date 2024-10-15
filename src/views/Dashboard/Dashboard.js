@@ -69,11 +69,11 @@ export default function Dashboard() {
                   color='gray.400'
                   fontWeight='bold'
                   textTransform='uppercase'>
-                  Today's Money
+                  Today's Present
                 </StatLabel>
                 <Flex>
                   <StatNumber fontSize='lg' color={textColor} fontWeight='bold'>
-                    $53,897
+                    0
                   </StatNumber>
                 </Flex>
               </Stat>
@@ -86,12 +86,12 @@ export default function Dashboard() {
                 <WalletIcon h={"24px"} w={"24px"} color={iconBoxInside} />
               </IconBox>
             </Flex>
-            <Text color='gray.400' fontSize='sm'>
+            {/* <Text color='gray.400' fontSize='sm'>
               <Text as='span' color='green.400' fontWeight='bold'>
                 +3.48%{" "}
               </Text>
               Since last month
-            </Text>
+            </Text> */}
           </Flex>
         </Card>
         <Card minH='125px'>
@@ -108,11 +108,11 @@ export default function Dashboard() {
                   color='gray.400'
                   fontWeight='bold'
                   textTransform='uppercase'>
-                  Today's Users
+                  Today's Absent
                 </StatLabel>
                 <Flex>
                   <StatNumber fontSize='lg' color={textColor} fontWeight='bold'>
-                    $3,200
+                    0
                   </StatNumber>
                 </Flex>
               </Stat>
@@ -125,12 +125,12 @@ export default function Dashboard() {
                 <GlobeIcon h={"24px"} w={"24px"} color={iconBoxInside} />
               </IconBox>
             </Flex>
-            <Text color='gray.400' fontSize='sm'>
+            {/* <Text color='gray.400' fontSize='sm'>
               <Text as='span' color='green.400' fontWeight='bold'>
                 +5.2%{" "}
               </Text>
               Since last month
-            </Text>
+            </Text> */}
           </Flex>
         </Card>
         <Card minH='125px'>
@@ -147,11 +147,11 @@ export default function Dashboard() {
                   color='gray.400'
                   fontWeight='bold'
                   textTransform='uppercase'>
-                  New Clients
+                  Available Team
                 </StatLabel>
                 <Flex>
                   <StatNumber fontSize='lg' color={textColor} fontWeight='bold'>
-                    +2,503
+                    0
                   </StatNumber>
                 </Flex>
               </Stat>
@@ -164,12 +164,12 @@ export default function Dashboard() {
                 <DocumentIcon h={"24px"} w={"24px"} color={iconBoxInside} />
               </IconBox>
             </Flex>
-            <Text color='gray.400' fontSize='sm'>
+            {/* <Text color='gray.400' fontSize='sm'>
               <Text as='span' color='red.500' fontWeight='bold'>
                 -2.82%{" "}
               </Text>
               Since last month
-            </Text>
+            </Text> */}
           </Flex>
         </Card>
         <Card minH='125px'>
@@ -186,11 +186,11 @@ export default function Dashboard() {
                   color='gray.400'
                   fontWeight='bold'
                   textTransform='uppercase'>
-                  Total Sales
+                  Left
                 </StatLabel>
                 <Flex>
                   <StatNumber fontSize='lg' color={textColor} fontWeight='bold'>
-                    $173,000
+                    0
                   </StatNumber>
                 </Flex>
               </Stat>
@@ -203,16 +203,16 @@ export default function Dashboard() {
                 <CartIcon h={"24px"} w={"24px"} color={iconBoxInside} />
               </IconBox>
             </Flex>
-            <Text color='gray.400' fontSize='sm'>
+            {/* <Text color='gray.400' fontSize='sm'>
               <Text as='span' color='green.400' fontWeight='bold'>
                 +8.12%{" "}
               </Text>
               Since last month
-            </Text>
+            </Text> */}
           </Flex>
         </Card>
       </SimpleGrid>
-      <Grid
+      {/* <Grid
         templateColumns={{ sm: "1fr", lg: "2fr 1fr" }}
         templateRows={{ lg: "repeat(2, auto)" }}
         gap='20px'>
@@ -393,7 +393,7 @@ export default function Dashboard() {
             </Table>
           </Box>
         </Card>
-      </Grid>
+      </Grid> */}
     </Flex>
   );
 }

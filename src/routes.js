@@ -21,6 +21,8 @@ import AddEmployee from 'views/Pages/AddEmployee';
 import AllEmployee from 'views/Pages/AllEmployee';
 import AttendanceTable from 'views/Pages/AttendanceTable';
 import EmployeeMonthAttendanceTable from 'views/Pages/EmployeeMonthAttendanceTable';
+import DateWiseAttendance from 'views/Pages/DateWiseAttendance';
+import ReceptionLogin from 'views/Pages/ReceptionLogin';
 
 var dashRoutes = [
   {
@@ -118,6 +120,22 @@ var dashRoutes = [
     rtlName: "لوحة القيادة",
     icon: <HomeIcon color='inherit' />,
     component: EmployeeMonthAttendanceTable,
+    layout: "/admin",
+  },
+  {
+    path: "/employee-date-attendance",
+    name: "Employee Wise Table",
+    rtlName: "لوحة القيادة",
+    icon: <HomeIcon color='inherit' />,
+    component: DateWiseAttendance,
+    layout: "/admin",
+  },
+  {
+    path: "/reception-login",
+    name: "Reception Login",
+    rtlName: "لوحة القيادة",
+    icon: <HomeIcon color='inherit' />,
+    component: ReceptionLogin,
     layout: "/admin",
   },
 ];
