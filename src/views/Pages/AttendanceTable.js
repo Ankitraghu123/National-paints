@@ -16,22 +16,22 @@ import {
 } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
 import { allEmployee } from "features/Employee/EmployeeSlice";
-import { addHoliday } from "features/Holiday/HolidaySlice";
 import { allHoliday } from "features/Holiday/HolidaySlice";
 
 const AttendanceTable = () => {
   const dispatch = useDispatch();
-  // const [holidays,setHolidays] = useState([])
-  // const [selectedHolidayDate, setSelectedHolidayDate] = useState('');
+ 
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth());
   const [daysInMonth, setDaysInMonth] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [entriesPerPage, setEntriesPerPage] = useState(5); // Default entries per page
+  const [entriesPerPage, setEntriesPerPage] = useState(50); // Default entries per page
   const [searchTerm, setSearchTerm] = useState(""); // New state for search input
+  const allHolidays = useSelector(state => state.holiday.allHolidays)
+  const [holidaysInMonth, setHolidaysInMonth] = useState([]);
 
   const employees = useSelector((state) => state.employee?.allEmployees);
-
+  const today = new Date();
   useEffect(() => {
     dispatch(allEmployee());
     dispatch(allHoliday())
@@ -45,15 +45,39 @@ const AttendanceTable = () => {
     setDaysInMonth(days);
   }, [year, month]);
 
-  // const handleAddHoliday = () => {
-  //   if (selectedHolidayDate) {
-  //     // Dispatch action to add holiday
-  //     dispatch(addHoliday({ date: selectedHolidayDate }));
-  //     // Add selected date to holiday dates array
-  //     setHolidays([...holidays, selectedHolidayDate]);
-  //     setSelectedHolidayDate(''); // Clear the input after dispatch
-  //   }
-  // };
+  useEffect(() => {
+    const holidays = getHolidaysForMonth(month, year);
+    setHolidaysInMonth(holidays);
+  }, [month, year, allHolidays]);
+
+  console.log(holidaysInMonth)
+
+
+  const getHolidaysForMonth = (month) => {
+    return allHolidays?.filter(holiday => {
+      const holidayDate = new Date(holiday.date);
+      return holidayDate.getMonth() === month && holidayDate.getFullYear() === today.getFullYear(); // Check for current year
+    });
+  };
+
+
+const isHoliday = (day) => {
+  return holidaysInMonth?.some(holiday => {
+    const holidayDate = new Date(holiday.date);
+    return holidayDate.getDate() === day; // Check if the holiday's date matches the given day
+  });
+};
+
+const getHolidayNameByDate = (day) => {
+  const holiday = holidaysInMonth?.find(holiday => {
+    const holidayDate = new Date(holiday.date);
+    return holidayDate.getDate() === day && 
+           holidayDate.getMonth() === month && // Assuming `month` is the current month
+           holidayDate.getFullYear() === today.getFullYear(); // Assuming `today` is a Date object
+  });
+
+  return holiday ? holiday.name : "N/A"; // Return the name if found, otherwise null
+};
 
   const isSunday = (date) => {
     return new Date(year, month, date).getDay() === 0; // Sunday is 0
@@ -68,9 +92,7 @@ const AttendanceTable = () => {
   const calculateTotalHours = (attendanceRecords) => {
     const totalHoursDecimal = daysInMonth.reduce((total, day) => {
       const currentDate = new Date(year, month, day);
-
-     
-      
+  
       const attendanceRecord = attendanceRecords.find((record) => {
         const recordDate = new Date(record.date);
         return (
@@ -81,20 +103,18 @@ const AttendanceTable = () => {
       });
   
       const hoursForDay = attendanceRecord ? attendanceRecord.totalHours : 0;
-      const overtimeHours =
-        attendanceRecord && attendanceRecord.checkIn && attendanceRecord.checkOut
-          ? calculateOvertime(attendanceRecord.checkIn, attendanceRecord.checkOut)
-          : 0;
   
-      if (isSunday(day)) {
-        return total + 8 + overtimeHours; // 8 hours for Sunday plus overtime
+      // Check if the day is Sunday or a holiday
+      if (isSunday(day) || isHoliday(day)) {
+        total = total + 8; // Add 8 hours for Sunday or holiday
       }
   
-      return total + hoursForDay + overtimeHours; 
+      return total + hoursForDay; 
     }, 0);
   
     return formatHours(totalHoursDecimal); 
   };
+  
 
   const calculateOvertime = (checkIn, checkOut) => {
     const checkInTime = new Date(checkIn);
@@ -116,11 +136,10 @@ const AttendanceTable = () => {
   };
 
   const calculateDailySalary = (monthlySalary, hours, daysInMonth) => {
-    console.log(hours)
     if (!hours || !hours.includes(':')) {
-      console.error("Invalid hours format:", hours);
       return 0;  // Return a fallback value like 0 in case of invalid input
     }
+
   
     const salaryPerMinute = monthlySalary / (daysInMonth * 8 * 60); 
     
@@ -134,16 +153,16 @@ const AttendanceTable = () => {
 
   const getDailyHours = (attendanceRecord, day) => {
     const isCurrentDaySunday = isSunday(day); 
-  
+
     if (!attendanceRecord) return isCurrentDaySunday ? formatHours(8) : "0 : 0";
-  
+  // console.log(attendanceRecord.totalHours)
     const hoursForDay = attendanceRecord.totalHours || 0;
     const overtimeHours =
       attendanceRecord.checkIn && attendanceRecord.checkOut
         ? calculateOvertime(attendanceRecord.checkIn, attendanceRecord.checkOut)
         : 0;
   
-    let totalDailyHours = hoursForDay + overtimeHours;
+    let totalDailyHours = hoursForDay ;
   
     // Variables to track if lunch deduction should be applied
     let shouldDeductLunch = false;
@@ -152,7 +171,8 @@ const AttendanceTable = () => {
     for (let i = 0; i < attendanceRecord.timeLogs.length; i++) {
       const checkInTime = new Date(attendanceRecord.timeLogs[i].checkIn);
       const checkOutTime = new Date(attendanceRecord.timeLogs[i].checkOut);
-  
+      // console.log(checkInTime.getHours(),checkOutTime.getHours())
+
       // Check if lunch deduction should apply
       if (checkInTime.getHours() < 13 && checkOutTime.getHours() > 14) {
         shouldDeductLunch = true;
@@ -163,6 +183,10 @@ const AttendanceTable = () => {
     // Deduct lunch time if applicable
     if (shouldDeductLunch) {
       totalDailyHours -= 0.5; // Deduct 30 minutes (0.5 hours)
+    }
+
+    if(isHoliday(day)){
+      totalDailyHours += 8
     }
   
     const formattedHours = formatHours(isCurrentDaySunday ? totalDailyHours + 8 : totalDailyHours);
@@ -188,7 +212,7 @@ const AttendanceTable = () => {
     );
 
   return (
-    <Box p={8} mt={100} backgroundColor={"white"} borderRadius={"30px"}>
+    <Box p={8} mt={100} backgroundColor={"white"} borderRadius={"30px"} >
       {/* Year and Month Selection */}
       <Box display="flex" alignItems="center" gap={4} mb={4}>
         <Box>
@@ -216,22 +240,7 @@ const AttendanceTable = () => {
             ))}
           </Select>
         </Box>
-      </Box>
-
-      {/* <Box mb={4}>
-        <Text mb={2}>Select Holiday Date:</Text>
-        <Input
-          type="date"
-          value={selectedHolidayDate}
-          onChange={(e) => setSelectedHolidayDate(e.target.value)}
-        />
-        <Button mt={2} onClick={handleAddHoliday}>
-          Add Holiday
-        </Button>
-      </Box> */}
-
-      {/* Search Bar */}
-      <Box mb={4}>
+        <Box width={'40%'}>
         <Text mb={2}>Search by Employee Name:</Text>
         <Input
           placeholder="Search employee..."
@@ -240,6 +249,12 @@ const AttendanceTable = () => {
         />
       </Box>
 
+      </Box>
+
+      
+
+      {/* Search Bar */}
+      
       {/* Entries per page selection */}
       <Box mb={4}>
         <Text mb={2}>Entries per page:</Text>
@@ -248,7 +263,7 @@ const AttendanceTable = () => {
           onChange={(e) => setEntriesPerPage(Number(e.target.value))}
           width="150px"
         >
-          {[5, 10, 15, 20].map((option) => (
+          {[50,75,100].map((option) => (
             <option key={option} value={option}>
               {option}
             </option>
@@ -267,7 +282,7 @@ const AttendanceTable = () => {
                   key={day}
                   style={isSunday(day) ? { color: "red" } : {}}
                 >
-                  {isSunday(day) ? day + '(Sun)' : day}
+                  {isSunday(day) ? day + '(Sun)' :isHoliday(day) ? day +`(${ getHolidayNameByDate(day)})` : day}
                 </Th>
               ))}
               <Th>Total Hours</Th>
@@ -295,11 +310,11 @@ const AttendanceTable = () => {
   return (
     <Td key={day} style={isCurrentDaySunday ? { color: "red" } : {}}>
       {isCurrentDaySunday && !attendanceRecord
-        ? formatHours(8)
-        : formattedHours ? formattedHours : 0}
+        ? formatHours(8) : isHoliday(day) && !attendanceRecord ? formatHours(8) :
+         formattedHours ? formattedHours : 0}
       <br />
       {/* Today's Salary: {isCurrentDaySunday && !attendanceRecord ?calculateDailySalary(employee.salary, getDailyHours(attendanceRecord, day), daysInMonth.length) :todaysSalary} */}
-      {shouldDeductLunch && <Text color="gray">Lunch: 30 min</Text>}
+      {/* {shouldDeductLunch && <Text color="gray">Lunch: 30 min</Text>} */}
     </Td>
   );
 })}

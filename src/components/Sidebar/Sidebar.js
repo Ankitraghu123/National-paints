@@ -40,13 +40,13 @@ const routes = [
   {
     name: "Todays Attendance",
     icon: "👤",
-    path: "/admin/employee-date-attendance",
+    path: "/admin/todays-attendance",
   },
-  // {
-  //   name: "Add Holiday",
-  //   icon: "👤",
-  //   path: "/admin/dashboard",
-  // },
+  {
+    name: "Add Holiday",
+    icon: "👤",
+    path: "/admin/add-holiday",
+  },
   {
     name: "Add Employee",
     icon: "👤",

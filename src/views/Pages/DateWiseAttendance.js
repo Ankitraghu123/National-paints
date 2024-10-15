@@ -13,6 +13,7 @@ import {
   Text,
   Button,
   HStack,
+  Flex,
 } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
 import { allEmployee } from "features/Employee/EmployeeSlice";
@@ -25,7 +26,7 @@ const AttendanceTable = () => {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]); // Initialize with today's date
   const [daysInMonth, setDaysInMonth] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [entriesPerPage, setEntriesPerPage] = useState(5);
+  const [entriesPerPage, setEntriesPerPage] = useState(50);
   const [searchTerm, setSearchTerm] = useState("");
 
   const employees = useSelector((state) => state.employee?.allEmployees);
@@ -34,6 +35,8 @@ const AttendanceTable = () => {
     dispatch(allEmployee());
     dispatch(allHoliday());
   }, [dispatch]);
+
+  
 
   useEffect(() => {
     const days = Array.from(
@@ -163,7 +166,8 @@ const AttendanceTable = () => {
       
 
       {/* Date Selection */}
-      <Box mb={4}>
+      <Flex justifyContent={'space-between'}>
+      <Box width={'48%'} mb={4}>
         <Text mb={2}>Select Date:</Text>
         <Input
           type="date"
@@ -173,7 +177,7 @@ const AttendanceTable = () => {
       </Box>
 
       {/* Search Bar */}
-      <Box mb={4}>
+      <Box width={'48%'} mb={4}>
         <Text mb={2}>Search by Employee Name:</Text>
         <Input
           placeholder="Search employee..."
@@ -181,6 +185,7 @@ const AttendanceTable = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </Box>
+      </Flex>
 
       {/* Entries per page selection */}
       <Box mb={4}>
@@ -190,7 +195,7 @@ const AttendanceTable = () => {
           onChange={(e) => setEntriesPerPage(Number(e.target.value))}
           width="150px"
         >
-          {[5, 10, 15, 20,50].map((option) => (
+          {[50,75,100].map((option) => (
             <option key={option} value={option}>
               {option}
             </option>

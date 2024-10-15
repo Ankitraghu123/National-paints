@@ -12,6 +12,8 @@ import {
   Text,
   Heading,
   Td,
+  Flex,
+  Spacer,
 } from '@chakra-ui/react';
 import { useDispatch, useSelector } from 'react-redux';
 import { allEmployee, getEmployeeAttendance } from 'features/Employee/EmployeeSlice';
@@ -128,7 +130,8 @@ const EmployeeMonthAttendanceTable = () => {
       </Heading>
 
       {/* Employee Selection */}
-      <Box mb={4}>
+      <Flex  justifyContent={'space-between'}>
+      <Box width={'48%'} mb={4}>
         <Text mb={2}>Select Employee:</Text>
         <Select placeholder="Select employee" onChange={ handleEmployeeChange}>
           {employees?.map((employee) => (
@@ -140,10 +143,11 @@ const EmployeeMonthAttendanceTable = () => {
       </Box>
 
       {/* Month Selection */}
-      <Box mb={4}>
+      <Box width={'48%'} mb={4}>
         <Text mb={2}>Select Month:</Text>
         <Input type="month" onChange={handleMonthChange} />
       </Box>
+      </Flex>
 
       {/* Attendance Table */}
       {selectedEmployeeId && selectedMonth ? (

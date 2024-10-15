@@ -23,6 +23,8 @@ import AttendanceTable from 'views/Pages/AttendanceTable';
 import EmployeeMonthAttendanceTable from 'views/Pages/EmployeeMonthAttendanceTable';
 import DateWiseAttendance from 'views/Pages/DateWiseAttendance';
 import ReceptionLogin from 'views/Pages/ReceptionLogin';
+import TodaysAttendance from 'views/Pages/TodaysAttendance';
+import AddHoliday from 'views/Pages/AddHoliday';
 
 var dashRoutes = [
   {
@@ -136,6 +138,22 @@ var dashRoutes = [
     rtlName: "لوحة القيادة",
     icon: <HomeIcon color='inherit' />,
     component: ReceptionLogin,
+    layout: "/admin",
+  },
+  {
+    path: "/todays-attendance",
+    name: "Todays Attendance",
+    rtlName: "لوحة القيادة",
+    icon: <HomeIcon color='inherit' />,
+    component: TodaysAttendance,
+    layout: "/admin",
+  },
+  {
+    path: "/add-holiday",
+    name: "Add Holidays",
+    rtlName: "لوحة القيادة",
+    icon: <HomeIcon color='inherit' />,
+    component: AddHoliday,
     layout: "/admin",
   },
 ];

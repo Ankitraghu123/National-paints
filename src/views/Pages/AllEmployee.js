@@ -4,6 +4,8 @@ import { allEmployee } from 'features/Employee/EmployeeSlice';
 import {
   Box, Button, Table, Thead, Tbody, Tr, Th, Td, Text, HStack,
   Select,
+  Input,
+  Flex,
 } from '@chakra-ui/react';
 import { checkOut, checkIn } from 'features/Attendance/AttendanceSlice';
 
@@ -11,18 +13,16 @@ const AllEmployee = () => {
   const dispatch = useDispatch();
   const allEmployees = useSelector(state => state.employee?.allEmployees);
   const { checkedIn, checkedOut } = useSelector(state => state.attendance);
-  const [time, setTime] = useState({}); // State to hold selected time per employee
+  const [time, setTime] = useState({}); 
+  const [searchTerm, setSearchTerm] = useState('')
 
-  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const [entriesPerPage, setEntriesPerPage] = useState(5); // Change this to any number you prefer
+  const [entriesPerPage, setEntriesPerPage] = useState(50); 
 
-  // Fetch all employees on component mount
   useEffect(() => {
     dispatch(allEmployee());
   }, [dispatch, checkedIn, checkedOut]);
 
-  // Function to merge today's date with the selected time
   const combineDateWithTime = (timeString) => {
     const today = new Date();
     const [hours, minutes] = timeString.split(':');
@@ -61,10 +61,14 @@ const AllEmployee = () => {
     dispatch(checkOut({ empId, setTime: dateWithTime.toISOString() }));
   };
 
+  const filteredEmployees = allEmployees?.filter(employee =>
+    employee.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   // Pagination Logic
   const indexOfLastEmployee = currentPage * entriesPerPage;
   const indexOfFirstEmployee = indexOfLastEmployee - entriesPerPage;
-  const currentEmployees = allEmployees?.slice(indexOfFirstEmployee, indexOfLastEmployee);
+  const currentEmployees = filteredEmployees?.slice(indexOfFirstEmployee, indexOfLastEmployee);
 
   const totalEntries = allEmployees?.length || 0;
   const totalPages = Math.ceil(totalEntries / entriesPerPage);
@@ -73,19 +77,32 @@ const AllEmployee = () => {
     <Box p={8} mt={100} backgroundColor={'white'} borderRadius={'30px'}>
       <Text fontSize="2xl" fontWeight="bold" mb={4}>Employee Table</Text>
 
+      {/* Search Bar  */}
+      <Flex justifyContent={'space-between'} alignItems={'center'}>
+      <Box mb={4}>
+        <Input
+          placeholder="Search Employee by Name"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          mb={4}
+          width="300px"
+        />
+      </Box>
+
       {/* Entries per page selector */}
       <Box mb={4}>
-        <Text mb={2}>Entries Per Page </Text>
+        {/* <Text mb={2}>Entries Per Page </Text> */}
         <Select
           value={entriesPerPage}
           onChange={(e) => setEntriesPerPage(Number(e.target.value))}
           width="150px"
         >
-          {[5, 10, 15, 20].map((option) => (
+          {[50,75,100].map((option) => (
             <option key={option} value={option}>{option}</option>
           ))}
         </Select>
       </Box>
+      </Flex>
 
       <Box overflowX="auto">
         <Table variant="simple" colorScheme="gray">

@@ -40,6 +40,7 @@ import {
   lineChartOptions,
 } from "variables/charts";
 import { pageVisits, socialTraffic } from "variables/general";
+import AllEmployee from "views/Pages/AllEmployee";
 
 export default function Dashboard() {
   // Chakra Color Mode
@@ -212,6 +213,7 @@ export default function Dashboard() {
           </Flex>
         </Card>
       </SimpleGrid>
+      <AllEmployee/>
       {/* <Grid
         templateColumns={{ sm: "1fr", lg: "2fr 1fr" }}
         templateRows={{ lg: "repeat(2, auto)" }}
