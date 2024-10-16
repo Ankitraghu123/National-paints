@@ -18,22 +18,47 @@ export const checkOut = createAsyncThunk('attendance/checkout',async(data,thunkA
     }
 })
 
-export const getAttendance = createAsyncThunk('attendance/empId',async(empId,thunkApi)=>{
+// export const getAttendance = createAsyncThunk('attendance/empId',async(empId,thunkApi)=>{
+//     try{
+//         return await AttendanceService.GetAttendance(empId)
+//     }catch(err){
+//         return thunkApi.rejectWithValue(err)
+//     }
+// })
+
+
+// export const getMonthlyAttendance = createAsyncThunk('attendance/monthly',async(data,thunkApi)=>{
+//     try{
+//         return await AttendanceService.GetMonthlyAttendance(data)
+//     }catch(err){
+//         return thunkApi.rejectWithValue(err)
+//     }
+// })
+
+export const todaysPresent = createAsyncThunk('attendance/todays-present',async(thunkApi)=>{
     try{
-        return await AttendanceService.GetAttendance(empId)
+        return await AttendanceService.TodaysPresent()
     }catch(err){
         return thunkApi.rejectWithValue(err)
     }
 })
 
-
-export const getMonthlyAttendance = createAsyncThunk('attendance/monthly',async(data,thunkApi)=>{
+export const todaysAbsent = createAsyncThunk('attendance/todays-absent',async(thunkApi)=>{
     try{
-        return await AttendanceService.GetMonthlyAttendance(data)
+        return await AttendanceService.TodaysAbsent()
     }catch(err){
         return thunkApi.rejectWithValue(err)
     }
 })
+
+export const todaysAvailable = createAsyncThunk('attendance/todays-avail',async(thunkApi)=>{
+    try{
+        return await AttendanceService.TodaysAvailable()
+    }catch(err){
+        return thunkApi.rejectWithValue(err)
+    }
+})
+
 
 const initialState = {
     attendance:'',
@@ -78,6 +103,48 @@ export const AttendanceSlice = createSlice({
             state.isError=true
             state.isSuccess = false
             state.checkedOut = null
+        })
+        .addCase(todaysPresent.pending,(state)=>{
+            state.isLoading = true
+        })
+        .addCase(todaysPresent.fulfilled,(state,action)=>{
+            state.isLoading = false
+            state.isSuccess = true
+            state.todaysPresentEmployee = action.payload
+        })
+        .addCase(todaysPresent.rejected,(state,action)=>{
+            state.isLoading = false
+            state.isError=true
+            state.isSuccess = false
+            state.todaysPresentEmployee = null
+        })
+        .addCase(todaysAbsent.pending,(state)=>{
+            state.isLoading = true
+        })
+        .addCase(todaysAbsent.fulfilled,(state,action)=>{
+            state.isLoading = false
+            state.isSuccess = true
+            state.todaysAbsentEmployee = action.payload
+        })
+        .addCase(todaysAbsent.rejected,(state,action)=>{
+            state.isLoading = false
+            state.isError=true
+            state.isSuccess = false
+            state.todaysAbsentEmployee = null
+        })
+        .addCase(todaysAvailable.pending,(state)=>{
+            state.isLoading = true
+        })
+        .addCase(todaysAvailable.fulfilled,(state,action)=>{
+            state.isLoading = false
+            state.isSuccess = true
+            state.todaysAvailableEmployee = action.payload
+        })
+        .addCase(todaysAvailable.rejected,(state,action)=>{
+            state.isLoading = false
+            state.isError=true
+            state.isSuccess = false
+            state.todaysAvailableEmployee = null
         })
     }
 })

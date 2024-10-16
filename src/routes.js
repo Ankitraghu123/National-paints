@@ -25,6 +25,10 @@ import DateWiseAttendance from 'views/Pages/DateWiseAttendance';
 import ReceptionLogin from 'views/Pages/ReceptionLogin';
 import TodaysAttendance from 'views/Pages/TodaysAttendance';
 import AddHoliday from 'views/Pages/AddHoliday';
+import TodaysPresent from 'views/Pages/TodaysPresent';
+import TodaysAbsent from 'views/Pages/TodaysAbsent';
+import { todaysAvailable } from 'features/Attendance/AttendanceSlice';
+import AvailableEmployees from 'views/Pages/AvailableEmployees';
 
 var dashRoutes = [
   {
@@ -154,6 +158,30 @@ var dashRoutes = [
     rtlName: "لوحة القيادة",
     icon: <HomeIcon color='inherit' />,
     component: AddHoliday,
+    layout: "/admin",
+  },
+  {
+    path: "/todays-present",
+    name: "Todays Present",
+    rtlName: "لوحة القيادة",
+    icon: <HomeIcon color='inherit' />,
+    component: TodaysPresent,
+    layout: "/admin",
+  },
+  {
+    path: "/todays-absent",
+    name: "Todays Absent",
+    rtlName: "لوحة القيادة",
+    icon: <HomeIcon color='inherit' />,
+    component: TodaysAbsent,
+    layout: "/admin",
+  },
+  {
+    path: "/todays-avail",
+    name: "Todays Available",
+    rtlName: "لوحة القيادة",
+    icon: <HomeIcon color='inherit' />,
+    component: AvailableEmployees,
     layout: "/admin",
   },
 ];

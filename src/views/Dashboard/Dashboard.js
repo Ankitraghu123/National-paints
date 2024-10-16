@@ -31,7 +31,12 @@ import {
   GlobeIcon,
   WalletIcon,
 } from "components/Icons/Icons.js";
-import React from "react";
+import { todaysAvailable } from "features/Attendance/AttendanceSlice";
+import { todaysAbsent } from "features/Attendance/AttendanceSlice";
+import { todaysPresent } from "features/Attendance/AttendanceSlice";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 // Variables
 import {
   barChartData,
@@ -43,7 +48,11 @@ import { pageVisits, socialTraffic } from "variables/general";
 import AllEmployee from "views/Pages/AllEmployee";
 
 export default function Dashboard() {
-  // Chakra Color Mode
+  const dispatch = useDispatch()
+  const history = useHistory()
+  const todaysPresentEmployee = useSelector(state => state.attendance.todaysPresentEmployee)
+  const todaysAbsentEmployee = useSelector(state => state.attendance.todaysAbsentEmployee)
+  const todaysAvailableEmployee = useSelector(state => state.attendance.todaysAvailableEmployee)
   const iconBlue = useColorModeValue("blue.500", "blue.500");
   const iconBoxInside = useColorModeValue("white", "white");
   const textColor = useColorModeValue("gray.700", "white");
@@ -53,17 +62,26 @@ export default function Dashboard() {
 
   const { colorMode } = useColorMode();
 
+  useEffect(() => {
+    dispatch(todaysPresent())
+    dispatch(todaysAbsent())
+    dispatch(todaysAvailable())
+  },[dispatch])
+
   return (
     <Flex flexDirection='column' pt={{ base: "120px", md: "75px" }}>
       <SimpleGrid columns={{ sm: 1, md: 2, xl: 4 }} spacing='24px' mb='20px'>
         <Card minH='125px'>
-          <Flex direction='column'>
+          <Flex direction='column'
+              onClick={() => history.push('/admin/todays-present')}
+          >
             <Flex
               flexDirection='row'
               align='center'
               justify='center'
               w='100%'
-              mb='25px'>
+              mb='25px'
+              >
               <Stat me='auto'>
                 <StatLabel
                   fontSize='xs'
@@ -74,7 +92,7 @@ export default function Dashboard() {
                 </StatLabel>
                 <Flex>
                   <StatNumber fontSize='lg' color={textColor} fontWeight='bold'>
-                    0
+                    {todaysPresentEmployee?.data?.length}
                   </StatNumber>
                 </Flex>
               </Stat>
@@ -96,7 +114,9 @@ export default function Dashboard() {
           </Flex>
         </Card>
         <Card minH='125px'>
-          <Flex direction='column'>
+          <Flex direction='column'
+            onClick={() => history.push('/admin/todays-absent')}
+          >
             <Flex
               flexDirection='row'
               align='center'
@@ -113,7 +133,7 @@ export default function Dashboard() {
                 </StatLabel>
                 <Flex>
                   <StatNumber fontSize='lg' color={textColor} fontWeight='bold'>
-                    0
+                  {todaysAbsentEmployee?.data?.length}
                   </StatNumber>
                 </Flex>
               </Stat>
@@ -135,7 +155,9 @@ export default function Dashboard() {
           </Flex>
         </Card>
         <Card minH='125px'>
-          <Flex direction='column'>
+          <Flex direction='column'
+          onClick={() => history.push('/admin/todays-avail')}
+          >
             <Flex
               flexDirection='row'
               align='center'
@@ -152,7 +174,7 @@ export default function Dashboard() {
                 </StatLabel>
                 <Flex>
                   <StatNumber fontSize='lg' color={textColor} fontWeight='bold'>
-                    0
+                  {todaysAvailableEmployee?.data?.length}
                   </StatNumber>
                 </Flex>
               </Stat>

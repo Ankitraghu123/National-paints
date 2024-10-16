@@ -90,6 +90,9 @@ const getHolidayNameByDate = (day) => {
   };
 
   const calculateTotalHours = (attendanceRecords) => {
+    let totalHours = 0;
+    let totalMinutes = 0;
+  
     const totalHoursDecimal = daysInMonth.reduce((total, day) => {
       const currentDate = new Date(year, month, day);
   
@@ -118,18 +121,33 @@ const getHolidayNameByDate = (day) => {
       }
   
       if (shouldDeductLunch) {
-        hoursForDay -= 0.5; 
+        hoursForDay -= 0.5; // Deduct 30 minutes for lunch
+      }
+  
+      // Convert hoursForDay into hours and minutes
+      const currentHours = Math.floor(hoursForDay); // Integer part (hours)
+      const currentMinutes = Math.round((hoursForDay - currentHours) * 60); // Decimal part (minutes)
+  
+      totalHours += currentHours;
+      totalMinutes += currentMinutes;
+  
+      // Convert total minutes into hours if it exceeds 60
+      if (totalMinutes >= 60) {
+        totalHours += Math.floor(totalMinutes / 60);
+        totalMinutes = totalMinutes % 60; // Remaining minutes after converting to hours
       }
   
       if ((!attendanceRecord && isSunday(day)) || (!attendanceRecord && isHoliday(day))) {
-        return total + 8; 
+        totalHours += 8; // Default 8 hours for Sundays or holidays
       }
-  
-      return total + hoursForDay;
+      return total;
     }, 0);
   
-    return formatHours(totalHoursDecimal);
+    // Format the final result as hours and minutes
+    return `${totalHours} : ${totalMinutes} `;
   };
+  
+
   
 
   // const calculateTotalHours = (attendanceRecords) => {
@@ -145,19 +163,37 @@ const getHolidayNameByDate = (day) => {
   //       );
   //     });
   
-  //     const hoursForDay = attendanceRecord ? attendanceRecord.totalHours : 0;
+  //     let hoursForDay = attendanceRecord ? attendanceRecord.totalHours : 0;
+  //     let shouldDeductLunch = false;
   
-  //     // Check if the day is Sunday or a holiday
-  //     if (isSunday(day) || isHoliday(day) ) {
-  //       return  total + 8 ; // Add 8 hours for Sunday or holiday
+  //     if (attendanceRecord && attendanceRecord.timeLogs) {
+  //       for (let i = 0; i < attendanceRecord.timeLogs.length; i++) {
+  //         const checkInTime = new Date(attendanceRecord.timeLogs[i].checkIn);
+  //         const checkOutTime = new Date(attendanceRecord.timeLogs[i].checkOut);
+  
+  //         if (checkInTime.getHours() < 13 && checkOutTime.getHours() > 14) {
+  //           shouldDeductLunch = true;
+  //           break; // No need to check further if lunch deduction already applies
+  //         }
+  //       }
   //     }
   
-  //     return total + hoursForDay; 
-  //   }, 0);
+  //     if (shouldDeductLunch) {
+  //       hoursForDay -= 0.5; 
+  //     }
   
-  //   return formatHours(totalHoursDecimal); 
+  //     if ((!attendanceRecord && isSunday(day)) || (!attendanceRecord && isHoliday(day))) {
+  //       return total + 8; 
+  //     }
+      
+  //     return total + hoursForDay;
+  //   }, 0);
+
+  //   return formatHours(totalHoursDecimal);
   // };
   
+
+
 
   const calculateOvertime = (checkIn, checkOut) => {
     const checkInTime = new Date(checkIn);
