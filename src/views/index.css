@@ -68,3 +68,15 @@ table > tbody >tr > td{
   .css-1b7i6v1 {
     padding-left: 10px !important;
   }
+
+  @media (max-width: 668px) {
+    #emp-flex{
+      flex-direction: column;
+      align-items: start;
+    }
+
+    #emp-search{
+      width: 100% !important;
+    }
+    
+  }

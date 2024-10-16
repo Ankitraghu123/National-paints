@@ -25,7 +25,6 @@ import {
   renderViewRTL,
 } from "components/Scrollbar/Scrollbar";
 import { HSeparator } from "components/Separator/Separator";
-// import { SidebarHelp } from "components/Sidebar/SidebarHelp";
 import React, { useState } from "react";
 import { Scrollbars } from "react-custom-scrollbars";
 import { NavLink, useLocation } from "react-router-dom";
@@ -36,11 +35,6 @@ const routes = [
     name: "DashBoard",
     icon: "👤",
     path: "/admin/dashboard",
-  },
-  {
-    name: "Todays Attendance",
-    icon: "👤",
-    path: "/admin/todays-attendance",
   },
   {
     name: "Add Holiday",
@@ -299,13 +293,18 @@ export function SidebarResponsive(props) {
   const { logo, hamburgerColor, ...rest } = props;
   const mainPanel = React.useRef();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const activeRoute = (routeName) => location.pathname === routeName ? "active" : "";
-
-  const sidebarBackgroundColor = useColorModeValue("white", "navy.800");
-
+  const activeRoute = (routeName) => {
+    return location.pathname === routeName ? "active" : "";
+  };
+  const hamburgerColorMobile = useColorModeValue("gray.500", "white");
+  const sidebarActiveShadow = "0px 7px 11px rgba(0, 0, 0, 0.04)";
+  const sidebarBg = useColorModeValue("white", "navy.800");
+  const variantChange = "0.2s linear";
   const [isDropdownOpen, setDropdownOpen] = useState(false);
 
-  const handleDropdownToggle = () => setDropdownOpen(!isDropdownOpen);
+  const handleDropdownToggle = () => {
+    setDropdownOpen(!isDropdownOpen);
+  };
 
   const createLinks = () => {
     return routes.map((prop, key) => {
@@ -323,17 +322,18 @@ export function SidebarResponsive(props) {
               py="12px"
               borderRadius="15px"
               _hover="none"
-               className="css-152ve90"
+              className="css-152ve90"
               w="100%"
               _focus={{ boxShadow: "none" }}
             >
               <Flex>
                 <IconBox
-                  bg="gray.100"
+                  bg="transparent"
                   color="blue.500"
                   h="30px"
                   w="30px"
                   me="12px"
+                  transition={variantChange}
                 >
                   {prop.icon}
                 </IconBox>
@@ -349,7 +349,7 @@ export function SidebarResponsive(props) {
             </Button>
             <Collapse in={isDropdownOpen}>
               {prop.subRoutes.map((subProp, subKey) => (
-                <NavLink to={subProp.path} key={subKey}>
+                <NavLink to={subProp.path} key={subKey} onClick={onClose}>
                   <Button
                     boxSize="initial"
                     justifyContent="flex-start"
@@ -359,10 +359,10 @@ export function SidebarResponsive(props) {
                     mx="auto"
                     py="12px"
                     borderRadius="15px"
-                    pl="40px"
+                    pl="40px" // Indent sub-items
                     _hover="none"
-                    w="100%"
                      className="css-152ve90"
+                    w="100%"
                     _focus={{ boxShadow: "none" }}
                   >
                     <Text color="gray.400" my="auto" fontSize="sm">
@@ -377,70 +377,151 @@ export function SidebarResponsive(props) {
       }
 
       return (
-        <NavLink to={prop.path} key={key}>
-          <Button
-            boxSize="initial"
-            justifyContent="flex-start"
-            alignItems="center"
-            bg="transparent"
-            mb="6px"
-            mx="auto"
-            py="12px"
-            borderRadius="15px"
-             className="css-152ve90"
-            _hover="none"
-            w="100%"
-            _focus={{ boxShadow: "none" }}
-          >
-            <Flex>
-              <IconBox
-                bg="gray.100"
-                color="blue.500"
-                h="30px"
-                w="30px"
-                me="12px"
-              >
-                {prop.icon}
-              </IconBox>
-              <Text color="gray.400" my="auto" fontSize="sm">
-                {prop.name}
-              </Text>
-            </Flex>
-          </Button>
+        <NavLink to={prop.path} key={key} onClick={onClose}>
+          {activeRoute(prop.path) === "active" ? (
+            <Button
+              boxSize="initial"
+              justifyContent="flex-start"
+              alignItems="center"
+              boxShadow={sidebarActiveShadow}
+              bg="blue.500"
+              transition={variantChange}
+              mb="6px"
+              mx="auto"
+              py="12px"
+              borderRadius="15px"
+              _hover="none"
+              w="100%"
+              className="css-152ve90"
+              _active={{ bg: "inherit", transform: "none", borderColor: "transparent" }}
+              _focus={{ boxShadow: "0px 7px 11px rgba(0, 0, 0, 0.04)" }}
+            >
+              <Flex>
+                <IconBox
+                  bg="transparent"
+                  color="blue.500"
+                  h="30px"
+                  w="30px"
+                  me="12px"
+                  transition={variantChange}
+                >
+                  {prop.icon}
+                </IconBox>
+                <Text color="white" my="auto" fontSize="sm">
+                  {prop.name}
+                </Text>
+              </Flex>
+            </Button>
+          ) : (
+            <Button
+              boxSize="initial"
+              justifyContent="flex-start"
+              alignItems="center"
+              bg="transparent"
+              mb="6px"
+              mx="auto"
+              py="12px"
+              borderRadius="15px"
+              _hover="none"
+              className="css-152ve90"
+              w="100%"
+              _active={{ bg: "inherit", transform: "none", borderColor: "transparent" }}
+              _focus={{ boxShadow: "none" }}
+            >
+              <Flex>
+                <IconBox
+                  bg="transparent"
+                  color="blue.500"
+                  h="30px"
+                  w="30px"
+                  me="12px"
+                  transition={variantChange}
+                >
+                  {prop.icon}
+                </IconBox>
+                <Text color="gray.400" my="auto" fontSize="sm">
+                  {prop.name}
+                </Text>
+              </Flex>
+            </Button>
+          )}
         </NavLink>
       );
     });
   };
 
+  const links = <>{createLinks()}</>;
+
+  const hamburgerMenu = (
+    <HamburgerIcon
+      color={hamburgerColor ? hamburgerColor : hamburgerColorMobile}
+      w="18px"
+      h="18px"
+    />
+  );
+
+  const brand = (
+    <Box pt={"25px"} mb="12px">
+      {props.logo}
+      <HSeparator my="26px" />
+    </Box>
+  );
+
   return (
     <Box ref={mainPanel}>
-      <Button onClick={onOpen} p="0px" bg="transparent" color={hamburgerColor} _focus={{ boxShadow: "none" }}>
-        <HamburgerIcon w="24px" h="24px" />
-      </Button>
-      <Drawer isOpen={isOpen} onClose={onClose} placement="left">
-        <DrawerOverlay />
-        <DrawerContent bg={sidebarBackgroundColor}>
-          <DrawerCloseButton />
-          <DrawerBody>
-            <Scrollbars
-              autoHide
-              renderTrackVertical={document.documentElement.dir === "rtl" ? renderTrackRTL : renderTrack}
-              renderThumbVertical={useColorModeValue(renderThumbLight, renderThumbDark)}
-              renderView={document.documentElement.dir === "rtl" ? renderViewRTL : renderView}
+      <Flex display={{ sm: "flex", xl: "none" }} alignItems="center">
+        <Button
+          onClick={onOpen}
+          variant="transparent-with-icon"
+          p="0px"
+          w="max-content"
+          h="max-content"
+          colorScheme="none"
+        >
+          {hamburgerMenu}
+        </Button>
+        <Drawer
+          isOpen={isOpen}
+          onClose={onClose}
+          placement={document.documentElement.dir === "rtl" ? "right" : "left"}
+        >
+          <DrawerOverlay />
+          <DrawerContent
+            w="285px"
+            maxW="285px"
+            ms={{ sm: "16px" }}
+            my={{ sm: "16px" }}
+            borderRadius="16px"
+            bg={sidebarBg}
+          >
+            <DrawerCloseButton
+              _focus={{ boxShadow: "none" }}
+  _hover={{ boxShadow: "none" }}
+  onClick={onClose}
+            />
+            <DrawerBody
+              maxW="285px"
+              px="1rem"
+              overflowY="auto"
+              filter="drop-shadow(0px 5px 14px rgba(0, 0, 0, 0.05))"
             >
-              <Box>
-                {logo}
-                <HSeparator my="26px" />
-              </Box>
-              <Stack direction="column" mb="40px">
-                <Box>{createLinks()}</Box>
-              </Stack>
-            </Scrollbars>
-          </DrawerBody>
-        </DrawerContent>
-      </Drawer>
+              <Scrollbars
+                autoHide
+                renderTrackVertical={document.documentElement.dir === "rtl" ? renderTrackRTL : renderTrack}
+                renderThumbVertical={useColorModeValue(renderThumbLight, renderThumbDark)}
+                renderView={document.documentElement.dir === "rtl" ? renderViewRTL : renderView}
+              >
+                <Box>{brand}</Box>
+                <Stack direction="column" mb="40px">
+                  <Box>{links}</Box>
+                </Stack>
+              </Scrollbars>
+            </DrawerBody>
+          </DrawerContent>
+        </Drawer>
+      </Flex>
     </Box>
   );
 }
 
-export default Sidebar;
+export default Sidebar;

@@ -102,18 +102,61 @@ const getHolidayNameByDate = (day) => {
         );
       });
   
-      const hoursForDay = attendanceRecord ? attendanceRecord.totalHours : 0;
+      let hoursForDay = attendanceRecord ? attendanceRecord.totalHours : 0;
+      let shouldDeductLunch = false;
   
-      // Check if the day is Sunday or a holiday
-      if (isSunday(day) || isHoliday(day)) {
-        total = total + 8; // Add 8 hours for Sunday or holiday
+      if (attendanceRecord && attendanceRecord.timeLogs) {
+        for (let i = 0; i < attendanceRecord.timeLogs.length; i++) {
+          const checkInTime = new Date(attendanceRecord.timeLogs[i].checkIn);
+          const checkOutTime = new Date(attendanceRecord.timeLogs[i].checkOut);
+  
+          if (checkInTime.getHours() < 13 && checkOutTime.getHours() > 14) {
+            shouldDeductLunch = true;
+            break; // No need to check further if lunch deduction already applies
+          }
+        }
       }
   
-      return total + hoursForDay; 
+      if (shouldDeductLunch) {
+        hoursForDay -= 0.5; 
+      }
+  
+      if ((!attendanceRecord && isSunday(day)) || (!attendanceRecord && isHoliday(day))) {
+        return total + 8; 
+      }
+  
+      return total + hoursForDay;
     }, 0);
   
-    return formatHours(totalHoursDecimal); 
+    return formatHours(totalHoursDecimal);
   };
+  
+
+  // const calculateTotalHours = (attendanceRecords) => {
+  //   const totalHoursDecimal = daysInMonth.reduce((total, day) => {
+  //     const currentDate = new Date(year, month, day);
+  
+  //     const attendanceRecord = attendanceRecords.find((record) => {
+  //       const recordDate = new Date(record.date);
+  //       return (
+  //         recordDate.getDate() === currentDate.getDate() &&
+  //         recordDate.getFullYear() === currentDate.getFullYear() &&
+  //         recordDate.getMonth() === currentDate.getMonth()
+  //       );
+  //     });
+  
+  //     const hoursForDay = attendanceRecord ? attendanceRecord.totalHours : 0;
+  
+  //     // Check if the day is Sunday or a holiday
+  //     if (isSunday(day) || isHoliday(day) ) {
+  //       return  total + 8 ; // Add 8 hours for Sunday or holiday
+  //     }
+  
+  //     return total + hoursForDay; 
+  //   }, 0);
+  
+  //   return formatHours(totalHoursDecimal); 
+  // };
   
 
   const calculateOvertime = (checkIn, checkOut) => {

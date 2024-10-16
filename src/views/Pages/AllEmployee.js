@@ -78,14 +78,15 @@ const AllEmployee = () => {
       <Text fontSize="2xl" fontWeight="bold" mb={4}>Employee Table</Text>
 
       {/* Search Bar  */}
-      <Flex justifyContent={'space-between'} alignItems={'center'}>
-      <Box mb={4}>
+      <Flex justifyContent={'space-between'} alignItems={'center'} id='emp-flex'>
+      <Box mb={4} width={'50%'} id='emp-search'>
         <Input
-          placeholder="Search Employee by Name"
+          placeholder="Search.... "
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           mb={4}
-          width="300px"
+          
+          // width="300px"
         />
       </Box>
 
@@ -95,7 +96,7 @@ const AllEmployee = () => {
         <Select
           value={entriesPerPage}
           onChange={(e) => setEntriesPerPage(Number(e.target.value))}
-          width="150px"
+          // width="150px"
         >
           {[50,75,100].map((option) => (
             <option key={option} value={option}>{option}</option>
