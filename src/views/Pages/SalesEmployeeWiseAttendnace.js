@@ -19,10 +19,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { allEmployee, getEmployeeAttendance } from 'features/Employee/EmployeeSlice';
 import { format } from 'prettier';
 
-const EmployeeMonthAttendanceTable = () => {
+const SalesMonthAttendanceTable = () => {
   const dispatch = useDispatch();
   const allEmployees = useSelector((state) => state.employee?.allEmployees);
-  const employees = allEmployees?.filter((employee) => employee.empType === 'labour');
+  const employees = allEmployees?.filter((employee) => employee.empType === 'sales');
   const attendanceData = useSelector((state) => state.employee?.employeeAttendnace);
   const [selectedEmployeeId, setSelectedEmployeeId] = useState('');
   const [selectedEmployeeName, setSelectedEmployeeName] = useState('');
@@ -74,67 +74,43 @@ const EmployeeMonthAttendanceTable = () => {
     return selectedDate.getDay() === 0; 
   };
 
-  const getDailyHours = (attendanceRecord, day) => {
-    const isCurrentDaySunday = isSunday(day);
 
-    
-    if (!attendanceRecord) return {formattedHours : isCurrentDaySunday ? formatHours(8) : "0:00"};
-    const hoursForDay = attendanceRecord.totalHours || 0;
-    let totalDailyHours = hoursForDay;
-  
-    // Check for lunch deduction
-    const shouldDeductLunch = attendanceRecord.timeLogs.some(log => {
-      const checkInTime = new Date(log.checkIn);
-      const checkOutTime = new Date(log.checkOut);
-      return checkInTime.getHours() < 13 && checkOutTime.getHours() > 14;
-    });
-  
-    if (shouldDeductLunch) {
-      totalDailyHours -= 0.5; // Deduct 30 minutes (0.5 hours)
+  const getAttendance = (attendanceRecord) => {
+    // Check if there are timeLogs and at least one checkIn
+    if (attendanceRecord?.timeLogs?.length > 0) {
+        const { checkIn, checkOut } = attendanceRecord.timeLogs[0];
+
+        // Convert checkOut time to a Date object and compare with 3 PM
+        const checkOutTime = new Date(checkOut);
+        const threePM = new Date(checkOutTime);
+        threePM.setHours(15, 0, 0, 0); // Set 3:00 PM
+
+        if (checkIn && checkOut && checkOutTime < threePM) {
+            // If there's a checkIn and checkOut is before 3 PM, it's half day
+            return "Half day";
+        } else if (checkIn) {
+            // If there's a checkIn but not before 3 PM, it's a full present
+            return "P";
+        }
     }
 
-    // If it's Sunday, add 8 hours to the total
-    if (isCurrentDaySunday) {
-      totalDailyHours += 8;
-    }
+    // If no checkIn, it's absent
+    return "A";
+};
 
-    return {
-      formattedHours: formatHours(totalDailyHours),
-      deductedLunch: shouldDeductLunch ? "Yes" : "No",
-    };
-  };
-
-  const calculateDailySalary = (attendanceRecord, daysInMonth) => {
-    const monthlySalary = 10000; // Monthly salary
-    const workingDaysInMonth = daysInMonth.length; // Number of days in the month
-    const dailySalary = monthlySalary / workingDaysInMonth; // Daily salary
-    
-    // Assuming totalHours is in decimal format (e.g., 8.5 for 8 hours and 30 minutes)
-    const totalHours = attendanceRecord.totalHours || 0;
-    
-    // Calculate total minutes worked
-    const workedMinutes = totalHours * 60; // Convert hours to minutes
-    
-    // Calculate hourly rate from daily salary
-    const hourlyRate = dailySalary / 8 ; // Assuming 8 working hours
   
-    // Calculate the salary for the current day
-    const salaryForToday = (workedMinutes / 60) * hourlyRate; // Convert worked minutes back to hours for salary calculation
-  
-    return salaryForToday.toFixed(2); // Return salary formatted to 2 decimal places
-  };
 
   return (
     <Box p={8} mt={20} backgroundColor="white" borderRadius="8px">
       <Heading as="h2" size="lg" mb={6}>
-        Labour Monthly Attendance
+        Sales Person Monthly Attendance
       </Heading>
 
       {/* Employee Selection */}
       <Flex  justifyContent={'space-between'}>
       <Box width={'48%'} mb={4}>
-        <Text mb={2}>Select Labour:</Text>
-        <Select placeholder="Select labour" onChange={ handleEmployeeChange}>
+        <Text mb={2}>Select Sales Person:</Text>
+        <Select placeholder="Select Sales Person" onChange={ handleEmployeeChange}>
           {employees?.map((employee) => (
             <option key={employee._id} value={employee._id}>
               {employee.name}
@@ -161,8 +137,7 @@ const EmployeeMonthAttendanceTable = () => {
                 <Th>In</Th>
                 <Th>Out</Th>
                
-                <Th>Lunch Deducted</Th>
-                <Th>Total Hours</Th>
+                <Th>Daily Attendnace</Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -173,9 +148,7 @@ const EmployeeMonthAttendanceTable = () => {
                 // Extract check-in and check-out times
                 const checkIns = attendance?.timeLogs.filter(log => log.checkIn).map(log => new Date(log.checkIn).toLocaleTimeString()) || [];
                 const checkOuts = attendance?.timeLogs.filter(log => log.checkOut).map(log => new Date(log.checkOut).toLocaleTimeString()) || [];
-                const dailySalary = attendance ? calculateDailySalary(attendance, daysInMonth) : "A";
 
-                const { formattedHours, deductedLunch } = getDailyHours(attendance, day);
 
                 return (
                   <Tr key={day}>
@@ -199,8 +172,7 @@ const EmployeeMonthAttendanceTable = () => {
                         (checkIns.length > 0 ? '-' : 'A')
                       )}
                     </Td>
-                    <Td>{deductedLunch ? deductedLunch : "No"}</Td>
-                    <Td>{formattedHours}</Td>
+                    <Td>{getAttendance(attendance)}</Td>
 
                   </Tr>
                 );
@@ -215,4 +187,4 @@ const EmployeeMonthAttendanceTable = () => {
   );
 };
 
-export default EmployeeMonthAttendanceTable;
+export default SalesMonthAttendanceTable;

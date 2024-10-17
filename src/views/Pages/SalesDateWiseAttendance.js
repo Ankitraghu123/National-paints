@@ -19,7 +19,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { allEmployee } from "features/Employee/EmployeeSlice";
 import { allHoliday } from "features/Holiday/HolidaySlice";
 
-const DateWiseAttendanceTable = () => {
+const SalesDateWiseAttendanceTable = () => {
   const dispatch = useDispatch();
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth());
@@ -31,7 +31,7 @@ const DateWiseAttendanceTable = () => {
 
   const allEmployees = useSelector((state) => state.employee?.allEmployees);
 
-  const employees = allEmployees?.filter((employee) => employee.empType === 'labour');
+  const employees = allEmployees?.filter((employee) => employee.empType === 'sales');
 
   useEffect(() => {
     dispatch(allEmployee());
@@ -58,99 +58,28 @@ const DateWiseAttendanceTable = () => {
     return `${hours} : ${minutes}`;
   };
 
-  const calculateTotalHours = (attendanceRecords) => {
-    const totalHoursDecimal = daysInMonth.reduce((total, day) => {
-      const currentDate = new Date(year, month, day);
-      const attendanceRecord = attendanceRecords.find((record) => {
-        const recordDate = new Date(record.date);
-        return (
-          recordDate.getDate() === currentDate.getDate() &&
-          recordDate.getFullYear() === currentDate.getFullYear() &&
-          recordDate.getMonth() === currentDate.getMonth()
-        );
-      });
-      const hoursForDay = attendanceRecord ? attendanceRecord.totalHours : 0;
-      const overtimeHours =
-        attendanceRecord && attendanceRecord.checkIn && attendanceRecord.checkOut
-          ? calculateOvertime(attendanceRecord.checkIn, attendanceRecord.checkOut)
-          : 0;
+  const getAttendance = (attendanceRecord) => {
+    // Check if there are timeLogs and at least one checkIn
+    if (attendanceRecord?.timeLogs?.length > 0) {
+        const { checkIn, checkOut } = attendanceRecord.timeLogs[0];
 
-      if (isSunday(day)) {
-        return total + 8 + overtimeHours; // 8 hours for Sunday plus overtime
-      }
+        // Convert checkOut time to a Date object and compare with 3 PM
+        const checkOutTime = new Date(checkOut);
+        const threePM = new Date(checkOutTime);
+        threePM.setHours(15, 0, 0, 0); // Set 3:00 PM
 
-      return total + hoursForDay + overtimeHours;
-    }, 0);
-
-    return formatHours(totalHoursDecimal);
-  };
-
-  const calculateOvertime = (checkIn, checkOut) => {
-    const checkInTime = new Date(checkIn);
-    const checkOutTime = new Date(checkOut);
-    const diffInHours =
-      (checkOutTime - checkInTime) / (1000 * 60 * 60);
-    return diffInHours > 8 ? diffInHours - 8 : 0;
-  };
-
-  const calculateDailySalary = (monthlySalary, hours, daysInMonth) => {
-    if (!hours || !hours.includes(':')) {
-      console.error("Invalid hours format:", hours);
-      return 0; // Return a fallback value like 0 in case of invalid input
+        if (checkIn && checkOut && checkOutTime < threePM) {
+            // If there's a checkIn and checkOut is before 3 PM, it's half day
+            return "Half day";
+        } else if (checkIn) {
+            // If there's a checkIn but not before 3 PM, it's a full present
+            return "P";
+        }
     }
 
-    const salaryPerMinute = monthlySalary / (daysInMonth * 8 * 60);
-    const [hourPart, minutePart] = hours.split(':').map(Number);
-    const totalMinutes = (hourPart || 0) * 60 + (minutePart || 0); // Default to 0 if NaN
-    const totalSalary = salaryPerMinute * totalMinutes;
-
-    return parseFloat(totalSalary.toFixed(2));
-  };
-
-  const getDailyHours = (attendanceRecord) => {
-    const selectedDayOfWeek = new Date(selectedDate).getDay();
-    if (!attendanceRecord) return {
-      formattedHours : selectedDayOfWeek === 0 ? formatHours(8) : "0 : 0"
-    }
-
-    const hoursForDay = attendanceRecord.totalHours || 0;
-    const overtimeHours =
-      attendanceRecord.checkIn && attendanceRecord.checkOut
-        ? calculateOvertime(attendanceRecord.checkIn, attendanceRecord.checkOut)
-        : 0;
-
-    let totalDailyHours = hoursForDay + overtimeHours;
-
-    // Calculate lunch deduction
-    let shouldDeductLunch = false;
-
-    // Check for lunch deduction based on attendance logs
-    for (let i = 0; i < attendanceRecord.timeLogs.length; i++) {
-      const checkInTime = new Date(attendanceRecord.timeLogs[i].checkIn);
-      const checkOutTime = new Date(attendanceRecord.timeLogs[i].checkOut);
-
-      // Check if lunch deduction should apply
-      if (checkInTime.getHours() < 13 && checkOutTime.getHours() > 14) {
-        shouldDeductLunch = true;
-        break; // No need to check further if lunch deduction already applies
-      }
-    }
-
-    // Deduct lunch time if applicable
-    if (shouldDeductLunch) {
-      totalDailyHours -= 0.5; // Deduct 30 minutes (0.5 hours)
-    }
-
-    
-  if (selectedDayOfWeek === 0) {
-    totalDailyHours += 8; // Add 8 hours if it's Sunday
-  }
-
-    return {
-      formattedHours: formatHours(totalDailyHours),
-      deductedLunch: shouldDeductLunch ? "Yes" : "No"
-    };
-  };
+    // If no checkIn, it's absent
+    return "A";
+};
 
   const totalPages = Math.ceil(employees?.length / entriesPerPage);
   const currentEmployees = employees
@@ -213,8 +142,8 @@ const DateWiseAttendanceTable = () => {
               <Th>Employee Name</Th>
               <Th>In</Th>
               <Th>Out</Th>
-              <Th>Lunch Deducted</Th>
-              <Th>{new Date(selectedDate).getDate()} (Today's Working Hours) {new Date(selectedDate).getDay()  == 0 ? "Sunday" : ''}</Th>
+              {/* <Th>Lunch Deducted</Th> */}
+              <Th>{new Date(selectedDate).getDate()} (Today's Attendnace) {new Date(selectedDate).getDay()  == 0 ? "Sunday" : ''}</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -228,7 +157,6 @@ const DateWiseAttendanceTable = () => {
       );
     });
 
-    const {formattedHours,deductedLunch} = getDailyHours(attendanceRecord);
 
     return (
       <Tr key={employee._id}>
@@ -257,10 +185,7 @@ const DateWiseAttendanceTable = () => {
           )}
         </Td>
        
-        <Td>
-          {deductedLunch ? deductedLunch : "No"}
-        </Td>
-        <Td>{formattedHours}
+        <Td>{getAttendance(attendanceRecord)}
         </Td>
       </Tr>
     );
@@ -272,4 +197,4 @@ const DateWiseAttendanceTable = () => {
   );
 };
 
-export default DateWiseAttendanceTable;
+export default SalesDateWiseAttendanceTable;

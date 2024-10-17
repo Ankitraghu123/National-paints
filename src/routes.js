@@ -29,6 +29,13 @@ import TodaysPresent from 'views/Pages/TodaysPresent';
 import TodaysAbsent from 'views/Pages/TodaysAbsent';
 import { todaysAvailable } from 'features/Attendance/AttendanceSlice';
 import AvailableEmployees from 'views/Pages/AvailableEmployees';
+import SalesAttendanceTable from 'views/Pages/SalesAttendanceTable';
+import StaffAttendanceTable from 'views/Pages/StaffAttendanceTable';
+import SalesDateWiseAttendanceTable from 'views/Pages/SalesDateWiseAttendance';
+import SalesMonthAttendanceTable from 'views/Pages/SalesEmployeeWiseAttendnace';
+import StaffDateWiseAttendanceTable from 'views/Pages/StaffDateWiseAttendanceTable';
+import StaffMonthAttendanceTable from 'views/Pages/StaffEmployeeWiseAttendance';
+import AllEmployeesTable from 'views/Pages/AllEmployeesTable';
 
 var dashRoutes = [
   {
@@ -106,10 +113,18 @@ var dashRoutes = [
   },
   {
     path: "/all-employee",
-    name: "AllEmployee",
+    name: "Add Attendance",
     rtlName: "لوحة القيادة",
     icon: <HomeIcon color='inherit' />,
     component: AllEmployee,
+    layout: "/admin",
+  },
+  {
+    path: "/all-employee-table",
+    name: "All Employees",
+    rtlName: "لوحة القيادة",
+    icon: <HomeIcon color='inherit' />,
+    component: AllEmployeesTable,
     layout: "/admin",
   },
   {
@@ -122,15 +137,70 @@ var dashRoutes = [
   },
   {
     path: "/employee-attendnace",
-    name: "Employee Wise Table",
+    name: "Month Wise Labour Attendnace",
     rtlName: "لوحة القيادة",
     icon: <HomeIcon color='inherit' />,
     component: EmployeeMonthAttendanceTable,
     layout: "/admin",
   },
+
+  {
+    path: "/sales-attendance-table",
+    name: "Sales Attendance Table",
+    rtlName: "لوحة القيادة",
+    icon: <HomeIcon color='inherit' />,
+    component: SalesAttendanceTable,
+    layout: "/admin",
+  },
+
+  {
+    path: "/sales-datewise-attendance-table",
+    name: "Sales DateWise Attendance Table",
+    rtlName: "لوحة القيادة",
+    icon: <HomeIcon color='inherit' />,
+    component: SalesDateWiseAttendanceTable,
+    layout: "/admin",
+  },
+
+  {
+    path: "/sales-monthwise-attendance-table",
+    name: " Month Wise Sales Attendance",
+    rtlName: "لوحة القيادة",
+    icon: <HomeIcon color='inherit' />,
+    component: SalesMonthAttendanceTable,
+    layout: "/admin",
+  },
+
+  {
+    path: "/staff-attendance-table",
+    name: "Staff Attendance Table",
+    rtlName: "لوحة القيادة",
+    icon: <HomeIcon color='inherit' />,
+    component: StaffAttendanceTable,
+    layout: "/admin",
+  },
+
+  {
+    path: "/staff-datewise-attendance-table",
+    name: "Staff DateWise Attendance Table",
+    rtlName: "لوحة القيادة",
+    icon: <HomeIcon color='inherit' />,
+    component: StaffDateWiseAttendanceTable,
+    layout: "/admin",
+  },
+
+  {
+    path: "/staff-monthwise-attendance-table",
+    name: "Staff MonthWise Attendance Table",
+    rtlName: "لوحة القيادة",
+    icon: <HomeIcon color='inherit' />,
+    component: StaffMonthAttendanceTable,
+    layout: "/admin",
+  },
+  
   {
     path: "/employee-date-attendance",
-    name: "Employee Wise Table",
+    name: "Date Wise Attendance",
     rtlName: "لوحة القيادة",
     icon: <HomeIcon color='inherit' />,
     component: DateWiseAttendance,
@@ -160,6 +230,7 @@ var dashRoutes = [
     component: AddHoliday,
     layout: "/admin",
   },
+ 
   {
     path: "/todays-present",
     name: "Todays Present",

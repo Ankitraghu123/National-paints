@@ -46,21 +46,28 @@ const routes = [
     icon: "👤",
     path: "/admin/add-employee",
   },
-
   {
-    name: "Attendance Table",
+    name: "All Employees",
     icon: "👤",
-    path: "/admin/attendance-table",
+    path: "/admin/all-employee-table",
   },
   {
-    name: "Employee",
+    name: "Add Attendance",
+    icon: "👤",
+    path: "/admin/all-employee",
+  },
+  
+
+  
+  {
+    name: "Labour",
     icon: "📂", // Icon for dropdown
     path: null, // No path, it's a parent
     subRoutes: [
       {
-        name: "Add Attendance",
+        name: "Labour Attendance",
         icon: "👤",
-        path: "/admin/all-employee",
+        path: "/admin/attendance-table",
       },
       {
         name: "Date Wise Attendance",
@@ -68,9 +75,54 @@ const routes = [
         path: "/admin/employee-date-attendance",
       },
       {
-        name: "Employee Wise Attendance",
+        name: "Month Wise Attendance",
         icon: "👤",
         path: "/admin/employee-attendnace",
+      },
+    ],
+  },
+  {
+    name: "Staff",
+    icon: "📂", 
+    path: null, 
+    subRoutes: [
+      {
+        name: "Staff Attendance",
+        icon: "👤", 
+        path: "/admin/staff-attendance-table",
+      },
+      {
+        name: "Date Wise Attendance",
+        icon: "👤", 
+        path: "/admin/staff-datewise-attendance-table",
+      },
+      {
+        name: "Month Wise Attendance",
+        icon: "👤", 
+        path: "/admin/staff-monthwise-attendance-table",
+      },
+      
+    ],
+  },
+  {
+    name: "Sales",
+    icon: "📂", 
+    path: null, 
+    subRoutes: [
+      {
+        name: "Sales Attendance",
+        icon: "👤",
+        path: "/admin/sales-attendance-table",
+      },
+      {
+        name: "Date Wise Attendance",
+        icon: "👤",
+        path: "/admin/sales-datewise-attendance-table",
+      },
+      {
+        name: "Month Wise Attendance",
+        icon: "👤",
+        path: "/admin/sales-monthwise-attendance-table",
       },
     ],
   },
@@ -91,10 +143,10 @@ function Sidebar(props) {
   const inactiveColor = useColorModeValue("gray.400", "gray.400");
   const sidebarActiveShadow = "0px 7px 11px rgba(0, 0, 0, 0.04)";
 
-  const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState(null); // Manages open dropdowns by index
 
-  const handleDropdownToggle = () => {
-    setDropdownOpen(!isDropdownOpen);
+  const handleDropdownToggle = (key) => {
+    setOpenDropdown(openDropdown === key ? null : key); // Toggles dropdown
   };
 
   const createLinks = () => {
@@ -103,7 +155,7 @@ function Sidebar(props) {
         return (
           <Box key={key}>
             <Button
-              onClick={handleDropdownToggle}
+              onClick={() => handleDropdownToggle(key)}
               boxSize="initial"
               justifyContent="flex-start"
               alignItems="center"
@@ -131,14 +183,14 @@ function Sidebar(props) {
                 <Text color={inactiveColor} my="auto" fontSize="sm">
                   {prop.name}
                 </Text>
-                {isDropdownOpen ? (
+                {openDropdown === key ? (
                   <ChevronUpIcon ml="auto" />
                 ) : (
                   <ChevronDownIcon ml="auto" />
                 )}
               </Flex>
             </Button>
-            <Collapse in={isDropdownOpen}>
+            <Collapse in={openDropdown === key}>
               {prop.subRoutes.map((subProp, subKey) => (
                 <NavLink to={subProp.path} key={subKey}>
                   <Button
@@ -300,10 +352,10 @@ export function SidebarResponsive(props) {
   const sidebarActiveShadow = "0px 7px 11px rgba(0, 0, 0, 0.04)";
   const sidebarBg = useColorModeValue("white", "navy.800");
   const variantChange = "0.2s linear";
-  const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState(null); // Manages open dropdowns by index
 
-  const handleDropdownToggle = () => {
-    setDropdownOpen(!isDropdownOpen);
+  const handleDropdownToggle = (key) => {
+    setOpenDropdown(openDropdown === key ? null : key); // Toggles dropdown
   };
 
   const createLinks = () => {
@@ -312,7 +364,7 @@ export function SidebarResponsive(props) {
         return (
           <Box key={key}>
             <Button
-              onClick={handleDropdownToggle}
+              onClick={() => handleDropdownToggle(key)} 
               boxSize="initial"
               justifyContent="flex-start"
               alignItems="center"
@@ -340,14 +392,14 @@ export function SidebarResponsive(props) {
                 <Text color="gray.400" my="auto" fontSize="sm">
                   {prop.name}
                 </Text>
-                {isDropdownOpen ? (
+                {openDropdown === key ? (
                   <ChevronUpIcon ml="auto" />
                 ) : (
                   <ChevronDownIcon ml="auto" />
                 )}
               </Flex>
             </Button>
-            <Collapse in={isDropdownOpen}>
+            <Collapse in={openDropdown === key}>
               {prop.subRoutes.map((subProp, subKey) => (
                 <NavLink to={subProp.path} key={subKey} onClick={onClose}>
                   <Button

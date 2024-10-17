@@ -30,7 +30,8 @@ const AttendanceTable = () => {
   const allHolidays = useSelector(state => state.holiday.allHolidays)
   const [holidaysInMonth, setHolidaysInMonth] = useState([]);
 
-  const employees = useSelector((state) => state.employee?.allEmployees);
+  const allEmployees = useSelector((state) => state.employee?.allEmployees);
+  const employees = allEmployees?.filter((employee) => employee.empType === 'labour');
   const today = new Date();
   useEffect(() => {
     dispatch(allEmployee());

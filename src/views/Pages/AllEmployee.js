@@ -56,13 +56,19 @@ const AllEmployee = () => {
 
   // Handle check-out
   const handleCheckOut = (empId) => {
-    const selectedTime = time[empId] || "17:00"; // Default to "17:00" if no time selected
+    let selectedTime = time[empId] ; // Default to "17:00" if no time selected
+    if (!selectedTime) {
+      // Get the current time in HH:mm format
+      const now = new Date();
+      selectedTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+    }
     const dateWithTime = combineDateWithTime(selectedTime);
     dispatch(checkOut({ empId, setTime: dateWithTime.toISOString() }));
   };
 
   const filteredEmployees = allEmployees?.filter(employee =>
-    employee.name.toLowerCase().includes(searchTerm.toLowerCase())
+    employee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    employee.empType.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Pagination Logic
@@ -110,6 +116,7 @@ const AllEmployee = () => {
           <Thead>
             <Tr>
               <Th>Name</Th>
+              <Th>Type</Th>
               <Th>Time</Th>
               <Th>Action</Th>
             </Tr>
@@ -118,6 +125,7 @@ const AllEmployee = () => {
             {currentEmployees?.map((employee) => (
               <Tr key={employee._id}>
                 <Td>{employee.name}</Td>
+                <Td>{employee.empType}</Td>
                 <Td>
                   <input
                     type="time"
