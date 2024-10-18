@@ -17,6 +17,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { allEmployee } from "features/Employee/EmployeeSlice";
 import { allHoliday } from "features/Holiday/HolidaySlice";
+import { checkIn } from "features/Attendance/AttendanceSlice";
 
 const StaffAttendanceTable = () => {
   const dispatch = useDispatch();
@@ -145,11 +146,10 @@ const getHolidayNameByDate = (day) => {
         let totalDaysWorked = 0; // Total days worked
         let totalHalfDays = 0; // Count for half days
         let totalAbsences = 0; // Count for absences
-        let consecutiveLateDays = 0; // Track consecutive late check-ins
+        let LateDays = 0; // Track consecutive late check-ins
         
         // Define 10 AM for checking late arrivals
-        const tenAM = new Date();
-        tenAM.setHours(10, 0, 0, 0);
+        
         
         daysInMonth.forEach((day) => {
             const currentDate = new Date(year, month, day);
@@ -166,23 +166,28 @@ const getHolidayNameByDate = (day) => {
             if (attendanceRecord && attendanceRecord.timeLogs.length > 0) {
                 const checkInTime = new Date(attendanceRecord.timeLogs[0].checkIn);
                 const checkOutTime = new Date(attendanceRecord.timeLogs[0].checkOut);
+
+                const tenAM = new Date(checkInTime);
+                tenAM.setHours(10, 0, 0, 0);
                 
-                const threePM = new Date(checkOutTime);
+                const threePM = new Date(checkInTime);
                 threePM.setHours(15, 0, 0, 0); // Set 3 PM for checkout comparison
     
                 // Check if employee checked in late (after 10 AM)
                 const isLate = checkInTime > tenAM;
+                console.log(tenAM , checkInTime)
     
                 if (isLate) {
-                    consecutiveLateDays++; // Increment late count if late
+                    LateDays++; // Increment late count if late
                 } else {
-                    consecutiveLateDays = 0; // Reset if on time
+                    LateDays = 0; // Reset if on time
                 }
     
                 // If it's the third consecutive late day, mark as half day
-                if (consecutiveLateDays >= 3) {
+                if (LateDays >= 3) {
+                  // console.log("half day")
                     totalHalfDays++; // Count as half day on the third consecutive late
-                    consecutiveLateDays = 0; // Reset consecutive late days after half day
+                   // Reset consecutive late days after half day
                 } else if (checkOutTime < threePM) {
                     totalHalfDays++; // Count as half day based on check-out time
                 } else {
@@ -196,11 +201,13 @@ const getHolidayNameByDate = (day) => {
             if (isSunday(day) || isHoliday(day)) {
                 totalDaysWorked += 1;
             }
+
         });
     
         // Add half days to total days worked (half days count as 0.5)
+        console.log(totalDaysWorked , totalHalfDays)
+
         totalDaysWorked += totalHalfDays * 0.5;
-    
         return totalDaysWorked.toFixed(1); // Return total days worked as a string
     };
     
@@ -288,7 +295,7 @@ const getHolidayNameByDate = (day) => {
                   {isSunday(day) ? day + '(Sun)' :isHoliday(day) ? day +`(${ getHolidayNameByDate(day)})` : day}
                 </Th>
               ))}
-              <Th>Total Hours</Th>
+              <Th>Total Days</Th>
               <Th>Total Salary</Th>
             </Tr>
           </Thead>

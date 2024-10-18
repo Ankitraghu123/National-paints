@@ -50,7 +50,6 @@ const AllEmployee = () => {
 
     const dateWithTime = combineDateWithTime(selectedTime);
     
-    console.log(dateWithTime)
     dispatch(checkIn({ empId, setTime: dateWithTime.toISOString() }));
   };
 

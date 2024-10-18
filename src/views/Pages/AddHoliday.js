@@ -82,7 +82,7 @@ const AddHoliday = () => {
         />
        </Box>
        <Box width={'48%'}>
-       <Text fontWeight="bold">Select Holiday Date:</Text>
+       <Text fontWeight="bold">Select Date:</Text>
         <Input
           type="date"
           value={selectedHolidayDate}
