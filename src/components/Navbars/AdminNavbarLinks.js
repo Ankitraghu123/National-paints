@@ -38,7 +38,7 @@ export default function HeaderLinks(props) {
   const { colorMode } = useColorMode();
 
   const LogoutHandler = () =>{
-    localStorage.removeItem('receptionToken')
+    localStorage.clear()
   }
 
   // Chakra Color Mode

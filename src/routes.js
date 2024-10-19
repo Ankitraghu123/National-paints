@@ -36,6 +36,9 @@ import SalesMonthAttendanceTable from 'views/Pages/SalesEmployeeWiseAttendnace';
 import StaffDateWiseAttendanceTable from 'views/Pages/StaffDateWiseAttendanceTable';
 import StaffMonthAttendanceTable from 'views/Pages/StaffEmployeeWiseAttendance';
 import AllEmployeesTable from 'views/Pages/AllEmployeesTable';
+import UnApprovedEmployees from 'views/Pages/UnApprovedEmployees';
+import UnPaidEmployees from 'views/Pages/UnPaidEmployees';
+import MonthWiseUnpaidAttendance from 'views/Pages/MonthWiseUnpaidAttendance';
 
 var dashRoutes = [
   {
@@ -253,6 +256,32 @@ var dashRoutes = [
     rtlName: "لوحة القيادة",
     icon: <HomeIcon color='inherit' />,
     component: AvailableEmployees,
+    layout: "/admin",
+  },
+
+  {
+    path: "/unapproved-employee",
+    name: "UnApproved Employees",
+    rtlName: "لوحة القيادة",
+    icon: <HomeIcon color='inherit' />,
+    component: UnApprovedEmployees,
+    layout: "/admin",
+  },
+
+  {
+    path: "/unpaid-employee",
+    name: "UnPaid Employees",
+    rtlName: "لوحة القيادة",
+    icon: <HomeIcon color='inherit' />,
+    component: UnPaidEmployees,
+    layout: "/admin",
+  },
+  {
+    path: "/unpaid-employee-attendnace/:id",
+    name: "UnPaid Employees Attendance",
+    rtlName: "لوحة القيادة",
+    icon: <HomeIcon color='inherit' />,
+    component: MonthWiseUnpaidAttendance,
     layout: "/admin",
   },
 ];

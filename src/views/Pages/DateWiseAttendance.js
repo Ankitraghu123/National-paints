@@ -168,8 +168,8 @@ const DateWiseAttendanceTable = () => {
       
 
       {/* Date Selection */}
-      <Flex justifyContent={'space-between'}>
-      <Box width={'48%'} mb={4}>
+      <Flex justifyContent={'space-between'} id="table-col">
+      <Box width={'48%'} mb={4} id="full-width">
         <Text mb={2}>Select Date:</Text>
         <Input
           type="date"
@@ -179,7 +179,7 @@ const DateWiseAttendanceTable = () => {
       </Box>
 
       {/* Search Bar */}
-      <Box width={'48%'} mb={4}>
+      <Box width={'48%'} mb={4} id="full-width">
         <Text mb={2}>Search by Employee Name:</Text>
         <Input
           placeholder="Search employee..."

@@ -7,10 +7,20 @@ const Register = async (data)=>{
 }
 
 const Login = async (data)=>{
-    const response = await axios.post(`${base_url}reception/login`,data)
+    const response = await axios.post(`${base_url}admin/login`,data)
    
-    const { token } = response.data;
-    localStorage.setItem('receptionToken',token)
+    const { token ,role} = response.data;
+    if (role === 'Admin') {
+        localStorage.setItem('adminToken', token);
+      } else if (role === 'Accountant') {
+        localStorage.setItem('accountantToken', token);
+      } else if (role === 'HR') {
+        localStorage.setItem('hrToken', token);
+      } else if (role === 'Reception') {
+        localStorage.setItem('receptionistToken', token);
+      } else {
+        localStorage.setItem('genericToken', token); 
+      }
     return response.data
 }
 

@@ -1,75 +1,171 @@
-import React, { useState } from 'react';
-import {
-  Box,
-  Button,
-  FormControl,
-  FormLabel,
-  Input,
-  Select,
-  VStack,
-  Flex,
-  Stack,
-} from '@chakra-ui/react';
-import { useDispatch } from 'react-redux';
-import { addEmployee } from 'features/Employee/EmployeeSlice';
+import { getUnApprovedEmployees } from 'features/Employee/EmployeeSlice';
+import React, { useEffect, useState } from 'react'
+import { Table, Thead, Tbody, Tr, Th, Td, Input, Box, Heading, Button, Flex, Text, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, FormControl, FormLabel, ModalFooter, VStack, Select } from '@chakra-ui/react';
+import { useDispatch, useSelector } from 'react-redux';
+import { isHR } from 'utils/config';
+import { CiEdit } from "react-icons/ci";
+import { approveEmployee } from 'features/Employee/EmployeeSlice';
+import { editEmployee } from 'features/Employee/EmployeeSlice';
 
-const AddEmployee = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    Dob: '',
-    location: '',
-    totalExp: '',
-    previousEmployer: '',
-    bankAccountNumber: '',
-    ifscCode: '',
-    bankBranch: '',
-    mobileNumber: '',
-    alternateNumber: '',
-    City: '',
-    pinCode: '',
-    currentAddress: '',
-    permanentAddress: '',
-    email: '',
-    panNumber: '',
-    maritalStatus: '',
-    bloodGroup: '',
-    qualification: '',
-    fathersName: '',
-    salary: '',
-    joiningDate: '',
-    registerationDate:'',
-    designation: '',
-    empType: 'staff', // Default employee type
-  });
+const UnApprovedEmployees = () => {
+    const dispatch = useDispatch();
+    const employeesData = useSelector((state) => state.employee.unapprovedEmployees);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filteredEmployees, setFilteredEmployees] = useState(employeesData);
+    const [isOpen, setIsOpen] = useState(false);
+    const [selectedEmployee, setSelectedEmployee] = useState(null);
+    const {unapprovedEmployee} = useSelector(state => state.employee)
+    useEffect(() => {
+      dispatch(getUnApprovedEmployees());
+    }, [dispatch]);
+  
+    useEffect(() => {
+      setFilteredEmployees(employeesData);
+    }, [employeesData]);
+  
+    const handleSearch = (event) => {
+      const value = event.target.value.toLowerCase();
+      setSearchTerm(value);
+  
+      const filtered = employeesData.filter((employee) =>
+        Object.values(employee).some((field) =>
+          String(field).toLowerCase().includes(value)
+        )
+      );
+      setFilteredEmployees(filtered);
+    };
 
-  const dispatch = useDispatch();
+    const handleApproveEmployees = (id) => {
+        dispatch(approveEmployee(id))
+    }
 
-  // Handle input changes
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
+    const handleEditClick = (employee) => {
+        setSelectedEmployee(employee);
+        setIsOpen(true);
+    };
 
-  // Handle form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    dispatch(addEmployee(formData));
-  };
+    const handleCloseModal = () => {
+        setIsOpen(false);
+        setSelectedEmployee(null);
+    };
 
-  return (
-    <Box p={6} rounded="md" boxShadow="md" bg="gray.50" maxWidth="800px" mx="auto" mt='40'>
-      <form onSubmit={handleSubmit}>
-        <VStack spacing={4}>
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (selectedEmployee) {
+            dispatch(editEmployee({id:selectedEmployee._id, selectedEmployee}));
+            handleCloseModal();
+        }
+    };
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setSelectedEmployee(prev => ({ ...prev, [name]: value }));
+    };
+  
+    return (
+      <Box p={5} mt={40} bg="white" borderRadius="30px">
+        <Heading mb={4}>UnApproved Employees</Heading>
+  
+        {/* Search Field */}
+        <Input
+          placeholder="Search by any field"
+          value={searchTerm}
+          onChange={handleSearch}
+          mb={4}
+          width="100%"
+        />
+  
+        {/* Scrollable Table */}
+        <Box overflowY="scroll" border="1px solid #E2E8F0" borderRadius="8px">
+          <Table variant="striped" colorScheme="teal" size="sm">
+            <Thead position="sticky" top={0} bg="gray.100" zIndex={1}>
+              <Tr>
+                <Th>Name</Th>
+                <Th>Employee Type</Th>
+                <Th>Date of Birth</Th>
+                <Th>Location</Th>
+                <Th>Total Experience</Th>
+                <Th>Previous Employer</Th>
+                <Th>Bank Account Number</Th>
+                <Th>IFSC Code</Th>
+                <Th>Bank Branch</Th>
+                <Th>Mobile Number</Th>
+                <Th>Alternate Number</Th>
+                <Th>City</Th>
+                <Th>Pin Code</Th>
+                <Th>Current Address</Th>
+                <Th>Permanent Address</Th>
+                <Th>Email</Th>
+                <Th>PAN Number</Th>
+                <Th>Marital Status</Th>
+                <Th>Blood Group</Th>
+                <Th>Qualification</Th>
+                <Th>Father's Name</Th>
+                <Th>Salary</Th>
+                <Th>Joining Date</Th>
+                <Th>Registeration Date</Th>
+                <Th>Action</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {filteredEmployees?.map((employee, index) => (
+                <Tr key={index}>
+                  <Td>{employee.name}</Td>
+                  <Td>{employee.empType}</Td>
+                  <Td>{employee.Dob}</Td>
+                  <Td>{employee.location}</Td>
+                  <Td>{employee.totalExp}</Td>
+                  <Td>{employee.previousEmployer}</Td>
+                  <Td>{employee.bankAccountNumber}</Td>
+                  <Td>{employee.ifscCode}</Td>
+                  <Td>{employee.bankBranch}</Td>
+                  <Td>{employee.mobileNumber}</Td>
+                  <Td>{employee.alternateNumber}</Td>
+                  <Td>{employee.City}</Td>
+                  <Td>{employee.pinCode}</Td>
+                  <Td>{employee.currentAddress}</Td>
+                  <Td>{employee.permanentAddress}</Td>
+                  <Td>{employee.email}</Td>
+                  <Td>{employee.panNumber}</Td>
+                  <Td>{employee.maritalStatus}</Td>
+                  <Td>{employee.bloodGroup}</Td>
+                  <Td>{employee.qualification}</Td>
+                  <Td>{employee.fathersName}</Td>
+                  <Td>{employee.salary}</Td>
+                  <Td>{employee.joiningDate}</Td>
+                  <Td>{employee.registerationDate}</Td>
+                  <Td >
+                    <Flex gap={2} alignItems={"ceneter"}>
+                    <Text fontSize={'30px'}><CiEdit onClick={() => handleEditClick(employee)}/></Text>
+                    {isHR() ? <Button onClick={() => handleApproveEmployees(employee._id)}>Approve</Button> : ''}
+                    </Flex>
+
+                  </Td>
+
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </Box>
+
+
+        {selectedEmployee && (
+                <Modal isOpen={!!selectedEmployee} onClose={() => setSelectedEmployee(null)}>
+                    <ModalOverlay />
+                    <ModalContent>
+                        <ModalHeader>Edit Employee</ModalHeader>
+                        <ModalCloseButton />
+                        <ModalBody>
+                        <Box>    
+                        <form onClick={handleSubmit}>
+                        <VStack spacing={4}>
           {/* Name Field */}
           <FormControl id="name" isRequired>
             <FormLabel>Name</FormLabel>
             <Input
               type="text"
               name="name"
-              value={formData.name}
+              value={selectedEmployee.name}
               onChange={handleChange}
               placeholder="Enter employee name"
             />
@@ -82,7 +178,7 @@ const AddEmployee = () => {
               <Input
                 type="date"
                 name="Dob"
-                value={formData.Dob}
+                value={selectedEmployee.Dob}
                 onChange={handleChange}
               />
             </FormControl>
@@ -92,7 +188,7 @@ const AddEmployee = () => {
               <Input
                 type="text"
                 name="location"
-                value={formData.location}
+                value={selectedEmployee.location}
                 onChange={handleChange}
                 placeholder="Enter location"
               />
@@ -106,7 +202,7 @@ const AddEmployee = () => {
               <Input
                 type="number"
                 name="totalExp"
-                value={formData.totalExp}
+                value={selectedEmployee.totalExp}
                 onChange={handleChange}
                 placeholder="Enter total experience in years"
               />
@@ -117,7 +213,7 @@ const AddEmployee = () => {
               <Input
                 type="text"
                 name="previousEmployer"
-                value={formData.previousEmployer}
+                value={selectedEmployee.previousEmployer}
                 onChange={handleChange}
                 placeholder="Enter previous employer"
               />
@@ -131,7 +227,7 @@ const AddEmployee = () => {
               <Input
                 type="number"
                 name="bankAccountNumber"
-                value={formData.bankAccountNumber}
+                value={selectedEmployee.bankAccountNumber}
                 onChange={handleChange}
                 placeholder="Enter bank account number"
               />
@@ -142,7 +238,7 @@ const AddEmployee = () => {
               <Input
                 type="text"
                 name="ifscCode"
-                value={formData.ifscCode}
+                value={selectedEmployee.ifscCode}
                 onChange={handleChange}
                 placeholder="Enter IFSC code"
               />
@@ -156,7 +252,7 @@ const AddEmployee = () => {
               <Input
                 type="text"
                 name="bankBranch"
-                value={formData.bankBranch}
+                value={selectedEmployee.bankBranch}
                 onChange={handleChange}
                 placeholder="Enter bank branch"
               />
@@ -167,7 +263,7 @@ const AddEmployee = () => {
               <Input
                 type="number"
                 name="mobileNumber"
-                value={formData.mobileNumber}
+                value={selectedEmployee.mobileNumber}
                 onChange={handleChange}
                 placeholder="Enter mobile number"
               />
@@ -181,7 +277,7 @@ const AddEmployee = () => {
               <Input
                 type="number"
                 name="alternateNumber"
-                value={formData.alternateNumber}
+                value={selectedEmployee.alternateNumber}
                 onChange={handleChange}
                 placeholder="Enter alternate number"
               />
@@ -192,7 +288,7 @@ const AddEmployee = () => {
               <Input
                 type="text"
                 name="City"
-                value={formData.City}
+                value={selectedEmployee.City}
                 onChange={handleChange}
                 placeholder="Enter city"
               />
@@ -206,7 +302,7 @@ const AddEmployee = () => {
               <Input
                 type="text"
                 name="pinCode"
-                value={formData.pinCode}
+                value={selectedEmployee.pinCode}
                 onChange={handleChange}
                 placeholder="Enter pin code"
               />
@@ -217,7 +313,7 @@ const AddEmployee = () => {
               <Input
                 type="text"
                 name="currentAddress"
-                value={formData.currentAddress}
+                value={selectedEmployee.currentAddress}
                 onChange={handleChange}
                 placeholder="Enter current address"
               />
@@ -231,7 +327,7 @@ const AddEmployee = () => {
               <Input
                 type="text"
                 name="permanentAddress"
-                value={formData.permanentAddress}
+                value={selectedEmployee.permanentAddress}
                 onChange={handleChange}
                 placeholder="Enter permanent address"
               />
@@ -242,7 +338,7 @@ const AddEmployee = () => {
               <Input
                 type="email"
                 name="email"
-                value={formData.email}
+                value={selectedEmployee.email}
                 onChange={handleChange}
                 placeholder="Enter email"
               />
@@ -256,7 +352,7 @@ const AddEmployee = () => {
               <Input
                 type="text"
                 name="panNumber"
-                value={formData.panNumber}
+                value={selectedEmployee.panNumber}
                 onChange={handleChange}
                 placeholder="Enter PAN number"
               />
@@ -266,7 +362,7 @@ const AddEmployee = () => {
               <FormLabel>Marital Status</FormLabel>
               <Select
                 name="maritalStatus"
-                value={formData.maritalStatus}
+                value={selectedEmployee.maritalStatus}
                 onChange={handleChange}
                 placeholder="Select marital status"
               >
@@ -284,7 +380,7 @@ const AddEmployee = () => {
               <Input
                 type="text"
                 name="bloodGroup"
-                value={formData.bloodGroup}
+                value={selectedEmployee.bloodGroup}
                 onChange={handleChange}
                 placeholder="Enter blood group"
               />
@@ -295,7 +391,7 @@ const AddEmployee = () => {
               <Input
                 type="text"
                 name="qualification"
-                value={formData.qualification}
+                value={selectedEmployee.qualification}
                 onChange={handleChange}
                 placeholder="Enter qualification"
               />
@@ -309,7 +405,7 @@ const AddEmployee = () => {
               <Input
                 type="text"
                 name="fathersName"
-                value={formData.fathersName}
+                value={selectedEmployee.fathersName}
                 onChange={handleChange}
                 placeholder="Enter father's name"
               />
@@ -320,7 +416,7 @@ const AddEmployee = () => {
               <Input
                 type="number"
                 name="salary"
-                value={formData.salary}
+                value={selectedEmployee.salary}
                 onChange={handleChange}
                 placeholder="Enter salary"
               />
@@ -334,7 +430,7 @@ const AddEmployee = () => {
               <Input
                 type="date"
                 name="joiningDate"
-                value={formData.joiningDate}
+                value={selectedEmployee.joiningDate}
                 onChange={handleChange}
               />
             </FormControl>
@@ -343,7 +439,7 @@ const AddEmployee = () => {
               <FormLabel>Department</FormLabel>
               <Select
                 name="empType"
-                value={formData.empType}
+                value={selectedEmployee.empType}
                 onChange={handleChange}
               >
                 <option value="staff">Staff</option>
@@ -359,7 +455,7 @@ const AddEmployee = () => {
               <Input
                 type="date"
                 name="registerationDate"
-                value={formData.registerationDate}
+                value={selectedEmployee.registerationDate}
                 onChange={handleChange}
               />
             </FormControl>
@@ -368,7 +464,7 @@ const AddEmployee = () => {
               <Input
                 type="String"
                 name="designation"
-                value={formData.designation}
+                value={selectedEmployee.designation}
                 onChange={handleChange}
               />
             </FormControl>
@@ -376,14 +472,22 @@ const AddEmployee = () => {
             
           </Flex>
 
-          {/* Submit Button */}
-          <Button type="submit" colorScheme="blue" width="full">
-            Add Employee
-          </Button>
-        </VStack>
-      </form>
-    </Box>
-  );
-};
+                                      
 
-export default AddEmployee;
+                                        <Button colorScheme="teal" type="submit">Save Changes</Button>
+                                    </VStack>
+                        </form>
+                                
+                                    </Box>
+                        </ModalBody>
+                        <ModalFooter>
+                            <Button colorScheme="blue" onClick={() => setSelectedEmployee(null)}>Close</Button>
+                        </ModalFooter>
+                    </ModalContent>
+                </Modal>
+            )}
+      </Box>
+    );
+}
+
+export default UnApprovedEmployees

@@ -69,9 +69,9 @@ export default function Dashboard() {
   },[dispatch])
 
   return (
-    <Flex flexDirection='column' pt={{ base: "120px", md: "75px" }}>
-      <SimpleGrid columns={{ sm: 1, md: 2, xl: 4 }} spacing='24px' mb='20px'>
-        <Card minH='125px'>
+    <Flex flexDirection='column' pt={{ base: "140px", md: "90px" }}>
+      <SimpleGrid  columns={{ sm: 2, md: 2, xl: 4 }} spacing='24px'>
+        <Card maxH='100px'>
           <Flex direction='column'
               onClick={() => history.push('/admin/todays-present')}
           >
@@ -113,7 +113,7 @@ export default function Dashboard() {
             </Text> */}
           </Flex>
         </Card>
-        <Card minH='125px'>
+        <Card maxH='100px'>
           <Flex direction='column'
             onClick={() => history.push('/admin/todays-absent')}
           >
@@ -154,7 +154,7 @@ export default function Dashboard() {
             </Text> */}
           </Flex>
         </Card>
-        <Card minH='125px'>
+        <Card maxH='100px'>
           <Flex direction='column'
           onClick={() => history.push('/admin/todays-avail')}
           >
@@ -195,7 +195,7 @@ export default function Dashboard() {
             </Text> */}
           </Flex>
         </Card>
-        <Card minH='125px'>
+        <Card maxH='100px'>
           <Flex direction='column'>
             <Flex
               flexDirection='row'

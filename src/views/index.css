@@ -78,5 +78,22 @@ table > tbody >tr > td{
     #emp-search{
       width: 100% !important;
     }
+
+    #table-col{
+      flex-direction: column;
+      align-items: start;
+    }
+
+    #full-width{
+      width: 250px;
+    }
+
+    .css-1bv6zgj{
+      padding: 0 !important;
+    }
+
+    #mt{
+      margin-top: 20px;
+    }
     
   }

@@ -1,8 +1,9 @@
 import axios from "axios";
 import { base_url } from "../../utils/base_url";
+import { config } from "utils/config";
 
 const CheckIn = async (data)=>{
-    const response = await axios.post(`${base_url}attendance/checkin`,data)
+    const response = await axios.post(`${base_url}attendance/checkin`,data,config)
     return response.data
 }
 

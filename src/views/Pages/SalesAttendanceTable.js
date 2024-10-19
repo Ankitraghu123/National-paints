@@ -178,7 +178,7 @@ const getHolidayNameByDate = (day) => {
   return (
     <Box p={8} mt={100} backgroundColor={"white"} borderRadius={"30px"} >
       {/* Year and Month Selection */}
-      <Box display="flex" alignItems="center" gap={4} mb={4}>
+      <Box display="flex" alignItems="center" gap={4} mb={4} id="table-col">
         <Box>
           <Text mb={2}>Year:</Text>
           <Input
@@ -188,6 +188,7 @@ const getHolidayNameByDate = (day) => {
             min="2000"
             max="2100"
             width="100px"
+            id="full-width"
           />
         </Box>
         <Box>
@@ -196,6 +197,7 @@ const getHolidayNameByDate = (day) => {
             value={month}
             onChange={(e) => setMonth(Number(e.target.value))}
             width="150px"
+            id="full-width"
           >
             {Array.from({ length: 12 }, (_, i) => (
               <option key={i} value={i}>
@@ -204,7 +206,7 @@ const getHolidayNameByDate = (day) => {
             ))}
           </Select>
         </Box>
-        <Box width={'40%'}>
+        <Box width={'40%'} id="full-width">
         <Text mb={2}>Search by Employee Name:</Text>
         <Input
           placeholder="Search employee..."

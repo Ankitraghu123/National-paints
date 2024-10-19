@@ -8,10 +8,13 @@ import {
   Flex,
 } from '@chakra-ui/react';
 import { checkOut, checkIn } from 'features/Attendance/AttendanceSlice';
+import UnPaidEmployees from './UnPaidEmployees';
+import { getUnpaidEmployees } from 'features/Employee/EmployeeSlice';
 
 const AllEmployee = () => {
   const dispatch = useDispatch();
   const allEmployees = useSelector(state => state.employee?.allEmployees);
+  const unpaidEmployees = useSelector(state => state.employee?.unpaidEmployees);
   const { checkedIn, checkedOut } = useSelector(state => state.attendance);
   const [time, setTime] = useState({}); 
   const [searchTerm, setSearchTerm] = useState('')
@@ -21,6 +24,7 @@ const AllEmployee = () => {
 
   useEffect(() => {
     dispatch(allEmployee());
+    dispatch(getUnpaidEmployees())
   }, [dispatch, checkedIn, checkedOut]);
 
   const combineDateWithTime = (timeString) => {
@@ -65,7 +69,12 @@ const AllEmployee = () => {
     dispatch(checkOut({ empId, setTime: dateWithTime.toISOString() }));
   };
 
-  const filteredEmployees = allEmployees?.filter(employee =>
+  const combinedEmployees = [
+    ...(allEmployees || []),  // Spread existing allEmployees array
+    ...(unpaidEmployees || [])  // Spread existing unpaidEmployees array
+  ];
+
+  const filteredEmployees = combinedEmployees?.filter(employee =>
     employee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     employee.empType.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -143,6 +152,7 @@ const AllEmployee = () => {
                 </Td>
               </Tr>
             ))}
+           
           </Tbody>
         </Table>
       </Box>

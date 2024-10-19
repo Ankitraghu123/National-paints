@@ -17,6 +17,46 @@ export const allEmployee = createAsyncThunk('employee/all',async(thunkApi)=>{
     }
 })
 
+export const getUnApprovedEmployees = createAsyncThunk('employee/unapproved',async(thunkApi)=>{
+    try{
+        return await EmployeeService.GetUnApprovedEmployees()
+    }catch(err){
+        return thunkApi.rejectWithValue(err)
+    }
+})
+
+export const getUnpaidEmployees = createAsyncThunk('employee/unpaid',async(thunkApi)=>{
+    try{
+        return await EmployeeService.GetUnpaidEmployees()
+    }catch(err){
+        return thunkApi.rejectWithValue(err)
+    }
+})
+
+export const approveEmployee = createAsyncThunk('employee/approve',async(id,thunkApi)=>{
+    try{
+        return await EmployeeService.approveEmployee(id)
+    }catch(err){
+        return thunkApi.rejectWithValue(err)
+    }
+})
+
+export const transferToPaidEmployee = createAsyncThunk('employee/tranfertopaid',async(id,thunkApi)=>{
+    try{
+        return await EmployeeService.tranferToPaidEmployee(id)
+    }catch(err){
+        return thunkApi.rejectWithValue(err)
+    }
+})
+
+export const editEmployee = createAsyncThunk('employee/edit',async(data,thunkApi)=>{
+    try{
+        return await EmployeeService.editEmployee(data)
+    }catch(err){
+        return thunkApi.rejectWithValue(err)
+    }
+})
+
 
 export const getEmployeeAttendance = createAsyncThunk('employee/attendnace',async(data,thunkApi)=>{
     try{
@@ -85,6 +125,80 @@ export const EmployeeSlice = createSlice({
             state.isError=true
             state.isSuccess = false
             state.employeeAttendnace = null
+        })
+
+        .addCase(getUnApprovedEmployees.pending,(state)=>{
+            state.isLoading = true
+        })
+        .addCase(getUnApprovedEmployees.fulfilled,(state,action)=>{
+            state.isLoading = false
+            state.isSuccess = true
+            state.unapprovedEmployees = action.payload
+        })
+        .addCase(getUnApprovedEmployees.rejected,(state,action)=>{
+            state.isLoading = false
+            state.isError=true
+            state.isSuccess = false
+            state.unapprovedEmployees = null
+        })
+
+        .addCase(getUnpaidEmployees.pending,(state)=>{
+            state.isLoading = true
+        })
+        .addCase(getUnpaidEmployees.fulfilled,(state,action)=>{
+            state.isLoading = false
+            state.isSuccess = true
+            state.unpaidEmployees = action.payload
+        })
+        .addCase(getUnpaidEmployees.rejected,(state,action)=>{
+            state.isLoading = false
+            state.isError=true
+            state.isSuccess = false
+            state.unpaidEmployees = null
+        })
+
+        .addCase(approveEmployee.pending,(state)=>{
+            state.isLoading = true
+        })
+        .addCase(approveEmployee.fulfilled,(state,action)=>{
+            state.isLoading = false
+            state.isSuccess = true
+            state.employeeApproved = action.payload
+        })
+        .addCase(approveEmployee.rejected,(state,action)=>{
+            state.isLoading = false
+            state.isError=true
+            state.isSuccess = false
+            state.employeeApproved = null
+        })
+        .addCase(transferToPaidEmployee.pending,(state)=>{
+            state.isLoading = true
+        })
+        .addCase(transferToPaidEmployee.fulfilled,(state,action)=>{
+            state.isLoading = false
+            state.isSuccess = true
+            state.transferedToPaid = action.payload
+        })
+        .addCase(transferToPaidEmployee.rejected,(state,action)=>{
+            state.isLoading = false
+            state.isError=true
+            state.isSuccess = false
+            state.transferedToPaid = null
+        })
+
+        .addCase(editEmployee.pending,(state)=>{
+            state.isLoading = true
+        })
+        .addCase(editEmployee.fulfilled,(state,action)=>{
+            state.isLoading = false
+            state.isSuccess = true
+            state.editedEmployee = action.payload
+        })
+        .addCase(editEmployee.rejected,(state,action)=>{
+            state.isLoading = false
+            state.isError=true
+            state.isSuccess = false
+            state.editedEmployee = null
         })
         
        

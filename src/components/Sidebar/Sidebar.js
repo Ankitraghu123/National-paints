@@ -25,9 +25,17 @@ import {
   renderViewRTL,
 } from "components/Scrollbar/Scrollbar";
 import { HSeparator } from "components/Separator/Separator";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Scrollbars } from "react-custom-scrollbars";
+import { FaCalendarAlt } from "react-icons/fa";
 import { NavLink, useLocation } from "react-router-dom";
+import { IoIosPeople, IoMdPeople } from "react-icons/io";
+import { IoPeople } from "react-icons/io5";
+import { FaPeopleCarryBox } from "react-icons/fa6";
+import { isAdmin } from "utils/config";
+import { isHR } from "utils/config";
+import { isReceptionist } from "utils/config";
+import { isAccountant } from "utils/config";
 
 // Define your routes here
 const routes = [
@@ -38,94 +46,119 @@ const routes = [
   },
   {
     name: "Add Holiday",
-    icon: "👤",
+    icon: <FaCalendarAlt />,
     path: "/admin/add-holiday",
-  },
-  {
-    name: "Add Employee",
-    icon: "👤",
-    path: "/admin/add-employee",
-  },
-  {
-    name: "All Employees",
-    icon: "👤",
-    path: "/admin/all-employee-table",
   },
   {
     name: "Add Attendance",
     icon: "👤",
     path: "/admin/all-employee",
   },
-  
-
-  
+ 
   {
-    name: "Labour",
-    icon: "📂", // Icon for dropdown
+    name: "Employees",
+    icon: <IoIosPeople />, // Icon for dropdown
     path: null, // No path, it's a parent
     subRoutes: [
       {
-        name: "Labour Attendance",
+        name: "Add Employee",
         icon: "👤",
-        path: "/admin/attendance-table",
+        path: "/admin/add-employee",
       },
       {
-        name: "Date Wise Attendance",
-        icon: "👤", // replace with your actual icon component
-        path: "/admin/employee-date-attendance",
-      },
-      {
-        name: "Month Wise Attendance",
+        name: "All Employees",
         icon: "👤",
-        path: "/admin/employee-attendnace",
-      },
-    ],
-  },
-  {
-    name: "Staff",
-    icon: "📂", 
-    path: null, 
-    subRoutes: [
-      {
-        name: "Staff Attendance",
-        icon: "👤", 
-        path: "/admin/staff-attendance-table",
+        path: "/admin/all-employee-table",
       },
       {
-        name: "Date Wise Attendance",
-        icon: "👤", 
-        path: "/admin/staff-datewise-attendance-table",
+        name: "UnApproved Employees",
+        icon: "👤",
+        path: "/admin/unapproved-employee",
       },
       {
-        name: "Month Wise Attendance",
-        icon: "👤", 
-        path: "/admin/staff-monthwise-attendance-table",
+        name: "UnPaid Employees",
+        icon: "👤",
+        path: "/admin/unpaid-employee",
       },
       
     ],
   },
-  {
-    name: "Sales",
-    icon: "📂", 
-    path: null, 
-    subRoutes: [
-      {
-        name: "Sales Attendance",
-        icon: "👤",
-        path: "/admin/sales-attendance-table",
-      },
-      {
-        name: "Date Wise Attendance",
-        icon: "👤",
-        path: "/admin/sales-datewise-attendance-table",
-      },
-      {
-        name: "Month Wise Attendance",
-        icon: "👤",
-        path: "/admin/sales-monthwise-attendance-table",
-      },
-    ],
-  },
+  
+
+  
+    ...(isHR() || isAdmin() ? 
+    [
+    {
+      name: "Labour",
+      icon: <IoIosPeople />, // Icon for dropdown
+      path: null, // No path, it's a parent
+      subRoutes: [
+        {
+          name: "Labour Attendance",
+          icon: "👤",
+          path: "/admin/attendance-table",
+        },
+        {
+          name: "Date Wise Attendance",
+          icon: "👤", // replace with your actual icon component
+          path: "/admin/employee-date-attendance",
+        },
+        {
+          name: "Month Wise Attendance",
+          icon: "👤",
+          path: "/admin/employee-attendnace",
+        },
+      ],
+    },
+    {
+      name: "Staff",
+      icon: <IoPeople />, 
+      path: null, 
+      subRoutes: [
+        {
+          name: "Staff Attendance",
+          icon: "👤", 
+          path: "/admin/staff-attendance-table",
+        },
+        {
+          name: "Date Wise Attendance",
+          icon: "👤", 
+          path: "/admin/staff-datewise-attendance-table",
+        },
+        {
+          name: "Month Wise Attendance",
+          icon: "👤", 
+          path: "/admin/staff-monthwise-attendance-table",
+        },
+        
+      ],
+    },
+    {
+      name: "Sales",
+      icon: <FaPeopleCarryBox />, 
+      path: null, 
+      subRoutes: [
+        {
+          name: "Sales Attendance",
+          icon: "👤",
+          path: "/admin/sales-attendance-table",
+        },
+        {
+          name: "Date Wise Attendance",
+          icon: "👤",
+          path: "/admin/sales-datewise-attendance-table",
+        },
+        {
+          name: "Month Wise Attendance",
+          icon: "👤",
+          path: "/admin/sales-monthwise-attendance-table",
+        },
+      ],
+    },] : []),
+  
+  
+ 
+ 
 ];
 
 function Sidebar(props) {

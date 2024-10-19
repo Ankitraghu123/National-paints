@@ -31,7 +31,7 @@ const AllEmployeesTable = () => {
   };
 
   return (
-    <Box p={5} mt={20} bg="white" borderRadius="30px">
+    <Box p={5} mt={40} bg="white" borderRadius="30px">
       <Heading mb={4}>All Employees</Heading>
 
       {/* Search Field */}
@@ -40,7 +40,7 @@ const AllEmployeesTable = () => {
         value={searchTerm}
         onChange={handleSearch}
         mb={4}
-        width="400px"
+        width="100%"
       />
 
       {/* Scrollable Table */}
