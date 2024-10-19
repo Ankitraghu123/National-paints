@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -18,17 +18,27 @@ const LoginForm = () => {
   const toast = useToast();
   const dispatch = useDispatch()
 
+  const {isSuccess} = useSelector(state => state.reception)
+
+  // useEffect(() => {
+  //   window.location.reload()
+  // },[isSuccess])
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     dispatch(Login({email,password}))
+
+    // setTimeout(() => {
+    // window.location.reload()
+    // },2000)
    
-      toast({
-        title: "Login successful.",
-        description: "Welcome back!",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
+      // toast({
+      //   title: "Login successful.",
+      //   description: "Welcome back!",
+      //   status: "success",
+      //   duration: 3000,
+      //   isClosable: true,
+      // });
 
      
    

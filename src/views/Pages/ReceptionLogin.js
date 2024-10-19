@@ -22,22 +22,38 @@ const LoginForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(Login({ email, password }));
+    
+    try {
+      // Dispatch the login action and wait for it to complete
+      const resultAction = await dispatch(Login({ email, password }));
 
-    setTimeout(() => {
+      // Check if the login was successful
+      if (Login.fulfilled.match(resultAction)) {
+        // Redirect to admin dashboard after successful login
+        history.push('/admin/dashboard');
+        window.location.reload(); // Reloading the page is optional
+      } else {
+        // If login failed, show an error message
+        toast({
+          title: "Login failed.",
+          description: "Please check your email and password.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      console.error("Login error:", error);
       toast({
-        title: 'Login successful.',
-        description: 'Welcome back!',
-        status: 'success',
-        duration: 3000,
+        title: "An error occurred.",
+        description: "Please try again later.",
+        status: "error",
+        duration: 5000,
         isClosable: true,
       });
-
-      // Redirect to admin dashboard after successful login
-      history.push('/admin/dashboard'); // Use history to navigate
-    }, 1000);
+    }
   };
-
+    
   return (
     <Box width="500px" mt="200" mx="auto" padding="5" borderWidth="1px" borderRadius="lg" style={{ backgroundColor: 'white' }}>
       <Heading as="h2" size="lg" textAlign="center" marginBottom="4">
