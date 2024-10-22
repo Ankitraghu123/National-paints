@@ -230,7 +230,7 @@ function Sidebar(props) {
                   {prop.icon}
                 </IconBox>
                 <Text color={inactiveColor} my="auto" fontSize="sm">
-                  {prop.name}
+                  {prop?.name}
                 </Text>
                 {openDropdown === key ? (
                   <ChevronUpIcon ml="auto" />
@@ -258,7 +258,7 @@ function Sidebar(props) {
                     _focus={{ boxShadow: "none" }}
                   >
                     <Text color={inactiveColor} my="auto" fontSize="sm">
-                      {subProp.name}
+                      {subProp?.name}
                     </Text>
                   </Button>
                 </NavLink>
@@ -333,7 +333,7 @@ function Sidebar(props) {
                   {prop.icon}
                 </IconBox>
                 <Text color={inactiveColor} my="auto" fontSize="sm">
-                  {prop.name}
+                  {prop?.name}
                 </Text>
               </Flex>
             </Button>
@@ -381,7 +381,7 @@ function Sidebar(props) {
           >
             <Box>{brand}</Box>
             
-            <Flex gap={5} mb={5}><Text id="blue" >Welcome</Text> <Text>{auth.name}</Text></Flex>
+            <Flex gap={5} mb={5}><Text id="blue" >Welcome</Text> <Text>{auth?.name}</Text></Flex>
             <Stack direction="column" mb="40px">
               <Box>{links}</Box>
             </Stack>
@@ -514,7 +514,7 @@ export function SidebarResponsive(props) {
                   {prop.icon}
                 </IconBox>
                 <Text color="white" my="auto" fontSize="sm">
-                  {prop.name}
+                  {prop?.name}
                 </Text>
               </Flex>
             </Button>
@@ -546,7 +546,7 @@ export function SidebarResponsive(props) {
                   {prop.icon}
                 </IconBox>
                 <Text color="gray.400" my="auto" fontSize="sm">
-                  {prop.name}
+                  {prop?.name}
                 </Text>
               </Flex>
             </Button>
@@ -618,7 +618,7 @@ export function SidebarResponsive(props) {
                 renderView={document.documentElement.dir === "rtl" ? renderViewRTL : renderView}
               >
                 <Box>{brand}</Box>
-                <Flex gap={5} mb={5}><Text id="blue" >Welcome</Text> <Text>{auth.name}</Text></Flex>
+                <Flex gap={5} mb={5}><Text id="blue" >Welcome</Text> <Text>{auth?.name}</Text></Flex>
                 <Stack direction="column" mb="40px">
                   <Box>{links}</Box>
                 </Stack>
