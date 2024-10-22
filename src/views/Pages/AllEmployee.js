@@ -101,7 +101,19 @@ const AllEmployee = () => {
       <Text fontSize="2xl" fontWeight="bold" mb={4}>Employee Table</Text>
 
       {/* Shared Date Input */}
-      <Flex mb={4}>
+      
+
+      {/* Search Bar  */}
+      <Flex justifyContent={'space-between'} alignItems={'center'} gap={5} id='emp-flex'>
+        <Box mb={4} width={'50%'} id='emp-search'>
+          <Input
+            placeholder="Search.... "
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            
+          />
+        </Box>
+        <Box mb={4} width={'50%'} >
         <Input
           type="date"
           value={sharedDate}
@@ -109,18 +121,7 @@ const AllEmployee = () => {
           max={monthEnd}
           onChange={(e) => handleSharedDateChange(e.target.value)}
         />
-      </Flex>
-
-      {/* Search Bar  */}
-      <Flex justifyContent={'space-between'} alignItems={'center'} id='emp-flex'>
-        <Box mb={4} width={'50%'} id='emp-search'>
-          <Input
-            placeholder="Search.... "
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            mb={4}
-          />
-        </Box>
+      </Box>
 
         {/* Entries per page selector */}
         <Box mb={4}>
