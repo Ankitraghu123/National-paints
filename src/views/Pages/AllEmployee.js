@@ -169,7 +169,7 @@ const AllEmployee = () => {
                 </Td>
                 <Td>
                   <Button colorScheme='green' onClick={() => handleCheckIn(employee._id)} isDisabled={hasCheckedInToday(employee)}>In</Button>
-                  <Button colorScheme='red' onClick={() => handleCheckOut(employee._id)} isDisabled={hasCheckedOutToday(employee)}>Out</Button>
+                  <Button ms={2} colorScheme='red' onClick={() => handleCheckOut(employee._id)} isDisabled={hasCheckedOutToday(employee)}>Out</Button>
                 </Td>
               </Tr>
             ))}
@@ -189,6 +189,7 @@ const AllEmployee = () => {
           Page {currentPage} of {totalPages}
         </Text>
         <Button
+        
           onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
           isDisabled={currentPage === totalPages}
         >
