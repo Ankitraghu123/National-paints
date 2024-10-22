@@ -64,7 +64,7 @@ const UnApprovedEmployees = () => {
   
     return (
       <Box p={5} mt={40} bg="white" borderRadius="30px">
-        <Heading mb={4}>UnApproved Employees</Heading>
+        <Heading mb={4}>Pending Employees</Heading>
   
         {/* Search Field */}
         <Input

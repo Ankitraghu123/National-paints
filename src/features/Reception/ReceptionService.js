@@ -21,6 +21,7 @@ const Login = async (data)=>{
       } else {
         localStorage.setItem('genericToken', token); 
       }
+      localStorage.setItem('data', JSON.stringify(response.data));
     return response.data
 }
 

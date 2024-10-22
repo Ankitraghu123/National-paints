@@ -44,6 +44,21 @@ const routes = [
     icon: "👤",
     path: "/admin/dashboard",
   },
+  ...(isAccountant() || isAdmin() ? 
+  [
+    {
+      name: "Remaining Salary",
+      icon: "👤",
+      path: "/admin/salary-to-be-paid",
+    },
+    {
+      name: "All Salaries",
+      icon: "👤",
+      path: "/admin/all-salaries",
+    },
+  ]:[]),
+  ...(isHR() || isReceptionist() || isAdmin() ? 
+  [
   {
     name: "Add Holiday",
     icon: <FaCalendarAlt />,
@@ -71,18 +86,18 @@ const routes = [
         path: "/admin/all-employee-table",
       },
       {
-        name: "UnApproved Employees",
+        name: "Pending Employees",
         icon: "👤",
         path: "/admin/unapproved-employee",
       },
       {
-        name: "UnPaid Employees",
+        name: "Trainee",
         icon: "👤",
         path: "/admin/unpaid-employee",
       },
       
     ],
-  },
+  },] : []),
   
 
   
@@ -170,6 +185,7 @@ function Sidebar(props) {
     return location.pathname === routeName ? "active" : "";
   };
 
+  const auth = JSON.parse(localStorage.getItem('data'));
   const activeBg = useColorModeValue("white", "navy.700");
   const inactiveBg = useColorModeValue("white", "navy.700");
   const activeColor = useColorModeValue("gray.700", "white");
@@ -337,6 +353,7 @@ function Sidebar(props) {
       {props.logo}
       <HSeparator my="26px" />
     </Box>
+   
   );
 
   return (
@@ -363,6 +380,8 @@ function Sidebar(props) {
             renderView={document.documentElement.dir === "rtl" ? renderViewRTL : renderView}
           >
             <Box>{brand}</Box>
+            
+            <Flex gap={5} mb={5}><Text id="blue" >Welcome</Text> <Text>{auth.name}</Text></Flex>
             <Stack direction="column" mb="40px">
               <Box>{links}</Box>
             </Stack>
@@ -375,6 +394,8 @@ function Sidebar(props) {
 
 export function SidebarResponsive(props) {
   let location = useLocation();
+  const auth = JSON.parse(localStorage.getItem('data'));
+  // console.log(auth)
   const { logo, hamburgerColor, ...rest } = props;
   const mainPanel = React.useRef();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -597,6 +618,7 @@ export function SidebarResponsive(props) {
                 renderView={document.documentElement.dir === "rtl" ? renderViewRTL : renderView}
               >
                 <Box>{brand}</Box>
+                <Flex gap={5} mb={5}><Text id="blue" >Welcome</Text> <Text>{auth.name}</Text></Flex>
                 <Stack direction="column" mb="40px">
                   <Box>{links}</Box>
                 </Stack>

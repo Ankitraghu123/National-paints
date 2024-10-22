@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Box,
   Input,
@@ -18,6 +18,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { allEmployee } from "features/Employee/EmployeeSlice";
 import { allHoliday } from "features/Holiday/HolidaySlice";
 import { checkIn } from "features/Attendance/AttendanceSlice";
+import { putSalary } from "features/Employee/EmployeeSlice";
+import { CSVLink } from 'react-csv';
+
 
 const StaffAttendanceTable = () => {
   const dispatch = useDispatch();
@@ -34,10 +37,12 @@ const StaffAttendanceTable = () => {
   const allEmployees = useSelector((state) => state.employee?.allEmployees);
   const employees = allEmployees?.filter((employee) => employee.empType === 'staff');
   const today = new Date();
+  const {monthSalary} = useSelector(state => state.employee)
+
   useEffect(() => {
     dispatch(allEmployee());
     dispatch(allHoliday())
-  }, [dispatch]);
+  }, [dispatch,monthSalary]);
 
   useEffect(() => {
     const days = Array.from(
@@ -218,6 +223,79 @@ const getHolidayNameByDate = (day) => {
         const totalSalary = dailySalary * totalDaysWorked;
         return totalSalary.toFixed(2)
     }
+
+    const approveSalaryHandler = (emp,len) => {
+      const totalSalary = calculateTotalSalary(
+        emp.salary,
+       emp.attendanceTime
+      )
+  
+      const lastDay = new Date(year, month+1, 0)
+  
+      dispatch(putSalary({month:lastDay,amount:totalSalary,empId:emp._id}))
+  
+    }
+  
+  
+    const isSalaryApproved = (emp) => {
+      if (!emp.salaryArray || emp.salaryArray.length === 0) {
+        return false;
+      }
+    
+      const salaryFound = emp.salaryArray.some(salaryRecord => {
+        // console.log(salaryRecord);
+    
+        const recordMonth = new Date(salaryRecord.month).getMonth() + 1;
+        const recordYear = new Date(salaryRecord.month).getFullYear();
+        return (recordMonth === month+1) && (recordYear === year);
+      });
+    
+      return salaryFound;
+    };
+
+
+    const csvData = useMemo(() => {
+      const data = employees?.map((employee) => {
+        const attendance = daysInMonth.reduce((acc, day) => {
+          const attendanceRecord = employee.attendanceTime?.find((record) => {
+            const recordDate = new Date(record.date);
+            return (
+              recordDate.getDate() === day &&
+              recordDate.getFullYear() === year &&
+              recordDate.getMonth() === month
+            );
+          });
+    
+          const isCurrentDaySunday = isSunday(day);
+          const isCurrentDayHoliday = isHoliday(day);
+          let status;
+    
+          if (isCurrentDaySunday && !attendanceRecord) {
+            status = formatHours(8); // If it's Sunday and no attendance record, treat as full day worked
+          } else if (isCurrentDayHoliday && !attendanceRecord) {
+            status = formatHours(8); // If it's a holiday and no attendance record, treat as full day worked
+          } else if (attendanceRecord) {
+            status = getAttendance(attendanceRecord); // Use the existing logic to determine attendance status
+          } else {
+            status = "A"; // Absence
+          }
+    
+          return { ...acc, [day]: status };
+        }, {});
+    
+        return {
+          name: employee.name,
+          ...attendance,
+          totalDays: calculateTotalDays(employee.attendanceTime || []),
+          totalSalary: calculateTotalSalary(employee.salary, employee.attendanceTime || []),
+        };
+      });
+    
+      return data || [];
+    }, [employees, daysInMonth, year, month]);
+    
+    
+    
       
       
 
@@ -283,6 +361,25 @@ const getHolidayNameByDate = (day) => {
         </Select>
       </Box>
 
+      <CSVLink
+        data={csvData?.map(employee => ({
+          name: employee.name,
+          ...Object.keys(employee).reduce((acc, key) => {
+            if (key !== 'name' && key !== 'totalDays' && key !== 'totalSalary') {
+              acc[`Day ${key}`] = employee[key];
+            }
+            return acc;
+          }, {}),
+          totalHours: employee.totalDays,
+          totalSalary: employee.totalSalary,
+        }))}
+        filename={`staffAttendance.csv`}
+        className="btn btn-primary"
+        target="_blank"
+      >
+        Export CSV
+      </CSVLink>
+
       {/* Attendance Table */}
       <TableContainer>
         <Table>
@@ -299,6 +396,8 @@ const getHolidayNameByDate = (day) => {
               ))}
               <Th>Total Days</Th>
               <Th>Total Salary</Th>
+              <Th>Approve</Th>
+
             </Tr>
           </Thead>
           <Tbody>
@@ -332,6 +431,7 @@ const getHolidayNameByDate = (day) => {
                 <Td> 
                     {calculateTotalSalary(employee.salary,employee?.attendanceTime)}
                   </Td>
+                  <Td className={isSalaryApproved(employee) ? 'green' : 'red'} onClick={() => !isSalaryApproved(employee) ? approveSalaryHandler(employee,daysInMonth.length) : ''}> {isSalaryApproved(employee) ? "Already Approved" : "Approve Salary"}</Td>
 
               </Tr>
             ))}

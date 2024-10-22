@@ -17,6 +17,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { allEmployee } from "features/Employee/EmployeeSlice";
 import { allHoliday } from "features/Holiday/HolidaySlice";
+import { putSalary } from "features/Employee/EmployeeSlice";
 
 const SalesAttendanceTable = () => {
   const dispatch = useDispatch();
@@ -33,10 +34,12 @@ const SalesAttendanceTable = () => {
   const allEmployees = useSelector((state) => state.employee?.allEmployees);
   const employees = allEmployees?.filter((employee) => employee.empType === 'sales');
   const today = new Date();
+  const {monthSalary} = useSelector(state => state.employee)
+
   useEffect(() => {
     dispatch(allEmployee());
     dispatch(allHoliday())
-  }, [dispatch]);
+  }, [dispatch,monthSalary]);
 
   useEffect(() => {
     const days = Array.from(
@@ -172,6 +175,35 @@ const getHolidayNameByDate = (day) => {
         const totalSalary = dailySalary * totalDaysWorked;
         return totalSalary.toFixed(2)
     }
+
+    const approveSalaryHandler = (emp,len) => {
+      const totalSalary = calculateTotalSalary(
+        emp.salary,
+       emp.attendanceTime
+      )
+  
+      const lastDay = new Date(year, month+1, 0)
+  
+      dispatch(putSalary({month:lastDay,amount:totalSalary,empId:emp._id}))
+  
+    }
+  
+  
+    const isSalaryApproved = (emp) => {
+      if (!emp.salaryArray || emp.salaryArray.length === 0) {
+        return false;
+      }
+    
+      const salaryFound = emp.salaryArray.some(salaryRecord => {
+        // console.log(salaryRecord);
+    
+        const recordMonth = new Date(salaryRecord.month).getMonth() + 1;
+        const recordYear = new Date(salaryRecord.month).getFullYear();
+        return (recordMonth === month+1) && (recordYear === year);
+      });
+    
+      return salaryFound;
+    };
       
       
 
@@ -253,6 +285,7 @@ const getHolidayNameByDate = (day) => {
               ))}
               <Th>Total Hours</Th>
               <Th>Total Salary</Th>
+              <Th>Approve</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -286,6 +319,8 @@ const getHolidayNameByDate = (day) => {
                 <Td> 
                     {calculateTotalSalary(employee.salary,employee?.attendanceTime)}
                   </Td>
+                  <Td className={isSalaryApproved(employee) ? 'green' : 'red'} onClick={() => !isSalaryApproved(employee) ? approveSalaryHandler(employee,daysInMonth.length) : ''}> {isSalaryApproved(employee) ? "Already Approved" : "Approve Salary"}</Td>
+
 
               </Tr>
             ))}

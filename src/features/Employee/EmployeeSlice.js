@@ -17,6 +17,14 @@ export const allEmployee = createAsyncThunk('employee/all',async(thunkApi)=>{
     }
 })
 
+export const singleEmployee = createAsyncThunk('employee/singleEmployee',async(id,thunkApi)=>{
+    try{
+        return await EmployeeService.SingleEmployee(id)
+    }catch(err){
+        return thunkApi.rejectWithValue(err)
+    }
+})
+
 export const getUnApprovedEmployees = createAsyncThunk('employee/unapproved',async(thunkApi)=>{
     try{
         return await EmployeeService.GetUnApprovedEmployees()
@@ -52,6 +60,30 @@ export const transferToPaidEmployee = createAsyncThunk('employee/tranfertopaid',
 export const editEmployee = createAsyncThunk('employee/edit',async(data,thunkApi)=>{
     try{
         return await EmployeeService.editEmployee(data)
+    }catch(err){
+        return thunkApi.rejectWithValue(err)
+    }
+})
+
+export const putSalary = createAsyncThunk('employee/putSalary',async(data,thunkApi)=>{
+    try{
+        return await EmployeeService.putSalary(data)
+    }catch(err){
+        return thunkApi.rejectWithValue(err)
+    }
+})
+
+export const paySalary = createAsyncThunk('employee/paySalary',async(data,thunkApi)=>{
+    try{
+        return await EmployeeService.paySalary(data)
+    }catch(err){
+        return thunkApi.rejectWithValue(err)
+    }
+})
+
+export const generateSalarySlip = createAsyncThunk('employee/generate-salary-slip',async(data,thunkApi)=>{
+    try{
+        return await EmployeeService.generateSalarySlip(data)
     }catch(err){
         return thunkApi.rejectWithValue(err)
     }
@@ -200,6 +232,67 @@ export const EmployeeSlice = createSlice({
             state.isSuccess = false
             state.editedEmployee = null
         })
+
+        .addCase(putSalary.pending,(state)=>{
+            state.isLoading = true
+        })
+        .addCase(putSalary.fulfilled,(state,action)=>{
+            state.isLoading = false
+            state.isSuccess = true
+            state.monthSalary = action.payload
+        })
+        .addCase(putSalary.rejected,(state,action)=>{
+            state.isLoading = false
+            state.isError=true
+            state.isSuccess = false
+            state.monthSalary = null
+        })
+
+        .addCase(paySalary.pending,(state)=>{
+            state.isLoading = true
+        })
+        .addCase(paySalary.fulfilled,(state,action)=>{
+            state.isLoading = false
+            state.isSuccess = true
+            state.salaryPaid = action.payload
+        })
+        .addCase(paySalary.rejected,(state,action)=>{
+            state.isLoading = false
+            state.isError=true
+            state.isSuccess = false
+            state.salaryPaid = null
+        })
+
+        .addCase(singleEmployee.pending,(state)=>{
+            state.isLoading = true
+        })
+        .addCase(singleEmployee.fulfilled,(state,action)=>{
+            state.isLoading = false
+            state.isSuccess = true
+            state.singleEmployee = action.payload
+        })
+        .addCase(singleEmployee.rejected,(state,action)=>{
+            state.isLoading = false
+            state.isError=true
+            state.isSuccess = false
+            state.singleEmployee = null
+        })
+
+        .addCase(generateSalarySlip.pending,(state)=>{
+            state.isLoading = true
+        })
+        .addCase(generateSalarySlip.fulfilled,(state,action)=>{
+            state.isLoading = false
+            state.isSuccess = true
+            state.salarySlip = action.payload
+        })
+        .addCase(generateSalarySlip.rejected,(state,action)=>{
+            state.isLoading = false
+            state.isError=true
+            state.isSuccess = false
+            state.salarySlip = null
+        })
+        
         
        
     }

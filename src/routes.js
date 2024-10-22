@@ -39,6 +39,9 @@ import AllEmployeesTable from 'views/Pages/AllEmployeesTable';
 import UnApprovedEmployees from 'views/Pages/UnApprovedEmployees';
 import UnPaidEmployees from 'views/Pages/UnPaidEmployees';
 import MonthWiseUnpaidAttendance from 'views/Pages/MonthWiseUnpaidAttendance';
+import PaySalary from 'views/Pages/PaySalary';
+import AllSalaries from 'views/Pages/AllSalaries';
+import SalarySlip from 'views/Pages/SalarySlip';
 
 var dashRoutes = [
   {
@@ -284,5 +287,33 @@ var dashRoutes = [
     component: MonthWiseUnpaidAttendance,
     layout: "/admin",
   },
+
+  // Accountant pannel 
+  {
+    path: "/salary-to-be-paid",
+    name: "Salary To Be Paid",
+    rtlName: "لوحة القيادة",
+    icon: <HomeIcon color='inherit' />,
+    component: PaySalary,
+    layout: "/admin",
+  },
+  {
+    path: "/all-salaries",
+    name: "All Salaries",
+    rtlName: "لوحة القيادة",
+    icon: <HomeIcon color='inherit' />,
+    component: AllSalaries,
+    layout: "/admin",
+  },
+
+  {
+    path: "/salary-slip/:id/:month",
+    name: "Salary Slip",
+    rtlName: "لوحة القيادة",
+    icon: <HomeIcon color='inherit' />,
+    component: SalarySlip,
+    layout: "/admin",
+  },
+
 ];
 export default dashRoutes;

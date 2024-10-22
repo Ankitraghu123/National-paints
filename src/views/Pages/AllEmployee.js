@@ -8,7 +8,6 @@ import {
   Flex,
 } from '@chakra-ui/react';
 import { checkOut, checkIn } from 'features/Attendance/AttendanceSlice';
-import UnPaidEmployees from './UnPaidEmployees';
 import { getUnpaidEmployees } from 'features/Employee/EmployeeSlice';
 
 const AllEmployee = () => {
@@ -17,61 +16,56 @@ const AllEmployee = () => {
   const unpaidEmployees = useSelector(state => state.employee?.unpaidEmployees);
   const { checkedIn, checkedOut } = useSelector(state => state.attendance);
   const [time, setTime] = useState({}); 
-  const [searchTerm, setSearchTerm] = useState('')
-
+  const [sharedDate, setSharedDate] = useState(new Date().toISOString().split('T')[0]); // Single date for all employees
+  const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(50); 
 
   useEffect(() => {
     dispatch(allEmployee());
-    dispatch(getUnpaidEmployees())
+    dispatch(getUnpaidEmployees());
   }, [dispatch, checkedIn, checkedOut]);
 
-  const combineDateWithTime = (timeString) => {
-    const today = new Date();
-    const [hours, minutes] = timeString.split(':');
-
-    // Set today's date with the selected time
-    today.setHours(parseInt(hours), parseInt(minutes), 0, 0);
-
-    return today; // Return the complete Date object
+  const getCurrentMonthRange = () => {
+    const now = new Date();
+    const start = new Date(now.getFullYear(), now.getMonth(), 1);
+    const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    return { start: start.toISOString().split('T')[0], end: end.toISOString().split('T')[0] };
   };
 
-  // Handle time change
+  const { start: monthStart, end: monthEnd } = getCurrentMonthRange();
+
+  const combineDateWithTime = (dateString, timeString) => {
+    const date = new Date(dateString);
+    const [hours, minutes] = timeString.split(':');
+    date.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+    return date; 
+  };
+
   const handleTimeChange = (empId, value) => {
     setTime(prev => ({ ...prev, [empId]: value }));
   };
 
-  // Handle check-in
+  // Update shared date
+  const handleSharedDateChange = (value) => {
+    setSharedDate(value);
+  };
+
   const handleCheckIn = (empId) => {
-    let selectedTime = time[empId];
-
-    if (!selectedTime) {
-      // Get the current time in HH:mm format
-      const now = new Date();
-      selectedTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
-    }
-
-    const dateWithTime = combineDateWithTime(selectedTime);
-    
+    const selectedTime = time[empId] || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+    const dateWithTime = combineDateWithTime(sharedDate, selectedTime);
     dispatch(checkIn({ empId, setTime: dateWithTime.toISOString() }));
   };
 
-  // Handle check-out
   const handleCheckOut = (empId) => {
-    let selectedTime = time[empId] ; // Default to "17:00" if no time selected
-    if (!selectedTime) {
-      // Get the current time in HH:mm format
-      const now = new Date();
-      selectedTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
-    }
-    const dateWithTime = combineDateWithTime(selectedTime);
+    const selectedTime = time[empId] || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+    const dateWithTime = combineDateWithTime(sharedDate, selectedTime);
     dispatch(checkOut({ empId, setTime: dateWithTime.toISOString() }));
   };
 
   const combinedEmployees = [
-    ...(allEmployees || []),  // Spread existing allEmployees array
-    ...(unpaidEmployees || [])  // Spread existing unpaidEmployees array
+    ...(allEmployees || []),
+    ...(unpaidEmployees || [])
   ];
 
   const filteredEmployees = combinedEmployees?.filter(employee =>
@@ -79,7 +73,6 @@ const AllEmployee = () => {
     employee.empType.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Pagination Logic
   const indexOfLastEmployee = currentPage * entriesPerPage;
   const indexOfFirstEmployee = indexOfLastEmployee - entriesPerPage;
   const currentEmployees = filteredEmployees?.slice(indexOfFirstEmployee, indexOfLastEmployee);
@@ -87,36 +80,59 @@ const AllEmployee = () => {
   const totalEntries = allEmployees?.length || 0;
   const totalPages = Math.ceil(totalEntries / entriesPerPage);
 
+  const hasCheckedInToday = (emp) => {
+    return emp.attendanceTime?.some(attendance => {
+      const attendanceDate = attendance.date; 
+      const timeLogs = attendance.timeLogs || [];
+      return attendanceDate.split('T')[0] === sharedDate && timeLogs.some(log => log.checkIn);
+    }) || false;
+  };
+
+  const hasCheckedOutToday = (emp) => {
+    return emp.attendanceTime?.some(attendance => {
+      const attendanceDate = attendance.date; 
+      const timeLogs = attendance.timeLogs || [];
+      return attendanceDate.split('T')[0] === sharedDate && timeLogs.some(log => log.checkOut);
+    }) || false;
+  };
+
   return (
     <Box p={8} mt={100} backgroundColor={'white'} borderRadius={'30px'}>
       <Text fontSize="2xl" fontWeight="bold" mb={4}>Employee Table</Text>
 
+      {/* Shared Date Input */}
+      <Flex mb={4}>
+        <Input
+          type="date"
+          value={sharedDate}
+          min={monthStart}
+          max={monthEnd}
+          onChange={(e) => handleSharedDateChange(e.target.value)}
+        />
+      </Flex>
+
       {/* Search Bar  */}
       <Flex justifyContent={'space-between'} alignItems={'center'} id='emp-flex'>
-      <Box mb={4} width={'50%'} id='emp-search'>
-        <Input
-          placeholder="Search.... "
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          mb={4}
-          
-          // width="300px"
-        />
-      </Box>
+        <Box mb={4} width={'50%'} id='emp-search'>
+          <Input
+            placeholder="Search.... "
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            mb={4}
+          />
+        </Box>
 
-      {/* Entries per page selector */}
-      <Box mb={4}>
-        {/* <Text mb={2}>Entries Per Page </Text> */}
-        <Select
-          value={entriesPerPage}
-          onChange={(e) => setEntriesPerPage(Number(e.target.value))}
-          // width="150px"
-        >
-          {[50,75,100].map((option) => (
-            <option key={option} value={option}>{option}</option>
-          ))}
-        </Select>
-      </Box>
+        {/* Entries per page selector */}
+        <Box mb={4}>
+          <Select
+            value={entriesPerPage}
+            onChange={(e) => setEntriesPerPage(Number(e.target.value))}
+          >
+            {[50, 75, 100].map((option) => (
+              <option key={option} value={option}>{option}</option>
+            ))}
+          </Select>
+        </Box>
       </Flex>
 
       <Box overflowX="auto">
@@ -125,6 +141,7 @@ const AllEmployee = () => {
             <Tr>
               <Th>Name</Th>
               <Th>Type</Th>
+              <Th>Date</Th>
               <Th>Time</Th>
               <Th>Action</Th>
             </Tr>
@@ -135,6 +152,13 @@ const AllEmployee = () => {
                 <Td>{employee.name}</Td>
                 <Td>{employee.empType}</Td>
                 <Td>
+                  <Input
+                    type="date"
+                    value={sharedDate} // Using shared date for all employees
+                    isReadOnly // Make it read-only
+                  />
+                </Td>
+                <Td>
                   <input
                     type="time"
                     value={time[employee._id] || ""}
@@ -143,16 +167,11 @@ const AllEmployee = () => {
                   />
                 </Td>
                 <Td>
-                  <Button
-                    colorScheme={employee.check === 0 ? 'green' : 'red'}
-                    onClick={() => employee.check === 0 ? handleCheckIn(employee._id) : handleCheckOut(employee._id)}
-                  >
-                    {employee.check === 0 ? 'In' : 'Out'}
-                  </Button>
+                  <Button colorScheme='green' onClick={() => handleCheckIn(employee._id)} isDisabled={hasCheckedInToday(employee)}>In</Button>
+                  <Button colorScheme='red' onClick={() => handleCheckOut(employee._id)} isDisabled={hasCheckedOutToday(employee)}>Out</Button>
                 </Td>
               </Tr>
             ))}
-           
           </Tbody>
         </Table>
       </Box>

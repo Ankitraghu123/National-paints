@@ -11,6 +11,11 @@ const AllEmployee = async ()=>{
     return response.data
 }
 
+const SingleEmployee = async (id)=>{
+    const response = await axios.get(`${base_url}employee/${id}`)
+    return response.data
+}
+
 const GetEmployeeAttendance = async (data) => {
     const response = await axios.get(`${base_url}employee/${data.id}/${data.month}`)
     return response.data
@@ -41,6 +46,22 @@ const tranferToPaidEmployee = async (id)=> {
     return response.data
 }
 
-const EmployeeService = {AddEmployee,AllEmployee,GetEmployeeAttendance,GetUnApprovedEmployees,GetUnpaidEmployees,approveEmployee,editEmployee,tranferToPaidEmployee}
+
+const putSalary = async (data)=> {
+    const response = await axios.post(`${base_url}employee/putSalary`,data)
+    return response.data
+}
+
+const paySalary = async (data)=> {
+    const response = await axios.post(`${base_url}employee/paySalary`,data)
+    return response.data
+}
+
+const generateSalarySlip = async (data)=> {
+    const response = await axios.post(`${base_url}employee/generate-salary-slip`,data)
+    return response.data
+}
+
+const EmployeeService = {AddEmployee,AllEmployee,GetEmployeeAttendance,GetUnApprovedEmployees,GetUnpaidEmployees,approveEmployee,editEmployee,tranferToPaidEmployee,putSalary,paySalary,SingleEmployee,generateSalarySlip}
 
 export default EmployeeService

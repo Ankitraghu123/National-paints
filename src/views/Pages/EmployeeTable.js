@@ -23,8 +23,8 @@ const EmployeeTable = ({employeeData}) => {
   // Filter employees based on search
   const filteredEmployees = useMemo(() => {
     return employeeData?.filter((employee) =>
-      employee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      employee.salary.toString().includes(searchTerm)
+      employee?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      employee?.salary?.toString().includes(searchTerm)
     );
   }, [searchTerm, employeeData]);
 

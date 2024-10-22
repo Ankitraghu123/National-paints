@@ -41,7 +41,7 @@ const UnPaidEmployees = () => {
   
     return (
       <Box p={5} mt={40} bg="white" borderRadius="30px">
-        <Heading mb={4}>UnPaid Employees</Heading>
+        <Heading mb={4}>Trainees</Heading>
   
         {/* Search Field */}
         <Input

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Box,
   Input,
@@ -17,6 +17,9 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { allEmployee } from "features/Employee/EmployeeSlice";
 import { allHoliday } from "features/Holiday/HolidaySlice";
+import { putSalary } from "features/Employee/EmployeeSlice";
+import { CSVLink } from 'react-csv';
+
 
 const AttendanceTable = () => {
   const dispatch = useDispatch();
@@ -32,11 +35,12 @@ const AttendanceTable = () => {
 
   const allEmployees = useSelector((state) => state.employee?.allEmployees);
   const employees = allEmployees?.filter((employee) => employee.empType === 'labour');
+  const {monthSalary} = useSelector(state => state.employee)
   const today = new Date();
   useEffect(() => {
     dispatch(allEmployee());
     dispatch(allHoliday())
-  }, [dispatch]);
+  }, [dispatch,monthSalary]);
 
   useEffect(() => {
     const days = Array.from(
@@ -147,63 +151,37 @@ const getHolidayNameByDate = (day) => {
     // Format the final result as hours and minutes
     return `${totalHours} : ${totalMinutes} `;
   };
-  
 
-  
 
-  // const calculateTotalHours = (attendanceRecords) => {
-  //   const totalHoursDecimal = daysInMonth.reduce((total, day) => {
-  //     const currentDate = new Date(year, month, day);
+  // const calculateOvertime = (attendanceRecords) => {
+  //   let totalOvertime = 0;
   
-  //     const attendanceRecord = attendanceRecords.find((record) => {
-  //       const recordDate = new Date(record.date);
-  //       return (
-  //         recordDate.getDate() === currentDate.getDate() &&
-  //         recordDate.getFullYear() === currentDate.getFullYear() &&
-  //         recordDate.getMonth() === currentDate.getMonth()
-  //       );
-  //     });
+  //   attendanceRecords.forEach(record => {
+  //     record.timeLogs.forEach(log => {
+  //       const checkIn = new Date(log.checkIn);
+  //       const checkOut = new Date(log.checkOut);
   
-  //     let hoursForDay = attendanceRecord ? attendanceRecord.totalHours : 0;
-  //     let shouldDeductLunch = false;
+  //       // Ensure both checkIn and checkOut are valid
+  //       if (checkIn && checkOut) {
+  //         // Calculate total worked hours minus lunch (30 minutes)
+  //         let workedHours = (checkOut - checkIn) / (60 * 60 * 1000); // Convert to hours
   
-  //     if (attendanceRecord && attendanceRecord.timeLogs) {
-  //       for (let i = 0; i < attendanceRecord.timeLogs.length; i++) {
-  //         const checkInTime = new Date(attendanceRecord.timeLogs[i].checkIn);
-  //         const checkOutTime = new Date(attendanceRecord.timeLogs[i].checkOut);
+  //         // Deduct 0.5 hours for lunch if applicable
+  //         if (checkIn.getHours() < 13 && checkOut.getHours() > 14) {
+  //           workedHours -= 0.5; // Deduct 30 minutes (0.5 hours)
+  //         }
   
-  //         if (checkInTime.getHours() < 13 && checkOutTime.getHours() > 14) {
-  //           shouldDeductLunch = true;
-  //           break; // No need to check further if lunch deduction already applies
+  //         // Check if worked hours exceed 8.5 hours (after lunch deduction)
+  //         if (workedHours > 8.5) {
+  //           totalOvertime += workedHours - 8; // Add overtime beyond 8.5 hours
   //         }
   //       }
-  //     }
+  //     });
+  //   });
   
-  //     if (shouldDeductLunch) {
-  //       hoursForDay -= 0.5; 
-  //     }
-  
-  //     if ((!attendanceRecord && isSunday(day)) || (!attendanceRecord && isHoliday(day))) {
-  //       return total + 8; 
-  //     }
-      
-  //     return total + hoursForDay;
-  //   }, 0);
-
-  //   return formatHours(totalHoursDecimal);
+  //   return totalOvertime; // Return in hours
   // };
   
-
-
-
-  const calculateOvertime = (checkIn, checkOut) => {
-    const checkInTime = new Date(checkIn);
-    const checkOutTime = new Date(checkOut);
-    const diffInHours =
-      (checkOutTime - checkInTime) / (1000 * 60 * 60); 
-    return diffInHours > 8 ? diffInHours - 8 : 0; 
-  };
-
   const calculateTotalSalary = (monthlySalary, hours,daysInMonth) => {
     const salaryPerMinute = monthlySalary / (daysInMonth * 8 * 60); 
   
@@ -278,7 +256,35 @@ const getHolidayNameByDate = (day) => {
   };  
   };
   
+  const approveSalaryHandler = (emp,len) => {
+    const totalSalary = calculateTotalSalary(
+      emp.salary,
+      calculateTotalHours(emp.attendanceTime),
+      len
+    )
+
+    const lastDay = new Date(year, month+1, 0)
+
+    dispatch(putSalary({month:lastDay,amount:totalSalary,empId:emp._id}))
+
+  }
+
+
+  const isSalaryApproved = (emp) => {
+    if (!emp.salaryArray || emp.salaryArray.length === 0) {
+      return false;
+    }
   
+    const salaryFound = emp.salaryArray.some(salaryRecord => {
+      // console.log(salaryRecord);
+  
+      const recordMonth = new Date(salaryRecord.month).getMonth() + 1;
+      const recordYear = new Date(salaryRecord.month).getFullYear();
+      return (recordMonth === month+1) && (recordYear === year);
+    });
+  
+    return salaryFound;
+  };
   
 
   const totalPages = Math.ceil(employees?.length / entriesPerPage);
@@ -290,6 +296,43 @@ const getHolidayNameByDate = (day) => {
       (currentPage - 1) * entriesPerPage,
       currentPage * entriesPerPage
     );
+
+    const csvData = useMemo(() => {
+      return currentEmployees?.map((employee) => {
+        const dailyHours = daysInMonth?.map((day) => {
+          const attendanceRecord = employee.attendanceTime?.find((record) => {
+            const recordDate = new Date(record.date).getDate();
+            return (
+              recordDate === day &&
+              new Date(record.date).getFullYear() === year &&
+              new Date(record.date).getMonth() === month
+            );
+          });
+    
+          // Use getDailyHours to get the formatted hours
+          const { formattedHours } = getDailyHours(attendanceRecord, day);
+    
+          // If there's no attendance record, check if it's a holiday or Sunday
+          if (!attendanceRecord) {
+            return isHoliday(day) ? 8 : isSunday(day) ? 8 : 0;
+          }
+    
+          return formattedHours || 0;
+        });
+    
+        // Calculate total hours based on daily hours array
+        const totalHours = calculateTotalHours(employee.attendanceTime);
+    
+        return {
+          name: employee.name,
+          totalHours,
+          totalSalary: calculateTotalSalary(employee.salary, totalHours, daysInMonth.length),
+          days: dailyHours,
+        };
+      });
+    }, [currentEmployees, daysInMonth, year, month]);
+    
+    
 
   return (
     <Box p={8} mt={100} backgroundColor={"white"} borderRadius={"30px"} >
@@ -353,6 +396,23 @@ const getHolidayNameByDate = (day) => {
         </Select>
       </Box>
 
+      <CSVLink
+        data={csvData?.map(employee => ({
+          name: employee.name,
+          ...employee.days.reduce((acc, hours, index) => {
+            acc[`Day ${index + 1}`] = hours;
+            return acc;
+          }, {}),
+          totalHours: employee.totalHours,
+          totalSalary: employee.totalSalary,
+        }))}
+        filename={`labourAttendance.csv`}
+        className="btn btn-primary"
+        target="_blank"
+      >
+        Export CSV
+      </CSVLink>
+
       {/* Attendance Table */}
       <TableContainer>
         <Table>
@@ -367,8 +427,10 @@ const getHolidayNameByDate = (day) => {
                   {isSunday(day) ? day + '(Sun)' :isHoliday(day) ? day +`(${ getHolidayNameByDate(day)})` : day}
                 </Th>
               ))}
+              {/* <Th>Overtime Hours</Th> */}
               <Th>Total Hours</Th>
               <Th>Total Salary</Th>
+              <Th>Approve</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -400,12 +462,14 @@ const getHolidayNameByDate = (day) => {
     </Td>
   );
 })}
+                {/* <Td>{calculateOvertime(employee.attendanceTime)}</Td> */}
                 <Td>{calculateTotalHours(employee.attendanceTime)}</Td>
                 <Td> {calculateTotalSalary(
                     employee.salary,
                     calculateTotalHours(employee.attendanceTime),
                     daysInMonth.length 
                   )}</Td>
+                  <Td className={isSalaryApproved(employee) ? 'green' : 'red'} onClick={() => !isSalaryApproved(employee) ? approveSalaryHandler(employee,daysInMonth.length) : ''}> {isSalaryApproved(employee) ? "Already Approved" : "Approve Salary"}</Td>
 
               </Tr>
             ))}

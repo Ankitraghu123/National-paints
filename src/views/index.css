@@ -12,6 +12,22 @@ table > tbody >tr > td{
     text-align: center !important;
 }
 
+.red{
+  background-color: orangered;
+  color: white;
+  font-weight: 600;
+}
+
+.green{
+  background-color: rgb(75, 161, 75);
+  color: white;
+  font-weight: 600;
+}
+
+#blue{
+  color: #3182CE !important;
+}
+
 .logo {
     font-family: 'Arial', sans-serif; /* A clean font for the main text */
     font-weight: bold;
