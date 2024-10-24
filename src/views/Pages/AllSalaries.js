@@ -44,7 +44,7 @@ const AllSalaries = () => {
       const salaryDate = new Date(salary.month);
       return (
         salaryDate.getMonth() === parseInt(month) &&
-        salaryDate.getFullYear() === parseInt(year)
+        salaryDate.getFullYear() === parseInt(year) && salary.isSalaryApproved 
       );
     })
   );
@@ -139,6 +139,9 @@ const AllSalaries = () => {
             <Tr>
               <Th>Employee Name</Th>
               <Th>Employee Type</Th>
+              <Th>Base Salary</Th>
+              <Th>Loan deduction</Th>
+              <Th>Advance Taken</Th>
               <Th>Total Salary</Th>
               <Th>Pay</Th>
               <Th>Generate Salary Slip</Th>
@@ -159,6 +162,13 @@ const AllSalaries = () => {
               <Td>{emp.name}</Td>
               <Td>{emp.empType}</Td>
               <Td>{salaryEntry?.amount || "N/A"}</Td>
+              <Td>{salaryEntry?.loanAmount }</Td>
+              <Td>{salaryEntry?.advance ? 500 : 0 }</Td>
+              <Td>
+  {salaryEntry?.advance 
+    ? (salaryEntry.amount - 500 - salaryEntry.loanAmount).toFixed(2) 
+    : (salaryEntry.amount - salaryEntry.loanAmount).toFixed(2)}
+</Td>
               <Td>
                 {salaryEntry?.isPaid ? (
                   <Text color="green.500">Paid</Text> // You can customize this message/style

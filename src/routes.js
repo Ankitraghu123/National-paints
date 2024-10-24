@@ -42,6 +42,8 @@ import MonthWiseUnpaidAttendance from 'views/Pages/MonthWiseUnpaidAttendance';
 import PaySalary from 'views/Pages/PaySalary';
 import AllSalaries from 'views/Pages/AllSalaries';
 import SalarySlip from 'views/Pages/SalarySlip';
+import PayAdvance from 'views/Pages/PayAdvance';
+import Loan from 'views/Pages/Loan';
 
 var dashRoutes = [
   {
@@ -314,6 +316,25 @@ var dashRoutes = [
     component: SalarySlip,
     layout: "/admin",
   },
+
+  {
+    path: "/pay-advance",
+    name: "Pay Advance",
+    rtlName: "لوحة القيادة",
+    icon: <HomeIcon color='inherit' />,
+    component: PayAdvance,
+    layout: "/admin",
+  },
+
+  {
+    path: "/give-loan",
+    name: "Give Loan",
+    rtlName: "لوحة القيادة",
+    icon: <HomeIcon color='inherit' />,
+    component: Loan,
+    layout: "/admin",
+  },
+
 
 ];
 export default dashRoutes;

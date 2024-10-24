@@ -56,6 +56,16 @@ const routes = [
       icon: "👤",
       path: "/admin/all-salaries",
     },
+    {
+      name: "Pay Advance",
+      icon: "👤",
+      path: "/admin/pay-advance",
+    },
+    {
+      name: "Give Loan",
+      icon: "👤",
+      path: "/admin/give-loan",
+    },
   ]:[]),
   ...(isHR() || isReceptionist() || isAdmin() ? 
   [

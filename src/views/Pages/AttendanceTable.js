@@ -19,6 +19,7 @@ import { allEmployee } from "features/Employee/EmployeeSlice";
 import { allHoliday } from "features/Holiday/HolidaySlice";
 import { putSalary } from "features/Employee/EmployeeSlice";
 import { CSVLink } from 'react-csv';
+import { FaDownload } from "react-icons/fa";
 
 
 const AttendanceTable = () => {
@@ -153,34 +154,55 @@ const getHolidayNameByDate = (day) => {
   };
 
 
-  // const calculateOvertime = (attendanceRecords) => {
-  //   let totalOvertime = 0;
+//   const calculateOvertime = (attendanceRecords) => {
+//     let totalOvertimeMinutes = 0;
+
+//     attendanceRecords?.forEach(record => {
+//         // Only consider the first time log
+//         if (record.timeLogs && record.timeLogs.length > 0) {
+//             const log = record.timeLogs[0]; // Get the first time log
+//             const checkIn = new Date(log.checkIn);
+//             const checkOut = new Date(log.checkOut);
+
+//             // Ensure both checkIn and checkOut are valid
+//             if (checkIn && checkOut) {
+//                 // Calculate total worked hours minus lunch (30 minutes)
+//                 let workedHours = (checkOut - checkIn) / (60 * 60 * 1000); // Convert to hours
+
+//                 // Deduct 0.5 hours for lunch if applicable
+//                 if (checkIn.getHours() < 13 && checkOut.getHours() > 14) {
+//                     workedHours -= 0.5; // Deduct 30 minutes (0.5 hours)
+//                 }
+
+//                 // Check for the time to be excluded between 6:30 PM and 7 PM
+//                 const sixThirtyPM = new Date(checkOut);
+//                 sixThirtyPM.setHours(18, 30, 0, 0); // 6:30 PM
+
+//                 const sevenPM = new Date(checkOut);
+//                 sevenPM.setHours(19, 0, 0, 0); // 7:00 PM
+
+//                 // If check-out is between 6:30 PM and 7 PM, adjust worked hours
+//                 if (checkOut >= sixThirtyPM && checkOut < sevenPM) {
+//                     workedHours -= (checkOut - sixThirtyPM) / (60 * 60 * 1000); // Remove time between 6:30 PM and check-out
+//                 }
+
+//                 // Check if worked hours exceed 8.5 hours (after lunch deduction)
+//                 if (workedHours > 8.5) {
+//                     totalOvertimeMinutes += (workedHours - 8) * 60; // Add overtime in minutes
+//                 }
+//             }
+//         }
+//     });
+
+//     // Convert total overtime minutes to hours and minutes
+//     const hours = Math.floor(totalOvertimeMinutes / 60);
+//     const minutes = totalOvertimeMinutes % 60;
+
+//     return `${hours} : ${minutes.toFixed(0)}`; // Return in "X hours and Y minutes" format
+// };
+
   
-  //   attendanceRecords.forEach(record => {
-  //     record.timeLogs.forEach(log => {
-  //       const checkIn = new Date(log.checkIn);
-  //       const checkOut = new Date(log.checkOut);
   
-  //       // Ensure both checkIn and checkOut are valid
-  //       if (checkIn && checkOut) {
-  //         // Calculate total worked hours minus lunch (30 minutes)
-  //         let workedHours = (checkOut - checkIn) / (60 * 60 * 1000); // Convert to hours
-  
-  //         // Deduct 0.5 hours for lunch if applicable
-  //         if (checkIn.getHours() < 13 && checkOut.getHours() > 14) {
-  //           workedHours -= 0.5; // Deduct 30 minutes (0.5 hours)
-  //         }
-  
-  //         // Check if worked hours exceed 8.5 hours (after lunch deduction)
-  //         if (workedHours > 8.5) {
-  //           totalOvertime += workedHours - 8; // Add overtime beyond 8.5 hours
-  //         }
-  //       }
-  //     });
-  //   });
-  
-  //   return totalOvertime; // Return in hours
-  // };
   
   const calculateTotalSalary = (monthlySalary, hours,daysInMonth) => {
     const salaryPerMinute = monthlySalary / (daysInMonth * 8 * 60); 
@@ -277,7 +299,9 @@ const getHolidayNameByDate = (day) => {
   
     const salaryFound = emp.salaryArray.some(salaryRecord => {
       // console.log(salaryRecord);
-  
+      console.log( new Date(salaryRecord.month).getMonth())
+      console.log(month)
+      
       const recordMonth = new Date(salaryRecord.month).getMonth() + 1;
       const recordYear = new Date(salaryRecord.month).getFullYear();
       return (recordMonth === month+1) && (recordYear === year);
@@ -396,6 +420,7 @@ const getHolidayNameByDate = (day) => {
         </Select>
       </Box>
 
+      <Button colorScheme="green" display={'flex'} gap={3} mb={4}>
       <CSVLink
         data={csvData?.map(employee => ({
           name: employee.name,
@@ -410,9 +435,10 @@ const getHolidayNameByDate = (day) => {
         className="btn btn-primary"
         target="_blank"
       >
-        Export CSV
+        Export to Exel
       </CSVLink>
-
+      <FaDownload />
+      </Button>
       {/* Attendance Table */}
       <TableContainer>
         <Table>
@@ -430,7 +456,7 @@ const getHolidayNameByDate = (day) => {
               {/* <Th>Overtime Hours</Th> */}
               <Th>Total Hours</Th>
               <Th>Total Salary</Th>
-              <Th>Approve</Th>
+              <Th>Action</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -469,7 +495,7 @@ const getHolidayNameByDate = (day) => {
                     calculateTotalHours(employee.attendanceTime),
                     daysInMonth.length 
                   )}</Td>
-                  <Td className={isSalaryApproved(employee) ? 'green' : 'red'} onClick={() => !isSalaryApproved(employee) ? approveSalaryHandler(employee,daysInMonth.length) : ''}> {isSalaryApproved(employee) ? "Already Approved" : "Approve Salary"}</Td>
+                  <Td> <Button colorScheme={isSalaryApproved(employee) ? 'green' : 'red'} onClick={() => !isSalaryApproved(employee) ? approveSalaryHandler(employee,daysInMonth.length) : ''}>{isSalaryApproved(employee) ? "Approved" : "Approve"}</Button> </Td>
 
               </Tr>
             ))}

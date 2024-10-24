@@ -59,6 +59,13 @@ export const todaysAvailable = createAsyncThunk('attendance/todays-avail',async(
     }
 })
 
+export const editAttendance = createAsyncThunk('attendance/edit-attendnace-time',async(data,thunkApi)=>{
+    try{
+        return await AttendanceService.EditAttendance(data)
+    }catch(err){
+        return thunkApi.rejectWithValue(err)
+    }
+})
 
 const initialState = {
     attendance:'',
@@ -145,6 +152,20 @@ export const AttendanceSlice = createSlice({
             state.isError=true
             state.isSuccess = false
             state.todaysAvailableEmployee = null
+        })
+        .addCase(editAttendance.pending,(state)=>{
+            state.isLoading = true
+        })
+        .addCase(editAttendance.fulfilled,(state,action)=>{
+            state.isLoading = false
+            state.isSuccess = true
+            state.editedAttendnaceTime = action.payload
+        })
+        .addCase(editAttendance.rejected,(state,action)=>{
+            state.isLoading = false
+            state.isError=true
+            state.isSuccess = false
+            state.editedAttendnaceTime = null
         })
     }
 })

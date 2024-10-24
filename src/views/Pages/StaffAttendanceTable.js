@@ -20,6 +20,7 @@ import { allHoliday } from "features/Holiday/HolidaySlice";
 import { checkIn } from "features/Attendance/AttendanceSlice";
 import { putSalary } from "features/Employee/EmployeeSlice";
 import { CSVLink } from 'react-csv';
+import { FaDownload } from "react-icons/fa";
 
 
 const StaffAttendanceTable = () => {
@@ -253,6 +254,82 @@ const getHolidayNameByDate = (day) => {
       return salaryFound;
     };
 
+    const calculateTotalLeaves = (attendanceRecords) => {
+      let totalLeaves = 0;
+    
+      // Loop through each day of the month
+      daysInMonth.forEach((day) => {
+        const currentDate = new Date(year, month, day);
+        const attendanceRecord = attendanceRecords.find((record) => {
+          const recordDate = new Date(record.date);
+          return (
+            recordDate.getDate() === currentDate.getDate() &&
+            recordDate.getFullYear() === currentDate.getFullYear() &&
+            recordDate.getMonth() === currentDate.getMonth()
+          );
+        });
+    
+        // Check if the day is a Sunday or a holiday
+        const isCurrentDaySunday = isSunday(day);
+        const isCurrentDayHoliday = isHoliday(day);
+    
+        // Count as leave if there's no attendance record and it's not a Sunday or holiday
+        if (!attendanceRecord && !isCurrentDaySunday && !isCurrentDayHoliday) {
+          totalLeaves++;
+        }
+      });
+    
+      return totalLeaves;
+    };
+    
+
+    const calculateTotalHalfDays = (attendanceRecords) => {
+      let totalHalfDays = 0; // Total half days
+      let consecutiveLateDays = 0; // Track consecutive late check-ins
+    
+      // Loop through each day in the month
+      daysInMonth.forEach((day) => {
+        const currentDate = new Date(year, month, day);
+        const attendanceRecord = attendanceRecords.find((record) => {
+          const recordDate = new Date(record.date);
+          return (
+            recordDate.getDate() === currentDate.getDate() &&
+            recordDate.getFullYear() === currentDate.getFullYear() &&
+            recordDate.getMonth() === currentDate.getMonth()
+          );
+        });
+    
+        if (attendanceRecord && attendanceRecord.timeLogs.length > 0) {
+          const checkInTime = new Date(attendanceRecord.timeLogs[0].checkIn);
+          const checkOutTime = new Date(attendanceRecord.timeLogs[0].checkOut);
+          const tenAM = new Date(checkInTime);
+          tenAM.setHours(10, 0, 0, 0);
+          const threePM = new Date(checkOutTime);
+          threePM.setHours(15, 0, 0, 0); // Set to 3 PM
+    
+          // Check if employee checked in late (after 10 AM)
+          const isLate = checkInTime > tenAM;
+    
+          if (isLate) {
+            consecutiveLateDays++; // Increment late count if late
+          } else {
+            consecutiveLateDays = 0; // Reset if on time
+          }
+    
+          // If it's the third consecutive late day, count as half day
+          if (consecutiveLateDays >= 3) {
+            totalHalfDays++;
+          } else if (checkOutTime < threePM) {
+            // Check if check-out is before 3 PM
+            totalHalfDays++; // Count as half day based on check-out time
+          }
+        }
+      });
+    
+      return totalHalfDays; // Return the total half days
+    };
+    
+
 
     const csvData = useMemo(() => {
       const data = employees?.map((employee) => {
@@ -361,7 +438,8 @@ const getHolidayNameByDate = (day) => {
         </Select>
       </Box>
 
-      <CSVLink
+          <Button colorScheme="green" display={'flex'} gap={3} mb={4}>
+          <CSVLink
         data={csvData?.map(employee => ({
           name: employee.name,
           ...Object.keys(employee).reduce((acc, key) => {
@@ -377,8 +455,10 @@ const getHolidayNameByDate = (day) => {
         className="btn btn-primary"
         target="_blank"
       >
-        Export CSV
+        Export to Exel
       </CSVLink>
+      <FaDownload />
+          </Button>
 
       {/* Attendance Table */}
       <TableContainer>
@@ -394,9 +474,11 @@ const getHolidayNameByDate = (day) => {
                   {isSunday(day) ? day + '(Sun)' :isHoliday(day) ? day +`(${ getHolidayNameByDate(day)})` : day}
                 </Th>
               ))}
-              <Th>Total Days</Th>
+              <Th>Leaves</Th>
+              <Th>Total Half Days</Th>
+              <Th>Present Days</Th>
               <Th>Total Salary</Th>
-              <Th>Approve</Th>
+              <Th>Action</Th>
 
             </Tr>
           </Thead>
@@ -427,11 +509,13 @@ const getHolidayNameByDate = (day) => {
     </Td>
   );
 })}
+                <Td>{calculateTotalLeaves(employee?.attendanceTime)}</Td>
+                <Td>{calculateTotalHalfDays(employee?.attendanceTime)}</Td>
                 <Td>{calculateTotalDays(employee?.attendanceTime)}</Td>
                 <Td> 
                     {calculateTotalSalary(employee.salary,employee?.attendanceTime)}
                   </Td>
-                  <Td className={isSalaryApproved(employee) ? 'green' : 'red'} onClick={() => !isSalaryApproved(employee) ? approveSalaryHandler(employee,daysInMonth.length) : ''}> {isSalaryApproved(employee) ? "Already Approved" : "Approve Salary"}</Td>
+                  <Td> <Button colorScheme={isSalaryApproved(employee) ? 'green' : 'red'} onClick={() => !isSalaryApproved(employee) ? approveSalaryHandler(employee,daysInMonth.length) : ''}>{isSalaryApproved(employee) ? "Approved" : "Approve"}</Button> </Td>
 
               </Tr>
             ))}

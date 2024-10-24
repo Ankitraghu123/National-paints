@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Box,
   Input,
@@ -14,10 +14,22 @@ import {
   Button,
   HStack,
   Flex,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  ModalCloseButton,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
 import { allEmployee } from "features/Employee/EmployeeSlice";
 import { allHoliday } from "features/Holiday/HolidaySlice";
+import { CSVLink } from 'react-csv';
+import { editAttendance } from "features/Attendance/AttendanceSlice";
+import { checkOut } from "features/Attendance/AttendanceSlice";
+import { FaDownload, FaEdit } from "react-icons/fa";
 
 const DateWiseAttendanceTable = () => {
   const dispatch = useDispatch();
@@ -28,6 +40,12 @@ const DateWiseAttendanceTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(50);
   const [searchTerm, setSearchTerm] = useState("");
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [selectedAttendanceRecord, setSelectedAttendanceRecord] = useState(null);
+  const [newCheckInTime, setNewCheckInTime] = useState("");
+  const [newCheckOutTime, setNewCheckOutTime] = useState("");
 
   const allEmployees = useSelector((state) => state.employee?.allEmployees);
 
@@ -162,6 +180,24 @@ const DateWiseAttendanceTable = () => {
       currentPage * entriesPerPage
     );
 
+    const csvData = useMemo(() => {
+     return []
+    }, [currentEmployees, daysInMonth, year, month]);
+
+
+    const handleEditTime = (employee, attendanceRecord) => {
+      setSelectedEmployee(employee);
+      setSelectedAttendanceRecord(attendanceRecord);
+      setNewCheckInTime(attendanceRecord?.checkIn || "");
+      setNewCheckOutTime(attendanceRecord?.checkOut || "");
+      onOpen();
+    };
+
+    const saveNewTimes = () => {
+      dispatch(editAttendance({empId:selectedEmployee._id,date:selectedDate,checkIn:newCheckInTime,checkOut:newCheckOutTime}))
+      onClose();
+    };
+
   return (
     <Box p={8} mt={100} backgroundColor={"white"} borderRadius={"30px"}>
       {/* Year and Month Selection */}
@@ -205,6 +241,17 @@ const DateWiseAttendanceTable = () => {
         </Select>
       </Box>
 
+     <Button colorScheme="green" display={'flex'} gap={3} mb={4}>
+     <CSVLink
+        data={[]}
+        filename={`labourAttendance.csv`}
+        className="btn btn-primary"
+        target="_blank"
+      >
+        Export to Exel
+      </CSVLink>
+      <FaDownload />
+     </Button>
       {/* Attendance Table */}
       <TableContainer>
         <Table>
@@ -215,6 +262,7 @@ const DateWiseAttendanceTable = () => {
               <Th>Out</Th>
               <Th>Lunch Deducted</Th>
               <Th>{new Date(selectedDate).getDate()} (Today's Working Hours) {new Date(selectedDate).getDay()  == 0 ? "Sunday" : ''}</Th>
+              <Th>Action</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -262,12 +310,47 @@ const DateWiseAttendanceTable = () => {
         </Td>
         <Td>{formattedHours}
         </Td>
+        <Td onClick={() => handleEditTime(employee, attendanceRecord)}>
+        <FaEdit />
+                    </Td>
       </Tr>
     );
   })}
 </Tbody>
         </Table>
       </TableContainer>
+
+
+
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Edit In/Out Times</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text mb={2}>In Time:</Text>
+            <Input
+              type="time"
+              value={newCheckInTime}
+              onChange={(e) => setNewCheckInTime(e.target.value)}
+            />
+
+            <Text mb={2} mt={4}>Out Time:</Text>
+            <Input
+              type="time"
+              value={newCheckOutTime}
+              onChange={(e) => setNewCheckOutTime(e.target.value)}
+            />
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={saveNewTimes}>
+              Save
+            </Button>
+            <Button onClick={onClose}>Cancel</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 };

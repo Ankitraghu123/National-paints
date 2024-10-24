@@ -27,10 +27,15 @@ const TodaysAvailable = async ()=>{
     return response.data
 }
 
+const EditAttendance = async (data)=>{
+    const response = await axios.put(`${base_url}attendance/edit-attendance-time`,data)
+    return response.data
+}
 
 
 
 
-const AttendanceService = {CheckIn,CheckOut,TodaysPresent,TodaysAbsent,TodaysAvailable}
+
+const AttendanceService = {CheckIn,CheckOut,TodaysPresent,TodaysAbsent,TodaysAvailable,EditAttendance}
 
 export default AttendanceService

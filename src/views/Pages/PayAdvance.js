@@ -16,11 +16,15 @@ import {
 } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
 import { allEmployee } from "features/Employee/EmployeeSlice";
+import { allHoliday } from "features/Holiday/HolidaySlice";
+import { putSalary } from "features/Employee/EmployeeSlice";
 import { paySalary } from "features/Employee/EmployeeSlice";
+import { Link } from "react-router-dom";
+import { payAdvance } from "features/Employee/EmployeeSlice";
 
-const PaySalary = () => {
+const PayAdvance = () => {
   const dispatch = useDispatch();
-
+ 
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth());
   
@@ -30,42 +34,44 @@ const PaySalary = () => {
 
   const employees = useSelector((state) => state.employee?.allEmployees);
   // const employees = allEmployees?.filter((employee) => employee.empType === 'labour');
-  const { salaryPaid } = useSelector(state => state.employee);
-
+  const {advancePaid} = useSelector(state => state.employee)
+  const today = new Date();
   useEffect(() => {
     dispatch(allEmployee());
-  }, [dispatch, salaryPaid]);
+  }, [dispatch,advancePaid]);
 
-  // Filter employees whose salary for the selected month/year has isPaid set to false
-  const selectedEmployees = employees?.filter((employee) =>
-    employee.salaryArray.some((salary) => {
-      const salaryDate = new Date(salary.month);
-      return (
-        salaryDate.getMonth() === parseInt(month) &&
-        salaryDate.getFullYear() === parseInt(year) &&
-        !salary.isPaid && salary.isSalaryApproved  // Only select employees where isPaid is false
-      );
-    })
-  );
+//   const selectedEmployees = employees?.filter((employee) =>
+//     employee.salaryArray.some((salary) => {
+//       const salaryDate = new Date(salary.month);
+//       return (
+//         salaryDate.getMonth() === parseInt(month) &&
+//         salaryDate.getFullYear() === parseInt(year)
+//       );
+//     })
+//   );
+
+  
 
   const totalPages = Math.ceil(employees?.length / entriesPerPage);
-  const currentEmployees = selectedEmployees
+  const currentEmployees = employees
     ?.filter((employee) =>
-      employee.name.toLowerCase().includes(searchTerm.toLowerCase())||
-    employee.empType.toLowerCase().includes(searchTerm.toLowerCase())
-
+      employee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    employee.empType.toLowerCase().includes(searchTerm.toLowerCase()) 
     )
     .slice(
       (currentPage - 1) * entriesPerPage,
       currentPage * entriesPerPage
     );
 
-  const handlePaySalary = async (empId, month) => {
-    dispatch(paySalary({ empId, month }));
-  };
+    const handlePayAdvance = async (empId, month) => {
+        
+          dispatch(payAdvance({empId,month}))
+         
+        
+      };
 
   return (
-    <Box p={8} mt={100} backgroundColor={"white"} borderRadius={"30px"}>
+    <Box p={8} mt={100} backgroundColor={"white"} borderRadius={"30px"} >
       {/* Year and Month Selection */}
       <Box display="flex" alignItems="center" gap={4} mb={4} id="table-col">
         <Box>
@@ -96,15 +102,20 @@ const PaySalary = () => {
           </Select>
         </Box>
         <Box width={'40%'} id="full-width">
-          <Text mb={2}>Search by Employee Name:</Text>
-          <Input
-            placeholder="Search employee..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </Box>
+        <Text mb={2}>Search by Employee Name:</Text>
+        <Input
+          placeholder="Search employee..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
       </Box>
 
+      </Box>
+
+      
+
+      {/* Search Bar */}
+      
       {/* Entries per page selection */}
       <Box mb={4}>
         <Text mb={2}>Entries per page:</Text>
@@ -113,7 +124,7 @@ const PaySalary = () => {
           onChange={(e) => setEntriesPerPage(Number(e.target.value))}
           width="150px"
         >
-          {[50, 75, 100].map((option) => (
+          {[50,75,100].map((option) => (
             <option key={option} value={option}>
               {option}
             </option>
@@ -128,46 +139,41 @@ const PaySalary = () => {
             <Tr>
               <Th>Employee Name</Th>
               <Th>Employee Type</Th>
-              <Th>Base Salary</Th>
-              <Th>Loan deduction</Th>
-              <Th>Advance Taken</Th>
-              <Th>Total Salary</Th>
+              {/* <Th>Total Salary</Th> */}
               <Th>Pay</Th>
             </Tr>
           </Thead>
-          <Tbody>
-            {currentEmployees?.map((emp) => {
-              // Find the salary entry for the current month/year
-              const salaryEntry = emp.salaryArray.find((salary) => {
-                const salaryDate = new Date(salary.month);
-                return (
-                  salaryDate.getMonth() === month &&
-                  salaryDate.getFullYear() === year &&
-                  !salary.isPaid // Only show salaries where isPaid is false
-                );
-              });
-
-              return (
-                <Tr key={emp._id}>
-                  <Td>{emp.name}</Td>
-                  <Td>{emp.empType}</Td>
-                  <Td>{salaryEntry?.amount || "N/A"}</Td>
-              <Td>{salaryEntry?.loanAmount }</Td>
-              <Td>{salaryEntry?.advance ? 500 : 0 }</Td>
+         <Tbody>
+                    {currentEmployees?.map((emp) => {
+        // Find the salary entry for the current month/year
+        const salaryEntry = emp.salaryArray.find((salary) => {
+          const salaryDate = new Date(salary.month);
+          return (
+            salaryDate.getMonth() === month  &&
+            salaryDate.getFullYear() === year
+          );
+        });
+        return (
+            <Tr key={emp._id}> {/* Assuming emp._id is unique */}
+              <Td>{emp.name}</Td>
+              <Td>{emp.empType}</Td>
+              {/* <Td>{salaryEntry?.amount || "N/A"}</Td> */}
               <Td>
-  {salaryEntry?.advance 
-    ? (salaryEntry.amount - 500 - salaryEntry.loanAmount).toFixed(2) 
-    : (salaryEntry.amount - salaryEntry.loanAmount).toFixed(2)}
-</Td>
-                  <Td>
-                    <Button colorScheme="teal" onClick={() => handlePaySalary(emp._id, salaryEntry?.month)}>
-                      Pay
-                    </Button>
-                  </Td>
-                </Tr>
-              );
-            })}
-          </Tbody>
+                {salaryEntry?.advance ? (
+                  <Text color="green.500">Paid</Text> // You can customize this message/style
+                ) : (
+                  <Button colorScheme="teal" onClick={() => handlePayAdvance(emp._id, new Date(year, month +1,0))}>
+                    Pay Advance
+                  </Button>
+                )}
+              </Td>
+              
+            </Tr>
+          );
+        })}
+                </Tbody>
+           
+
         </Table>
       </TableContainer>
 
@@ -195,4 +201,9 @@ const PaySalary = () => {
   );
 };
 
-export default PaySalary;
+export default PayAdvance;
+
+
+
+
+

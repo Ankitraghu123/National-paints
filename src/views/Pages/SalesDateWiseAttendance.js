@@ -14,10 +14,20 @@ import {
   Button,
   HStack,
   Flex,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  ModalCloseButton,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
 import { allEmployee } from "features/Employee/EmployeeSlice";
 import { allHoliday } from "features/Holiday/HolidaySlice";
+import { editAttendance } from "features/Attendance/AttendanceSlice";
+import { FaDownload, FaEdit } from "react-icons/fa";
 
 const SalesDateWiseAttendanceTable = () => {
   const dispatch = useDispatch();
@@ -29,6 +39,14 @@ const SalesDateWiseAttendanceTable = () => {
   const [entriesPerPage, setEntriesPerPage] = useState(50);
   const [searchTerm, setSearchTerm] = useState("");
 
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [selectedAttendanceRecord, setSelectedAttendanceRecord] = useState(null);
+  const [newCheckInTime, setNewCheckInTime] = useState("");
+  const [newCheckOutTime, setNewCheckOutTime] = useState("");
+  const editedAttendanceTime = useSelector(state=> state.attendance.editedAttendanceTime?.attendance)
+
   const allEmployees = useSelector((state) => state.employee?.allEmployees);
 
   const employees = allEmployees?.filter((employee) => employee.empType === 'sales');
@@ -36,7 +54,7 @@ const SalesDateWiseAttendanceTable = () => {
   useEffect(() => {
     dispatch(allEmployee());
     dispatch(allHoliday());
-  }, [dispatch]);
+  }, [dispatch,editedAttendanceTime]);
 
   
 
@@ -91,6 +109,62 @@ const SalesDateWiseAttendanceTable = () => {
       currentPage * entriesPerPage
     );
 
+    const handleEditTime = (employee, attendanceRecord) => {
+      setSelectedEmployee(employee);
+      setSelectedAttendanceRecord(attendanceRecord);
+      setNewCheckInTime(attendanceRecord?.checkIn || "");
+      setNewCheckOutTime(attendanceRecord?.checkOut || "");
+      onOpen();
+    };
+
+    const saveNewTimes = () => {
+      dispatch(editAttendance({empId:selectedEmployee._id,date:selectedDate,checkIn:newCheckInTime,checkOut:newCheckOutTime}))
+      onClose();
+    };
+
+    const exportToCSV = () => {
+      const headers = ["Employee Name", "Check In", "Check Out", "Attendance"];
+      const csvRows = [];
+  
+      // Add headers to csvRows
+      csvRows.push(headers.join(","));
+  
+      currentEmployees.forEach((employee) => {
+        const attendanceRecord = employee.attendanceTime.find((record) => {
+          const recordDate = new Date(record.date);
+          return (
+            recordDate.getDate() === new Date(selectedDate).getDate() &&
+            recordDate.getFullYear() === new Date(selectedDate).getFullYear() &&
+            recordDate.getMonth() === new Date(selectedDate).getMonth()
+          );
+        });
+  
+        const checkInTime = attendanceRecord && attendanceRecord.timeLogs.length > 0
+          ? attendanceRecord.timeLogs.map(log => new Date(log.checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })).join("; ")
+          : "A";
+  
+        const checkOutTime = attendanceRecord && attendanceRecord.timeLogs.length > 0
+          ? attendanceRecord.timeLogs.map(log => new Date(log.checkOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })).join("; ")
+          : "A";
+  
+        const attendance = getAttendance(attendanceRecord);
+  
+        // Create a row for the current employee
+        const row = [employee.name, checkInTime, checkOutTime, attendance];
+        csvRows.push(row.join(","));
+      });
+  
+      // Create a Blob from the CSV data and trigger a download
+      const csvData = new Blob([csvRows.join("\n")], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(csvData);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `attendance_${selectedDate}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    };
+
   return (
     <Box p={8} mt={100} backgroundColor={"white"} borderRadius={"30px"}>
       {/* Year and Month Selection */}
@@ -134,6 +208,10 @@ const SalesDateWiseAttendanceTable = () => {
         </Select>
       </Box>
 
+      <Button colorScheme="green" gap={3} onClick={exportToCSV} mb={4}>
+        Export to Exel <FaDownload />
+      </Button>
+
       {/* Attendance Table */}
       <TableContainer>
         <Table>
@@ -144,6 +222,7 @@ const SalesDateWiseAttendanceTable = () => {
               <Th>Out</Th>
               {/* <Th>Lunch Deducted</Th> */}
               <Th>{new Date(selectedDate).getDate()} (Today's Attendnace) {new Date(selectedDate).getDay()  == 0 ? "Sunday" : ''}</Th>
+              <Th>Action</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -187,12 +266,45 @@ const SalesDateWiseAttendanceTable = () => {
        
         <Td>{getAttendance(attendanceRecord)}
         </Td>
+        <Td onClick={() => handleEditTime(employee, attendanceRecord)}>
+                      <FaEdit/>
+                    </Td>
       </Tr>
     );
   })}
 </Tbody>
         </Table>
       </TableContainer>
+
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Edit In/Out Times</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text mb={2}>In Time:</Text>
+            <Input
+              type="time"
+              value={newCheckInTime}
+              onChange={(e) => setNewCheckInTime(e.target.value)}
+            />
+
+            <Text mb={2} mt={4}>Out Time:</Text>
+            <Input
+              type="time"
+              value={newCheckOutTime}
+              onChange={(e) => setNewCheckOutTime(e.target.value)}
+            />
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={saveNewTimes}>
+              Save
+            </Button>
+            <Button onClick={onClose}>Cancel</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 };

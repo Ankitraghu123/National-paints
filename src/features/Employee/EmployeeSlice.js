@@ -81,6 +81,14 @@ export const paySalary = createAsyncThunk('employee/paySalary',async(data,thunkA
     }
 })
 
+export const payAdvance = createAsyncThunk('employee/payAdvance',async(data,thunkApi)=>{
+    try{
+        return await EmployeeService.payAdvance(data)
+    }catch(err){
+        return thunkApi.rejectWithValue(err)
+    }
+})
+
 export const generateSalarySlip = createAsyncThunk('employee/generate-salary-slip',async(data,thunkApi)=>{
     try{
         return await EmployeeService.generateSalarySlip(data)
@@ -93,6 +101,14 @@ export const generateSalarySlip = createAsyncThunk('employee/generate-salary-sli
 export const getEmployeeAttendance = createAsyncThunk('employee/attendnace',async(data,thunkApi)=>{
     try{
         return await EmployeeService.GetEmployeeAttendance(data)
+    }catch(err){
+        return thunkApi.rejectWithValue(err)
+    }
+})
+
+export const giveLoan = createAsyncThunk('employee/give-loan',async(data,thunkApi)=>{
+    try{
+        return await EmployeeService.GiveLoan(data)
     }catch(err){
         return thunkApi.rejectWithValue(err)
     }
@@ -291,6 +307,36 @@ export const EmployeeSlice = createSlice({
             state.isError=true
             state.isSuccess = false
             state.salarySlip = null
+        })
+
+        .addCase(payAdvance.pending,(state)=>{
+            state.isLoading = true
+        })
+        .addCase(payAdvance.fulfilled,(state,action)=>{
+            state.isLoading = false
+            state.isSuccess = true
+            state.advancePaid = action.payload
+        })
+        .addCase(payAdvance.rejected,(state,action)=>{
+            state.isLoading = false
+            state.isError=true
+            state.isSuccess = false
+            state.advancePaid = null
+        })
+
+        .addCase(giveLoan.pending,(state)=>{
+            state.isLoading = true
+        })
+        .addCase(giveLoan.fulfilled,(state,action)=>{
+            state.isLoading = false
+            state.isSuccess = true
+            state.loanGiven = action.payload
+        })
+        .addCase(giveLoan.rejected,(state,action)=>{
+            state.isLoading = false
+            state.isError=true
+            state.isSuccess = false
+            state.loanGiven = null
         })
         
         
