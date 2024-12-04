@@ -215,11 +215,11 @@ const routes = [
           icon: "👤",
           path: "/admin/guard-datewise-attendance-table",
         },
-        {
-          name: "Month Wise Attendance",
-          icon: "👤",
-          path: "/admin/guard-monthwise-attendance-table",
-        },
+        // {
+        //   name: "Month Wise Attendance",
+        //   icon: "👤",
+        //   path: "/admin/guard-monthwise-attendance-table",
+        // },
       ],
     },
     {
@@ -237,11 +237,11 @@ const routes = [
           icon: "👤",
           path: "/admin/officeboy-datewise-attendance-table",
         },
-        {
-          name: "Month Wise Attendance",
-          icon: "👤",
-          path: "/admin/officeboy-monthwise-attendance-table",
-        },
+        // {
+        //   name: "Month Wise Attendance",
+        //   icon: "👤",
+        //   path: "/admin/officeboy-monthwise-attendance-table",
+        // },
       ],
     }
   ] : []),

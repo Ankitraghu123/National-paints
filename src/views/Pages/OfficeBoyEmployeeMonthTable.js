@@ -109,61 +109,93 @@ const OfficeBoyEmplpoyeeMonthTable = () => {
     }) : null;
   };
 
-   const roundMinutes = (minutes) => {
-    if (minutes <= 14) return 0;
-    else if (minutes <= 29) return 15;
-    else if (minutes <= 44) return 30;
-    else return 45;
+  const roundTime = (date) => {
+    const minutes = date.getMinutes();
+    const roundedMinutes = roundMinutes(minutes);
+  
+    // Adjust hours if rounded minutes go to 60
+    if (roundedMinutes === 60) {
+      date.setHours(date.getHours() + 1, 0, 0, 0); // Increment the hour and set minutes to 0
+    } else {
+      date.setMinutes(roundedMinutes, 0, 0); // Set rounded minutes
+    }
+  
+    return date;
+  };
+  
+  // Helper function to format hours into HH:MM format
+  const formatHours = (hours) => {
+    const wholeHours = Math.floor(hours);
+    const rawMinutes = (hours - wholeHours) * 60;
+  
+    const roundedMinutes = Math.round(rawMinutes);
+  
+    return `${wholeHours}:${roundedMinutes.toString().padStart(2, "0")}`;
   };
 
-  const formatHours = (totalHoursDecimal) => {
-    const hours = Math.floor(totalHoursDecimal); // Whole hours
-    const rawMinutes = (totalHoursDecimal - hours) * 60;
-    const minutes = roundMinutes(Math.round(rawMinutes)); // Convert decimal to minutes
-    return `${hours} : ${minutes}`;  // Format as required
+  const roundMinutes = (minutes) => {
+    if (minutes <= 10) return 0;
+    if (minutes <= 25) return 15;
+    if (minutes <= 40) return 30;
+    if (minutes <= 55) return 45;
+    return 60; // Minutes > 55 round to the next hour
   };
+
+  
   const isSunday = (day) => {
     const selectedDate = new Date(`${selectedMonth}-${day.toString().padStart(2, '0')}`);
     return selectedDate.getDay() === 0; 
   };
 
-  const getDailyHours = (attendanceRecord, day) => {
-    const isCurrentDaySunday = isSunday(day);
-
+  const getDailyHours = (attendanceRecord) => {
     if (!attendanceRecord || !attendanceRecord.timeLogs || attendanceRecord.timeLogs.length === 0) {
-      return { formattedHours: isCurrentDaySunday ? formatHours(12) : "0:00", deductedLunch: "No" };
+      return {
+        formattedHours: "0:0",
+        deductedLunch: "No",
+      };
     }
-
+  
     const firstLog = attendanceRecord.timeLogs[0];
     const checkInTime = firstLog.checkIn;
     const checkOutTime = firstLog.checkOut;
-
+  
     if (!checkInTime || !checkOutTime) {
-      return { formattedHours: "0:00", deductedLunch: "No" };
+      return {
+        formattedHours: "0:0",
+        deductedLunch: "No",
+      };
     }
-
+  
+    // Convert checkInTime and checkOutTime to Date objects
     let checkInDate = new Date(checkInTime);
     let checkOutDate = new Date(checkOutTime);
-
+  
+    // Round check-in and check-out times
+    checkInDate = roundTime(checkInDate);
+    checkOutDate = roundTime(checkOutDate);
+  
+    // If the checkOutTime is earlier than the checkInTime, it means the checkout is on the next day
     if (checkOutDate < checkInDate) {
-      checkOutDate.setDate(checkOutDate.getDate() + 1);
+      checkOutDate.setDate(checkOutDate.getDate() + 1); // Add 1 day to checkOutTime
     }
-
-    let totalHours = (checkOutDate - checkInDate) / (1000 * 60 * 60);
-
+  
+    // Calculate total hours worked (difference between check-out and check-in)
+    const checkInMilliseconds = checkInDate.getTime();
+    const checkOutMilliseconds = checkOutDate.getTime();
+  
+    let totalHours = (checkOutMilliseconds - checkInMilliseconds) / (1000 * 60 * 60); // Convert milliseconds to hours
+  
+    // Deduct lunch if conditions are met (check-in before 1 PM and check-out after 2 PM)
     const checkInHour = checkInDate.getUTCHours();
     const checkOutHour = checkOutDate.getUTCHours();
-
-    const isLunchDeductible = checkInHour < 13 && checkOutHour >= 14;
-
+  
+    // Check if lunch should be deducted
+    const isLunchDeductible = checkInHour < 13 && checkOutHour > 14;
+  
     if (isLunchDeductible) {
-      totalHours -= 0.5;
+      totalHours -= 0.5; // Deduct 30 minutes for lunch
     }
-
-    if (isCurrentDaySunday) {
-      totalHours += 12;
-    }
-
+  
     return {
       formattedHours: formatHours(totalHours),
       deductedLunch: isLunchDeductible ? "Yes" : "No",
