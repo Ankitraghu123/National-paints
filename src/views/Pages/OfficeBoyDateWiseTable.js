@@ -167,6 +167,10 @@ const OfficeBoyDateWiseTable = () => {
     let checkInDate = new Date(checkInTime);
     let checkOutDate = new Date(checkOutTime);
   
+    // Round check-in and check-out times
+    checkInDate = roundTime(checkInDate);
+    checkOutDate = roundTime(checkOutDate);
+  
     // If the checkOutTime is earlier than the checkInTime, it means the checkout is on the next day
     if (checkOutDate < checkInDate) {
       checkOutDate.setDate(checkOutDate.getDate() + 1); // Add 1 day to checkOutTime
@@ -185,7 +189,7 @@ const OfficeBoyDateWiseTable = () => {
     console.log(checkInHour,checkOutHour)
     const isLunchDeductible = checkInHour < 13 && checkOutHour >= 14;
   
-    if (isLunchDeductible) {
+    if (isLunchDeductible) { 
       totalHours -= 0.5; // Deduct 30 minutes for lunch
     }
   
