@@ -134,8 +134,8 @@ const AllEmployee = () => {
           <Input
             type="date"
             value={sharedDate}
-            min={monthStart}
-            max={monthEnd}
+            // min={monthStart}
+            // max={monthEnd}
             onChange={(e) => handleSharedDateChange(e.target.value)}
           />
         </Box>
