@@ -164,6 +164,10 @@ const SalesAttendanceTable = () => {
       }
     }
 
+    if (!attendanceRecord.removeDay) {
+      return "P";
+  }
+
     return "A";
   };
 
