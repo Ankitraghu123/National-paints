@@ -1,0 +1,173 @@
+
+table > thead >tr > th{
+    border: 2px solid #AEAEAE !important;
+    background-color: #3182CE;
+    color: white !important;
+    font-size: 17px !important;
+}
+
+
+table > tbody >tr > td{
+    border: 2px solid #AEAEAE !important;
+    text-align: center !important;
+    
+}
+
+.css-xumdn4{
+  background:white !important;
+}
+
+.css-po59wb{
+  background:white !important;
+}
+
+.css-12y4u6o{
+  background:white !important;
+}
+
+.css-woqubx tr:nth-of-type(odd) td {
+  background:#B2F5EA !important;
+}
+
+.css-woqubx tr:nth-of-type(odd) td {
+  background:#B2F5EA !important;
+}
+
+#col-fixed{
+  position: sticky;
+  left: 0;
+  z-index: 9;
+  width: min-content !important;
+  padding:0 !important;
+  text-align: center;
+}
+
+#head-fixed{
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.red{
+  background-color: orangered;
+  color: white;
+  font-weight: 600;
+}
+
+.green{
+  background-color: rgb(75, 161, 75);
+  color: white;
+  font-weight: 600;
+}
+
+#blue{
+  color: #3182CE !important;
+}
+
+.logo {
+    font-family: 'Arial', sans-serif; /* A clean font for the main text */
+    font-weight: bold;
+    font-size: 17px;
+    color: #333; /* Dark grey for "National" */
+    text-transform: uppercase;
+    letter-spacing: 2px; /* Adds space between letters for a professional look */
+    display: inline-block;
+  }
+
+  .logo span {
+    color: #1e90ff; /* Dodger blue color for "Paints" */
+    font-family: 'Brush Script MT', cursive; /* A more artistic font for "Paints" */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Adds a slight shadow for depth */
+    font-size: 21px; /* Slightly larger font for emphasis */
+  }
+
+  .logo:hover span {
+    color: #4682b4; /* Steel blue on hover for a subtle change */
+    text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.4); /* Increases shadow on hover */
+    transition: 0.3s ease; /* Smooth transition effect */
+  }
+
+  .css-k008qs{
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  .css-2twrlq {
+    width: 2em !important;
+    height: 1.5em !important;
+  }
+
+  .css-11p5knp{
+    width: 89% !important;
+    margin-left: .2vmax !important;
+    /* background-color: blue !important; */
+  }
+
+
+
+  .css-152ve90 {
+    width: 89% !important;
+    margin-left: .2vmax !important;
+    box-shadow: 5px 5px 10px rgb(172, 170, 170) !important;
+    margin-bottom: 1rem !important;
+  }
+
+  .css-pzh1on {
+    width: 270px !important;
+    max-width: 270px !important;
+  }
+
+  .css-1b7i6v1 {
+    padding-left: 10px !important;
+  }
+
+  #sticky{
+    position: fixed;
+    z-index: 9999999;
+    background-color: white;
+    text-align: center;
+    width: 98%;
+    padding: 10px 0;
+    border-radius: 30px;
+  }
+
+  /* #white{
+    background-color: white !important;
+  } */
+
+  @media (max-width: 668px) {
+    #emp-flex{
+      flex-direction: column;
+      align-items: start;
+    }
+    .css-d02e5s{
+      padding-left:5px  !important;
+      padding-right:0 !important;
+    }
+    #emp-search{
+      width: 100% !important;
+    }
+
+    #table-col{
+      flex-direction: column;
+      align-items: start;
+    }
+
+    #full-width{
+      width: 250px;
+    }
+
+    .css-1bv6zgj{
+      padding: 0 !important;
+    }
+
+    #mt{
+      margin-top: 20px;
+    }
+
+    #menu-fixed{
+      margin-top: -90px;
+      margin-left: 250px;
+    }
+    
+  }
