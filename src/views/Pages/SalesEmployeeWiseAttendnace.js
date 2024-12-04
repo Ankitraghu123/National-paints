@@ -107,19 +107,17 @@ const SalesMonthAttendanceTable = () => {
       const { checkIn, checkOut } = attendanceRecord.timeLogs[0];
 
       // Convert checkOut time to a Date object and compare with 3 PM in local time
-      const checkOutTime = new Date(checkOut);
-      const threePM = new Date(checkOutTime);
-      threePM.setHours(15, 0, 0, 0); // Set 3:00 PM
+      let checkInDate = new Date(checkIn);
+      let checkOutDate = new Date(checkOut);
+      // Extract only the time part (HH:mm) from the checkIn and checkOut
+      const checkInHour = checkInDate.getUTCHours();
+      const checkOutHour = checkOutDate.getUTCHours()
 
-      // Adjust for timezone if necessary
-      const checkOutHours = checkOutTime.getHours();
-      const threePMHours = threePM.getHours();
-
-      if (!(checkIn && checkOut && checkOutHours < threePMHours)) {
-        // If there's a checkIn and checkOut is before 3 PM, it's half day
+      if (checkInHour <= 14 && checkOutHour <= 14) {
         return "Half day";
-      } else if (checkIn) {
-        // If there's a checkIn but not before 3 PM, it's a full present
+      } else if (checkInHour >= 14 && checkOutHour >= 14) {
+        return "Half day";
+      } else if (checkInHour <= 13) {
         return "P";
       }
     }
