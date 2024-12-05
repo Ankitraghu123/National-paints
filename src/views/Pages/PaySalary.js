@@ -72,14 +72,14 @@ const PaySalary = () => {
   const handleBonusChange = (empId, value) => {
     setBonus((prevBonus) => ({
       ...prevBonus,
-      [empId]: value,
+      [empId]: value === "" ? 0 : Number(value),
     }));
   };
 
   const handleDeductionChange = (empId, value) => {
     setDeduction((prevDeduction) => ({
       ...prevDeduction,
-      [empId]: value,
+      [empId]: value === "" ? 0 : Number(value),
     }));
   };
 
@@ -241,15 +241,15 @@ const PaySalary = () => {
                   <Td>
                     <Input
                       type="number"
-                      value={bonus[emp._id] || 0}
-                      onChange={(e) => handleBonusChange(emp._id, Number(e.target.value))}
+                      value={bonus[emp._id] || ""}
+                      onChange={(e) => handleBonusChange(emp._id, e.target.value)}
                     />
                   </Td>
                   <Td>
                     <Input
                       type="number"
-                      value={deduction[emp._id] || 0}
-                      onChange={(e) => handleDeductionChange(emp._id, Number(e.target.value))}
+                      value={deduction[emp._id] || ""}
+                      onChange={(e) => handleDeductionChange(emp._id, e.target.value)}
                     />
                   </Td>
                   <Td>

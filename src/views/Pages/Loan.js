@@ -24,6 +24,7 @@ const Loan = () => {
   const [repaymentMonths, setRepaymentMonths] = useState('');
   const [amountForMonth, setAmountForMonth] = useState([]);
   const [isSpecificAmount, setIsSpecificAmount] = useState(false); // New state to track user's choice
+  const [startingMonth, setStartingMonth] = useState(''); // New state for starting month
 
   useEffect(() => {
     dispatch(allEmployee());
@@ -109,6 +110,7 @@ const Loan = () => {
       monthlyDeduction,
       months: repaymentMonths,
       amountForMonth,
+      startingMonth, // Include starting month in the data
     };
 
     try {
@@ -209,6 +211,16 @@ const Loan = () => {
             </FormControl>
           ))
         }
+
+        <FormControl mb={4} isRequired>
+          <FormLabel>Starting Month of Repayment</FormLabel>
+          <Input
+            type="month" // Use month input type for better UX
+            value={startingMonth}
+            onChange={(e) => setStartingMonth(e.target.value)}
+            placeholder="Select starting month"
+          />
+        </FormControl>
 
         <Button colorScheme="teal" type="submit">
           Submit Loan
