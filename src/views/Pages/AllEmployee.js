@@ -117,6 +117,20 @@ const AllEmployee = () => {
     }) || false;
   };
 
+  const calculateTotalHours = (empId) => {
+    const inTimeValue = inTime[empId];
+    const outTimeValue = outTime[empId];
+
+    if (inTimeValue && outTimeValue) {
+      const inDateTime = new Date(`${sharedDate}T${inTimeValue}:00`);
+      const outDateTime = new Date(`${sharedDate}T${outTimeValue}:00`);
+      const diffInMs = outDateTime - inDateTime;
+      const diffInHours = diffInMs / (1000 * 60 * 60);
+      return diffInHours.toFixed(2);
+    }
+    return '0.00';
+  };
+
   return (
     <Box p={8} mt={100} backgroundColor={'white'} borderRadius={'30px'}>
       <Text fontSize="2xl" fontWeight="bold" mb={4}>Employee Table</Text>
@@ -160,6 +174,7 @@ const AllEmployee = () => {
               <Th>Date</Th>
               <Th>In Time</Th>
               <Th>Out Time</Th>
+              <Th>Total Hours</Th>
               <Th>Action</Th>
             </Tr>
           </Thead>
@@ -189,6 +204,7 @@ const AllEmployee = () => {
                     disabled={hasCheckedOutToday(employee)}
                   />
                 </Td>
+                <Td>{calculateTotalHours(employee._id)}</Td>
                 <Td>
                   <Button
                     colorScheme="blue"

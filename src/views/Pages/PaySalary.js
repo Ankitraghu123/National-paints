@@ -23,8 +23,8 @@ const PaySalary = () => {
 
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth());
-  const [bonus, setBonus] = useState('');
-  const [deduction, setDeduction] = useState('');
+  const [bonus, setBonus] = useState({});
+  const [deduction, setDeduction] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(50); // Default entries per page
   const [searchTerm, setSearchTerm] = useState(""); // New state for search input
@@ -61,7 +61,26 @@ const PaySalary = () => {
     .slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage);
 
   const handlePaySalary = async (empId, month) => {
-    dispatch(paySalary({ empId, month, bonus, deduction }));
+    dispatch(paySalary({ 
+      empId, 
+      month, 
+      bonus: bonus[empId] || 0, 
+      deduction: deduction[empId] || 0 
+    }));
+  };
+
+  const handleBonusChange = (empId, value) => {
+    setBonus((prevBonus) => ({
+      ...prevBonus,
+      [empId]: value,
+    }));
+  };
+
+  const handleDeductionChange = (empId, value) => {
+    setDeduction((prevDeduction) => ({
+      ...prevDeduction,
+      [empId]: value,
+    }));
   };
 
   // Calculate the total remaining salary for all employees
@@ -78,7 +97,7 @@ const PaySalary = () => {
       });
 
       const remainingSalary = salaryEntry
-        ? salaryEntry.amount - salaryEntry.loanAmount + bonus - deduction
+        ? salaryEntry.amount - salaryEntry.loanAmount + bonus[employee._id] - deduction[employee._id]
         : 0;
 
       return acc + remainingSalary;
@@ -222,15 +241,15 @@ const PaySalary = () => {
                   <Td>
                     <Input
                       type="number"
-                      value={bonus}
-                      onChange={(e) => setBonus(Number(e.target.value))}
+                      value={bonus[emp._id] || 0}
+                      onChange={(e) => handleBonusChange(emp._id, Number(e.target.value))}
                     />
                   </Td>
                   <Td>
                     <Input
                       type="number"
-                      value={deduction}
-                      onChange={(e) => setDeduction(Number(e.target.value))}
+                      value={deduction[emp._id] || 0}
+                      onChange={(e) => handleDeductionChange(emp._id, Number(e.target.value))}
                     />
                   </Td>
                   <Td>
@@ -239,14 +258,14 @@ const PaySalary = () => {
                           salaryEntry.amount -
                           500 -
                           salaryEntry.loanAmount +
-                          bonus -
-                          deduction
+                          (bonus[emp._id] || 0) -
+                          (deduction[emp._id] || 0)
                         ).toFixed(2)
                       : (
                           salaryEntry.amount -
                           salaryEntry.loanAmount +
-                          bonus -
-                          deduction
+                          (bonus[emp._id] || 0) -
+                          (deduction[emp._id] || 0)
                         ).toFixed(2)}
                   </Td>
                   <Td>
