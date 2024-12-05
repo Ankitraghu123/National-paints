@@ -118,6 +118,7 @@ const AllEmployee = () => {
   };
 
   const calculateTotalHours = (empId) => {
+    
     const inTimeValue = inTime[empId];
     const outTimeValue = outTime[empId];
 
