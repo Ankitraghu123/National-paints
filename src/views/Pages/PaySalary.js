@@ -61,12 +61,15 @@ const PaySalary = () => {
     .slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage);
 
   const handlePaySalary = async (empId, month) => {
-    dispatch(paySalary({ 
-      empId, 
-      month, 
-      bonus: bonus[empId] || 0, 
-      deduction: deduction[empId] || 0 
-    }));
+    const confirmPayment = window.confirm(`Are you sure you want to pay the salary?`);
+    if (confirmPayment) {
+      dispatch(paySalary({ 
+        empId, 
+        month, 
+        bonus: bonus[empId] || 0, 
+        deduction: deduction[empId] || 0 
+      }));
+    }
   };
 
   const handleBonusChange = (empId, value) => {
