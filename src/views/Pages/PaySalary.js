@@ -96,11 +96,18 @@ const PaySalary = () => {
         );
       });
 
-      const remainingSalary = salaryEntry
-        ? salaryEntry.amount - salaryEntry.loanAmount + bonus[employee._id] - deduction[employee._id]
-        : 0;
+      if (salaryEntry) {
+        const baseSalary = salaryEntry.amount || 0;
+        const loanDeduction = salaryEntry.loanAmount || 0;
+        const advanceDeduction = salaryEntry.advance ? 500 : 0; // Assuming 500 is the advance amount
+        const bonusAmount = bonus[employee._id] || 0;
+        const deductionAmount = deduction[employee._id] || 0;
 
-      return acc + remainingSalary;
+        const remainingSalary = baseSalary - loanDeduction - advanceDeduction + bonusAmount - deductionAmount;
+        return acc + remainingSalary;
+      }
+
+      return acc;
     }, 0);
   }, [selectedEmployees, month, year, bonus, deduction]);
 
@@ -108,41 +115,12 @@ const PaySalary = () => {
   const formattedTotalRemainingSalary = totalRemainingSalary ? totalRemainingSalary.toFixed(2) : "0.00";
 
   // Calculate the total paid salaries for all employees
-  const totalPaidSalaries = useMemo(() => {
-    return employees?.reduce((acc, employee) => {
-      const paidSalaries = employee.salaryArray.filter((salary) => {
-        const salaryDate = new Date(salary.month);
-        return (
-          salaryDate.getMonth() === month &&
-          salaryDate.getFullYear() === year &&
-          salary.isPaid &&
-          salary.isSalaryApproved
-        );
-      });
-
-      const totalPaidForEmployee = paidSalaries.reduce((sum, salaryEntry) => {
-        return sum + salaryEntry.amount - salaryEntry.loanAmount + salaryEntry.bonus - salaryEntry.deduction;
-      }, 0);
-
-      return acc + totalPaidForEmployee;
-    }, 0);
-  }, [employees, month, year]);
-
-  // Ensure totalPaidSalaries is a number before calling toFixed
-  const formattedTotalPaidSalaries = totalPaidSalaries ? totalPaidSalaries.toFixed(2) : "0.00";
-
   return (
     <Box p={8} mt={100} backgroundColor={"white"} borderRadius={"30px"}>
       {/* Display total remaining salary */}
       <Box mb={4}>
         <Text fontSize="lg" fontWeight="bold">
           Total Remaining Salary: ₹ {formattedTotalRemainingSalary}
-        </Text>
-      </Box>
-      {/* Display total paid salaries */}
-      <Box mb={4}>
-        <Text fontSize="lg" fontWeight="bold">
-          Total Paid Salaries: ₹ {formattedTotalPaidSalaries}
         </Text>
       </Box>
       {/* Year and Month Selection */}
