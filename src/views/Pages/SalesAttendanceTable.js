@@ -285,7 +285,7 @@ const SalesAttendanceTable = () => {
         recordMonth === month + 1 &&
         recordYear === year &&
         salaryRecord.amount !== undefined &&
-        salaryRecord.amount > 0
+        salaryRecord?.isSalaryApproved 
       );
     });
 

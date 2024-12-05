@@ -338,7 +338,7 @@ const StaffAttendanceTable = () => {
         recordYear === year &&
         salaryRecord.amount !== undefined &&
         salaryRecord.amount > 0 &&
-        salaryRecord.isSalaryApproved
+        salaryRecord?.isSalaryApproved
       );
     });
 
