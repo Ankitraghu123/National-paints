@@ -340,10 +340,11 @@ const OfficeBoyAttendanceTable = () => {
 
   const approveSalaryHandler = (emp, len) => {
     const totalSalary = calculateTotalSalary(
-      emp.salary,
+      getEffectiveSalary(emp, month, year),
       calculateTotalHours(emp.attendanceTime),
       len
     );
+
 
     const lastDay = new Date(year, month + 1, 0);
 
