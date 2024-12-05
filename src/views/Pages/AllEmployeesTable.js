@@ -311,7 +311,7 @@ console.log("Filtered Employees:", filteredEmployees);
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
               />
-            </FormControl>
+              </FormControl>
             <FormControl mt={4}>
               <FormLabel>Date</FormLabel>
               <Input

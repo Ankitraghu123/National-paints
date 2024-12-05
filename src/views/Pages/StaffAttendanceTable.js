@@ -51,7 +51,7 @@ const StaffAttendanceTable = () => {
   useEffect(() => {
     dispatch(allEmployee());
     dispatch(allHoliday());
-  }, [dispatch, monthSalary, removedDay, restoredDay ]);
+  }, [dispatch, monthSalary, removedDay, restoredDay,  ]);
 
   useEffect(() => {
     const days = Array.from(
@@ -337,7 +337,8 @@ const StaffAttendanceTable = () => {
         recordMonth === month + 1 &&
         recordYear === year &&
         salaryRecord.amount !== undefined &&
-        salaryRecord.amount > 0
+        salaryRecord.amount > 0 &&
+        salaryRecord.isSalaryApproved
       );
     });
 
