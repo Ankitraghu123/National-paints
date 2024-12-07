@@ -451,16 +451,14 @@ const AttendanceTable = () => {
 
         // If there's no attendance record, check if it's a holiday
         if (!attendanceRecord) {
-          return isHoliday(day) ? 8 : 0;
+          return isHoliday(day) ? "8:0" : "0:0"; // Ensure this logic matches the table logic
         }
 
-        return formattedHours || 0;
+        return formattedHours || "0:0"; // Ensure default value matches table logic
       });
 
       // Calculate totals
-      const totalWorkingDays = calculateTotalWorkingDays(
-        employee.attendanceTime
-      );
+      const totalWorkingDays = calculateTotalWorkingDays(employee.attendanceTime);
       const totalOvertime = calculateTotalOvertime(employee.attendanceTime);
       const totalHours = calculateTotalHours(employee.attendanceTime);
       const totalSalary = calculateTotalSalary(

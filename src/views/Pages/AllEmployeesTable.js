@@ -52,7 +52,7 @@ const AllEmployeesTable = () => {
 
   useEffect(() => {
     setFilteredEmployees(employeesData);
-  }, []);
+  }, [employeesData]);
 
   const handleSearch = (event) => {
     console.log("Search Term:", searchTerm);

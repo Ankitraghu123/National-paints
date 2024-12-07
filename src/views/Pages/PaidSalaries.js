@@ -51,8 +51,6 @@ const PaidSalaries = () => {
     })
   );
 
-  
-
   const totalPages = Math.ceil(employees?.length / entriesPerPage);
   const currentEmployees = selectedEmployees
     ?.filter((employee) =>
@@ -69,8 +67,7 @@ const PaidSalaries = () => {
     const handlePaySalary = async (empId, month) => {
         
           dispatch(paySalary({empId,month}))
-         
-        
+      
       };
 
       const handleExportCSV = () => {
@@ -90,9 +87,11 @@ const PaidSalaries = () => {
             "Base Salary": salaryEntry?.amount || "N/A",
             "Loan Deduction": salaryEntry?.loanAmount || 0,
             "Advance Taken": salaryEntry?.advance ? 500 : 0,
+            "Bonus": salaryEntry?.bonus || 0,
+            "Deduction": salaryEntry?.deduction || 0,
             "Total Salary": salaryEntry?.advance
-              ? (salaryEntry.amount - 500 - salaryEntry.loanAmount).toFixed(2)
-              : (salaryEntry.amount - salaryEntry.loanAmount).toFixed(2),
+              ? (salaryEntry.amount - 500 - salaryEntry.loanAmount + salaryEntry.bonus - salaryEntry.deduction).toFixed(2)
+              : (salaryEntry.amount - salaryEntry.loanAmount + salaryEntry.bonus - salaryEntry.deduction).toFixed(2),
           };
         });
     

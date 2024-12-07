@@ -53,7 +53,7 @@ const UnPaidEmployees = () => {
 
   useEffect(() => {
     dispatch(getUnpaidEmployees());
-  }, [dispatch, editedEmployee, transferedToPaid]);
+  }, [dispatch, editedEmployee, transferedToPaid, employeesData]);
 
   useEffect(() => {
     setFilteredEmployees(employeesData);
