@@ -48,23 +48,23 @@ const AllEmployeesTable = () => {
 
   useEffect(() => {
     dispatch(allEmployee());
-  }, [dispatch,editedEmployee,deletedEmployee,employeeApproved]);
+  }, [dispatch, editedEmployee, deletedEmployee, employeeApproved]);
 
   useEffect(() => {
     setFilteredEmployees(employeesData);
-  }, [employeesData]);
+  }, []);
 
   const handleSearch = (event) => {
-    console.log("Search Term:", searchTerm);
-console.log("Filtered Employees:", filteredEmployees);
     const value = event.target.value.toLowerCase();
+    console.log("Search Term:", value);
     setSearchTerm(value);
 
-    const filtered = employeesData.filter((employee) =>
+    const filtered = employeesData?.filter((employee) =>
       Object.values(employee).some((field) =>
         String(field).toLowerCase().includes(value)
       )
     );
+    console.log("Filtered Employees:", filtered);
     setFilteredEmployees(filtered);
   };
 

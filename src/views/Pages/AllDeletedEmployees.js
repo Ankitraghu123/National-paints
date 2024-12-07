@@ -79,7 +79,7 @@ const AllDeletedEmployee = () => {
 
   useEffect(() => {
     setFilteredEmployees(employeesData);
-  }, [employeesData]);
+  }, []);
 
   const handleSearch = (event) => {
     const value = event.target.value.toLowerCase();
