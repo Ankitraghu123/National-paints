@@ -275,8 +275,16 @@ const DateWiseAttendanceTable = () => {
           "S. No.": index + 1,
           Name: employee.name,
           EmployeeCode: employee.employeeCode,
-          CheckIn: attendanceRecord?.checkIn || "A",
-          CheckOut: attendanceRecord?.checkOut || "A",
+          CheckIn:  attendanceRecord && attendanceRecord?.timeLogs?.length > 0 ? (
+            attendanceRecord?.timeLogs?.map((log) => (
+                extractTime(log.checkIn)
+            ))
+          ) : "A",
+          CheckOut: attendanceRecord && attendanceRecord?.timeLogs?.length > 0 ? (
+            attendanceRecord?.timeLogs?.map((log) => (
+                extractTime(log.checkOut)
+            ))
+          ) : "A",
           LunchDeducted: deductedLunch,
           WorkingHours: formattedHours,
           OvertimeHours: calculateOvertimeHours(attendanceRecord),
@@ -353,7 +361,7 @@ const DateWiseAttendanceTable = () => {
      <Button colorScheme="green" display={'flex'} gap={3} mb={4}>
      <CSVLink
         data={csvData || []}
-        filename={`labourAttendance.csv`}
+        filename={`${new Date(selectedDate).getDate()}_${new Date(selectedDate).getMonth()}_${new Date(selectedDate).getFullYear()}_labour_attendance.csv`}
         className="btn btn-primary"
         target="_blank"
       >

@@ -608,7 +608,7 @@ const AttendanceTable = () => {
                   }))
                 : []
             }
-            filename={"labourAttendance.csv"}
+            filename={`${year}-${month + 1}-labour-attendance.csv`}
             className="btn btn-primary"
             target="_blank"
           >

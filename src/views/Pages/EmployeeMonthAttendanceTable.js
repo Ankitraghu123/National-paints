@@ -175,21 +175,26 @@ const EmployeeMonthAttendanceTable = () => {
   };
 
   const csvData = useMemo(() => {
-    return employees?.map((employee, index) => {
-      const attendanceRecord = attendanceData?.find((record) => record.employeeId === employee._id);
-      const { formattedHours, deductedLunch } = getDailyHours(attendanceRecord);
+    return daysInMonth.map((day, idx) => {
+      const formattedDate = `${new Date(selectedMonth).getFullYear()}-${(new Date(selectedMonth).getMonth() + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+      const attendance = getAttendanceForDate(formattedDate);
+
+      const checkIns = attendance?.timeLogs.filter(log => log.checkIn).map(log => extractTime(log.checkIn)) || [];
+      const checkOuts = attendance?.timeLogs.filter(log => log.checkOut).map(log => extractTime(log.checkOut)) || [];
+      const { formattedHours, deductedLunch } = getDailyHours(attendance, day);
 
       return {
-        "Serial No.": index + 1, // Add Serial No. to CSV data
-        Name: employee.name,
-        EmployeeCode: employee.employeeCode,
-        CheckIn: attendanceRecord?.checkIn || "A",
-        CheckOut: attendanceRecord?.checkOut || "A",
+        "Serial No.": idx + 1,
+        Name: selectedEmployeeData.name,
+        EmployeeCode: selectedEmployeeData.employeeCode,
+        Date: formattedDate,
+        CheckIn: checkIns.length > 0 ? checkIns.join(', ') : 'A',
+        CheckOut: checkOuts.length > 0 ? checkOuts.join(', ') : (checkIns.length > 0 ? '-' : 'A'),
         LunchDeducted: deductedLunch,
         WorkingHours: formattedHours,
       };
     });
-  }, [employees, attendanceData]);
+  }, [daysInMonth, selectedMonth, selectedEmployeeData, attendanceData]);
 
   return (
     <Box p={8} mt={40} backgroundColor="white" borderRadius="8px">
@@ -220,7 +225,7 @@ const EmployeeMonthAttendanceTable = () => {
       <Button colorScheme="green" mb={4}>
         <CSVLink
           data={csvData || []}
-          filename="employee_attendance.csv"
+          filename={`${selectedEmployeeData.name}_${selectedMonth}.csv`}
           className="btn btn-primary"
           target="_blank"
         >
