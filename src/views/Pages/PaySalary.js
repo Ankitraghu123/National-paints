@@ -186,6 +186,7 @@ const PaySalary = () => {
         <Table>
           <Thead>
             <Tr>
+              <Th>S.No</Th>
               <Th id="col-fixed">Employee Name</Th>
               <Th>Employee Code</Th>
               <Th>Employee Type</Th>
@@ -199,7 +200,7 @@ const PaySalary = () => {
             </Tr>
           </Thead>
           <Tbody>
-            {currentEmployees?.map((emp) => {
+            {currentEmployees?.map((emp,index) => {
               // Find the salary entry for the current month/year
               const salaryEntry = emp.salaryArray.find((salary) => {
                 const salaryDate = new Date(salary.month);
@@ -213,6 +214,7 @@ const PaySalary = () => {
 
               return (
                 <Tr key={emp._id}>
+                  <Td>{index + 1}</Td>
                   <Td id="col-fixed">{emp.name}</Td>
                   <Td>{emp.employeeCode}</Td>
                   <Td>{emp.empType}</Td>

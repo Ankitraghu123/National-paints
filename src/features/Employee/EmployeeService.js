@@ -68,6 +68,11 @@ const paySalary = async (data)=> {
     return response.data
 }
 
+const unpaySalary = async (data)=> {
+    const response = await axios.post(`${base_url}employee/unpaySalary`,data)
+    return response.data
+}
+
 const payAdvance = async (data)=> {
     const response = await axios.put(`${base_url}employee/payAdvance`,data)
     return response.data
@@ -113,6 +118,6 @@ const EmployeeDetails = async (id)=> {
     return response.data
 }
 
-const EmployeeService = {AddEmployee,AllEmployee,GetEmployeeAttendance,GetUnApprovedEmployees,GetUnpaidEmployees,approveEmployee,editEmployee,tranferToPaidEmployee,putSalary,paySalary,SingleEmployee,generateSalarySlip,payAdvance,GiveLoan,EditSalary,DeleteEmployee,rejectEmployee,GetAgainEmployee,DeactivateEmployee,pullSalary,unpayAdvance,EmployeeDetails}
+const EmployeeService = {AddEmployee,AllEmployee,GetEmployeeAttendance,GetUnApprovedEmployees,GetUnpaidEmployees,approveEmployee,editEmployee,tranferToPaidEmployee,putSalary,paySalary,SingleEmployee,generateSalarySlip,payAdvance,GiveLoan,EditSalary,DeleteEmployee,rejectEmployee,GetAgainEmployee,DeactivateEmployee,pullSalary,unpayAdvance,EmployeeDetails,unpaySalary}
 
 export default EmployeeService

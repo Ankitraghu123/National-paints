@@ -122,6 +122,17 @@ export const paySalary = createAsyncThunk(
   }
 );
 
+export const unpaySalary = createAsyncThunk(
+  "employee/unpaySalary",
+  async (data, thunkApi) => {
+    try {
+      return await EmployeeService.unpaySalary(data);
+    } catch (err) {
+      return thunkApi.rejectWithValue(err);
+    }
+  }
+);
+
 export const payAdvance = createAsyncThunk(
   "employee/payAdvance",
   async (data, thunkApi) => {
@@ -419,6 +430,21 @@ export const EmployeeSlice = createSlice({
         state.salaryPaid = null;
       })
 
+      .addCase(unpaySalary.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(unpaySalary.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.unpaidSalary = action.payload;
+      })
+      .addCase(unpaySalary.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.unpaidSalary = null;
+      })
+
       .addCase(singleEmployee.pending, (state) => {
         state.isLoading = true;
       })
@@ -582,6 +608,7 @@ export const EmployeeSlice = createSlice({
         state.isSuccess = false;
         state.employeeDetails = null;
       });
+    
   },
 });
 

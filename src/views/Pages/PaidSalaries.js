@@ -19,6 +19,7 @@ import { allEmployee } from "features/Employee/EmployeeSlice";
 import { allHoliday } from "features/Holiday/HolidaySlice";
 import { putSalary } from "features/Employee/EmployeeSlice";
 import { paySalary } from "features/Employee/EmployeeSlice";
+import { unpaySalary } from "features/Employee/EmployeeSlice";
 import { Link } from "react-router-dom";
 import Papa from "papaparse";
 
@@ -36,9 +37,10 @@ const PaidSalaries = () => {
   // const employees = allEmployees?.filter((employee) => employee.empType === 'labour');
   const {salaryPaid} = useSelector(state => state.employee)
   const today = new Date();
+  const salaryR = useSelector(state => state.employee?.unpaidSalary?.salaryRecord)
   useEffect(() => {
     dispatch(allEmployee());
-  }, [dispatch,salaryPaid]);
+  }, [dispatch,salaryPaid,salaryR]);
 
   const selectedEmployees = employees?.filter((employee) =>
     employee.salaryArray.some((salary) => {
@@ -64,9 +66,9 @@ const PaidSalaries = () => {
     );
 
 
-    const handlePaySalary = async (empId, month) => {
-        
-          dispatch(paySalary({empId,month}))
+    const handleUnpaySalary = async (empId, month) => {
+
+          dispatch(unpaySalary({empId,month}))
       
       };
 
@@ -80,6 +82,10 @@ const PaidSalaries = () => {
               salary.isPaid
             );
           });
+
+          const handleUnpaySalary = async (empId, month) => {
+            dispatch(unpaySalary({empId,month}))
+          }
     
           return {
             "Employee Name": emp.name,
@@ -210,6 +216,7 @@ const PaidSalaries = () => {
         <Table>
           <Thead>
             <Tr>
+              <Th>S.No</Th>
               <Th id="col-fixed">Employee Name</Th>
               <Th>Employee Code</Th>
               <Th>Employee Type</Th>
@@ -224,7 +231,7 @@ const PaidSalaries = () => {
             </Tr>
           </Thead>
          <Tbody>
-                    {currentEmployees?.map((emp) => {
+                    {currentEmployees?.map((emp,index) => {
         // Find the salary entry for the current month/year
         const salaryEntry = emp.salaryArray.find((salary) => {
           const salaryDate = new Date(salary.month);
@@ -236,6 +243,7 @@ const PaidSalaries = () => {
         });
         return (
             <Tr key={emp._id}> {/* Assuming emp._id is unique */}
+              <Td>{index + 1}</Td>
               <Td id="col-fixed">{emp.name}</Td>
               <Td>{emp.employeeCode}</Td>
               <Td>{emp.empType}</Td>
@@ -250,13 +258,9 @@ const PaidSalaries = () => {
     : (salaryEntry?.amount - salaryEntry?.loanAmount + salaryEntry?.bonus - salaryEntry?.deduction).toFixed(2)}
 </Td>
               <Td>
-                {salaryEntry?.isPaid ? (
-                  <Text color="green.500">Paid</Text> // You can customize this message/style
-                ) : (
-                  <Button colorScheme="green" onClick={() => handlePaySalary(emp._id, salaryEntry?.month)}>
-                    Pay
-                  </Button>
-                )}
+               {
+                <Button colorScheme="red" onClick={() => handleUnpaySalary(emp._id, salaryEntry?.month)}>Unpay</Button>
+                }
               </Td>
               <Td > <Link to={`/admin/salary-slip/${emp._id}/${salaryEntry?.month}`} colorScheme="teal" >
                     Generate Salary Slip
