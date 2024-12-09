@@ -118,14 +118,13 @@ const AllEmployee = () => {
   };
 
   const calculateTotalHours = (empId) => {
-    
     const inTimeValue = inTime[empId];
     const outTimeValue = outTime[empId];
 
     if (inTimeValue && outTimeValue) {
       const inDateTime = new Date(`${sharedDate}T${inTimeValue}:00`);
       const outDateTime = new Date(`${sharedDate}T${outTimeValue}:00`);
-      const diffInMs = outDateTime - inDateTime;
+      const diffInMs = Math.abs(outDateTime - inDateTime);
       const diffInHours = diffInMs / (1000 * 60 * 60);
       return diffInHours.toFixed(2);
     }
