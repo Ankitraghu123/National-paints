@@ -117,7 +117,10 @@ const AllEmployee = () => {
     }) || false;
   };
 
-  const calculateTotalHours = (empId) => {
+  const calculateTotalHours = (empId, empType) => {
+    if (empType === 'labour') {
+      
+    }
     const inTimeValue = inTime[empId];
     const outTimeValue = outTime[empId];
 
@@ -204,7 +207,7 @@ const AllEmployee = () => {
                     disabled={hasCheckedOutToday(employee)}
                   />
                 </Td>
-                <Td>{calculateTotalHours(employee._id)}</Td>
+                <Td>{calculateTotalHours(employee._id, employee.empType)}</Td>
                 <Td>
                   <Button
                     colorScheme="blue"

@@ -191,7 +191,9 @@ const PaySalary = () => {
               <Th>Employee Code</Th>
               <Th>Employee Type</Th>
               <Th>Base Salary</Th>
-              <Th>Loan deduction</Th>
+              <Th>Leaves Taken</Th>
+              <Th>Leave Allowed</Th>
+              <Th>Loan Deduction</Th>
               <Th>Advance Taken</Th>
               <Th>Give Bonus</Th>
               <Th>Cut Deduction</Th>
@@ -219,6 +221,8 @@ const PaySalary = () => {
                   <Td>{emp.employeeCode}</Td>
                   <Td>{emp.empType}</Td>
                   <Td>{salaryEntry?.amount || "N/A"}</Td>
+                  <Td>{salaryEntry?.leavesTaken ? salaryEntry?.leavesTaken : 0}</Td>
+                  <Td>{salaryEntry?.leave}</Td>
                   <Td>{salaryEntry?.loanAmount}</Td>
                   <Td>{salaryEntry?.advance ? 500 : 0}</Td>
                   <Td>
