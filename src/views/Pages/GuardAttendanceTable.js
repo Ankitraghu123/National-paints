@@ -281,7 +281,8 @@ const GuardAttendanceTable = () => {
 
     const totalSalary = salaryPerMinute * totalMinutes;
 
-    return parseFloat(totalSalary.toFixed(2));
+    // return parseFloat(totalSalary.toFixed(2));
+    return Math.round(totalSalary / 10) * 10;
   };
 
   const calculateDailySalary = (monthlySalary, hours, daysInMonth) => {
@@ -294,7 +295,8 @@ const GuardAttendanceTable = () => {
     const [hourPart, minutePart] = hours.split(":").map(Number);
     const totalMinutes = (hourPart || 0) * 60 + (minutePart || 0); // Default to 0 if NaN
     const totalSalary = salaryPerMinute * totalMinutes;
-    return parseFloat(totalSalary.toFixed(2));
+    // return parseFloat(totalSalary.toFixed(2));
+    return Math.round(totalSalary / 10) * 10;
   };
 
   const getEffectiveSalary = (employee, month, year) => {

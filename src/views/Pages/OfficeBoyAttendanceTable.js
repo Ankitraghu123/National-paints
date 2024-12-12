@@ -319,7 +319,8 @@ const OfficeBoyAttendanceTable = () => {
 
     const totalSalary = salaryPerMinute * totalMinutes;
 
-    return parseFloat(totalSalary.toFixed(2));
+    // return parseFloat(totalSalary.toFixed(2));
+    return Math.round(totalSalary / 10) * 10;
   };
 
   const getEffectiveSalary = (employee, month, year) => {
