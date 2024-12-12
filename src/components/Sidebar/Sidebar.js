@@ -198,6 +198,11 @@ const routes = [
           icon: "👤",
           path: "/admin/sales-monthwise-attendance-table",
         },
+        {
+          name: "Tour Details",
+          icon: "👤",
+          path: "/admin/tour-details",
+        },
       ],
     },
     {
