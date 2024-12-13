@@ -117,6 +117,18 @@ const PaySalary = () => {
   // Ensure totalRemainingSalary is a number before calling toFixed
   const formattedTotalRemainingSalary = totalRemainingSalary ? totalRemainingSalary.toFixed(2) : "0.00";
 
+  const calculateLeaveSalary = (baseSalary, daysInMonth, leave, leavesTaken) => {
+       
+    if (!baseSalary || !daysInMonth || !leave || !leavesTaken) return 0;
+  
+    // Calculate effective leave days based on the condition
+    const effectiveLeaveDays = leavesTaken >= leave ? leave : leavesTaken;
+  
+    // Calculate leave salary
+    
+    return (baseSalary / daysInMonth) * effectiveLeaveDays;
+  };
+
   // Calculate the total paid salaries for all employees
   return (
     <Box p={8} mt={100} backgroundColor={"white"} borderRadius={"30px"}>
@@ -191,7 +203,10 @@ const PaySalary = () => {
               <Th>Employee Code</Th>
               <Th>Employee Type</Th>
               <Th>Base Salary</Th>
-              <Th>Loan deduction</Th>
+              <Th>Leaves Taken</Th>
+              <Th>Leave Allowed</Th>
+              <Th>Leave Salary</Th>
+              <Th>Loan Deduction</Th>
               <Th>Advance Taken</Th>
               <Th>Give Bonus</Th>
               <Th>Cut Deduction</Th>
@@ -211,6 +226,14 @@ const PaySalary = () => {
                   salary.isSalaryApproved
                 );
               });
+              const daysInMonth = new Date(year, month + 1, 0).getDate();
+              const leaveSalary = calculateLeaveSalary(
+                emp.salary,
+                daysInMonth,
+                salaryEntry?.leave,
+                salaryEntry?.leavesTaken,
+                emp._id
+              );
 
               return (
                 <Tr key={emp._id}>
@@ -219,6 +242,9 @@ const PaySalary = () => {
                   <Td>{emp.employeeCode}</Td>
                   <Td>{emp.empType}</Td>
                   <Td>{salaryEntry?.amount || "N/A"}</Td>
+                  <Td>{salaryEntry?.leavesTaken ? salaryEntry?.leavesTaken : 0}</Td>
+                  <Td>{salaryEntry?.leave}</Td>
+                  <Td>{leaveSalary.toFixed()} </Td>
                   <Td>{salaryEntry?.loanAmount}</Td>
                   <Td>{salaryEntry?.advance ? 500 : 0}</Td>
                   <Td>
@@ -226,6 +252,7 @@ const PaySalary = () => {
                       type="number"
                       value={bonus[emp._id] || ""}
                       onChange={(e) => handleBonusChange(emp._id, e.target.value)}
+                      onWheel={(e) => e.preventDefault()}
                     />
                   </Td>
                   <Td>
@@ -233,6 +260,7 @@ const PaySalary = () => {
                       type="number"
                       value={deduction[emp._id] || ""}
                       onChange={(e) => handleDeductionChange(emp._id, e.target.value)}
+                      onWheel={(e) => e.preventDefault()}
                     />
                   </Td>
                   <Td>

@@ -7,6 +7,7 @@ import RTLPage from "views/RTL/RTLPage.js";
 import Profile from "views/Dashboard/Profile.js";
 import SignIn from "views/Pages/SignIn.js";
 import SignUp from "views/Pages/SignUp.js";
+import SalesTour from "views/Pages/SalesTour.js";
 
 import {
   HomeIcon,
@@ -190,6 +191,14 @@ var dashRoutes = [
     rtlName: "لوحة القيادة",
     icon: <HomeIcon color='inherit' />,
     component: SalesMonthAttendanceTable,
+    layout: "/admin",
+  },
+  {
+    path: "/tour-details",
+    name: "Tour Details",
+    rtlName: "لوحة القيادة",
+    icon: <HomeIcon color='inherit' />,
+    component: SalesTour,
     layout: "/admin",
   },
 

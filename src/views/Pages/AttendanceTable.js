@@ -181,8 +181,7 @@ const AttendanceTable = () => {
     const checkInHour = checkInDate.getUTCHours();
     const checkOutHour = checkOutDate.getUTCHours();
 
-    const isLunchDeductible =
-      (checkInHour < 14 && checkOutHour > 14) || checkOutTime < checkInTime;
+    const isLunchDeductible = checkInHour < 14 && (checkOutHour > 14 || (checkOutHour === 14 && checkOutDate.getUTCMinutes() >= 30));
 
     if (isLunchDeductible) {
       totalHours -= 0.5; // Deduct 30 minutes for lunch
@@ -288,8 +287,8 @@ const AttendanceTable = () => {
     const totalMinutes = hourPart * 60 + minutePart;
 
     const totalSalary = salaryPerMinute * totalMinutes;
-
-    return parseFloat(totalSalary.toFixed(2));
+    return Math.round(parseFloat(totalSalary.toFixed(0)));
+    // return Math.round(totalSalary / 10) * 10;
   };
 
   const getEffectiveSalary = (employee, month, year) => {

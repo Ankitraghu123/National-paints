@@ -254,6 +254,50 @@ export const employeeDetails = createAsyncThunk(
   }
 );
 
+export const getTourDetails = createAsyncThunk(
+  "employee/tour-details",
+  async (data, thunkApi) => {
+    try {
+      return await EmployeeService.GetTourDetails(data);
+    } catch (err) {
+      return thunkApi.rejectWithValue(err);
+    }
+  }
+);
+
+export const addTourDetails = createAsyncThunk(
+  "employee/add-tour-details",
+  async (data, thunkApi) => {
+    try {
+      return await EmployeeService.AddTourDetails(data);
+    } catch (err) {
+      return thunkApi.rejectWithValue(err);
+    }
+  }
+);
+
+export const allTourDetails = createAsyncThunk(
+  "employee/all-tour-details",
+  async (thunkApi) => {
+    try {
+      return await EmployeeService.AllTourDetails();
+    } catch (err) {
+      return thunkApi.rejectWithValue(err);
+    }
+  }
+);
+
+export const deleteTourDetails = createAsyncThunk(
+  "employee/delete-tour",
+  async (id, thunkApi) => {
+    try {
+      return await EmployeeService.DeleteTourDetails(id);
+    } catch (err) {
+      return thunkApi.rejectWithValue(err);
+    }
+  }
+);
+
 const initialState = {
   employee: "",
   isError: false,
@@ -607,8 +651,64 @@ export const EmployeeSlice = createSlice({
         state.isError = true;
         state.isSuccess = false;
         state.employeeDetails = null;
+      })
+
+      .addCase(getTourDetails.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getTourDetails.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.tourDetails = action.payload;
+      })
+      .addCase(getTourDetails.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.tourDetails = null;
+      })
+      .addCase(addTourDetails.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(addTourDetails.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.addedTourDetails = action.payload;
+      })
+      .addCase(addTourDetails.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.addedTourDetails = null;
+      })
+      .addCase(allTourDetails.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(allTourDetails.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.allTourDetails = action.payload;
+      })
+      .addCase(allTourDetails.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.allTourDetails = null;
+      })
+      .addCase(deleteTourDetails.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(deleteTourDetails.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.deletedTourDetails = action.payload;
+      })
+      .addCase(deleteTourDetails.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.deletedTourDetails = null;
       });
-    
   },
 });
 
