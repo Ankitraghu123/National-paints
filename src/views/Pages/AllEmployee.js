@@ -216,6 +216,11 @@ const AllEmployee = () => {
           outDateTime = sixPm;
         }
 
+        // Ensure outDateTime is after inDateTime
+        if (outDateTime <= inDateTime) {
+          outDateTime.setDate(outDateTime.getDate() + 1);
+        }
+
         // Calculate total hours worked
         const checkInMilliseconds = inDateTime.getTime();
         const checkOutMilliseconds = outDateTime.getTime();
