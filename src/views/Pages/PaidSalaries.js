@@ -149,6 +149,18 @@ const PaidSalaries = () => {
   const formattedTotalPaidSalaries = totalPaidSalaries
     ? totalPaidSalaries.toFixed(2)
     : "0.00";
+  
+    const calculateLeaveSalary = (baseSalary, daysInMonth, leave, leavesTaken) => {
+       
+      if (!baseSalary || !daysInMonth || !leave || !leavesTaken) return 0;
+    
+      // Calculate effective leave days based on the condition
+      const effectiveLeaveDays = leavesTaken >= leave ? leave : leavesTaken;
+    
+      // Calculate leave salary
+      
+      return (baseSalary / daysInMonth) * effectiveLeaveDays;
+    };
 
   return (
     <Box p={8} mt={100} backgroundColor={"white"} borderRadius={"30px"}>
@@ -234,6 +246,7 @@ const PaidSalaries = () => {
               <Th>Base Salary</Th>
               <Th>Leaves Taken</Th>
               <Th>Leave Allowed</Th>
+              <Th>Leave Salary</Th>
               <Th>Loan deduction</Th>
               <Th>Advance Taken</Th>
               <Th>Bonus</Th>
@@ -254,6 +267,14 @@ const PaidSalaries = () => {
                   salary.isPaid
                 );
               });
+              const daysInMonth = new Date(year, month + 1, 0).getDate();
+              const leaveSalary = calculateLeaveSalary(
+                emp.salary,
+                daysInMonth,
+                salaryEntry?.leave,
+                salaryEntry?.leavesTaken,
+                emp._id
+              );
               return (
                 <Tr key={emp._id}>
                   {" "}
@@ -267,6 +288,7 @@ const PaidSalaries = () => {
                     {salaryEntry?.leavesTaken ? salaryEntry?.leavesTaken : 0}
                   </Td>
                   <Td>{salaryEntry?.leave}</Td>
+                  <Td>{leaveSalary.toFixed()}</Td>
                   <Td>{salaryEntry?.loanAmount}</Td>
                   <Td>{salaryEntry?.advance ? 500 : 0}</Td>
                   <Td>{salaryEntry?.bonus ? salaryEntry.bonus : 0}</Td>

@@ -267,7 +267,8 @@ const StaffAttendanceTable = () => {
     const dailySalary = salary / daysInMonth;
     const totalSalary = dailySalary * totalDaysWorked;
     // return totalSalary.toFixed(2);
-    return Math.round(totalSalary / 10) * 10;
+    return Math.round(parseFloat(totalSalary.toFixed(0)));
+    // return Math.round(totalSalary / 10) * 10;
   };
 
   const getEffectiveSalary = (employee, month, year) => {
