@@ -211,10 +211,10 @@ const AllEmployee = () => {
         }
 
         // Adjust check-out time to 6:00 PM if it's later
-        const sixPm = new Date(`${sharedDate}T18:00:00`);
-        if (outDateTime > sixPm) {
-          outDateTime = sixPm;
-        }
+        // const sixPm = new Date(`${sharedDate}T18:00:00`);
+        // if (outDateTime > sixPm) {
+        //   outDateTime = sixPm;
+        // }
 
         // Ensure outDateTime is after inDateTime
         if (outDateTime <= inDateTime) {
