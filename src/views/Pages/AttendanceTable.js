@@ -181,8 +181,7 @@ const AttendanceTable = () => {
     const checkInHour = checkInDate.getUTCHours();
     const checkOutHour = checkOutDate.getUTCHours();
 
-    const isLunchDeductible =
-      (checkInHour < 14 && checkOutHour > 14) || checkOutTime < checkInTime;
+    const isLunchDeductible = checkInHour < 14 && (checkOutHour > 14 || (checkOutHour === 14 && checkOutDate.getUTCMinutes() >= 30));
 
     if (isLunchDeductible) {
       totalHours -= 0.5; // Deduct 30 minutes for lunch
