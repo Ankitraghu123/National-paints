@@ -135,6 +135,21 @@ const AllEmployee = () => {
     );
   };
 
+  const getCheckInTimeToday = (emp) => {
+    const attendance = emp.attendanceTime?.find((attendance) => {
+      const attendanceDate = attendance.date;
+      return attendanceDate.split("T")[0] === sharedDate;
+    });
+  
+    if (attendance) {
+      const checkInLog = attendance.timeLogs?.find((log) => log.checkIn);
+      const returnTime = checkInLog?.checkIn?.split("T")[1]?.slice(0, 5);
+      return returnTime;
+    }
+  
+    return null;
+  };
+
   const hasCheckedOutToday = (emp) => {
     return (
       emp.attendanceTime?.some((attendance) => {
@@ -146,6 +161,201 @@ const AllEmployee = () => {
         );
       }) || false
     );
+  };
+
+  const getCheckOutTimeToday = (emp) => { 
+    const attendance = emp.attendanceTime?.find((attendance) => {
+      const attendanceDate = attendance.date;
+      return attendanceDate.split("T")[0] === sharedDate;
+    });
+
+    if (attendance) {
+      const checkOutLog = attendance.timeLogs?.find((log) => log.checkOut);
+      if (checkOutLog) {
+        const returnTime = checkOutLog?.checkOut?.split("T")[1]?.slice(0, 5);
+        return returnTime;
+      }
+    }
+
+    return null;
+  };
+
+  const calculateTotalHoursForAlreadyCheckedOut = (empId, empType, employee) => {
+    if (empType === "labour") {
+      const inTimeValue = getCheckInTimeToday(employee);
+      const outTimeValue = getCheckOutTimeToday(employee);
+
+      if (inTimeValue && outTimeValue) {
+        let inDateTime = new Date(`${sharedDate}T${inTimeValue}:00`);
+        const outDateTime = new Date(`${sharedDate}T${outTimeValue}:00`);
+        // Adjust check-in time to 10 AM if earlier, considering local time
+        if (inDateTime.getHours() < 10) {
+          inDateTime.setHours(10, 0, 0, 0);
+        }
+
+        // Handle overnight shift by adjusting check-out date
+        if (outDateTime < inDateTime) {
+          outDateTime.setDate(outDateTime.getDate() + 1);
+        }
+
+        // Calculate total hours worked
+        const checkInMilliseconds = inDateTime.getTime();
+        const checkOutMilliseconds = outDateTime.getTime();
+        let totalHours =
+          (checkOutMilliseconds - checkInMilliseconds) / (1000 * 60 * 60);
+
+        // Deduct lunch break if applicable
+        const checkInHour = inDateTime.getHours();
+        const checkOutHour = outDateTime.getHours();
+        const isLunchDeductible =
+          checkInHour < 14 &&
+          (checkOutHour > 14 ||
+            (checkOutHour === 14 && outDateTime.getMinutes() >= 30));
+
+        if (isLunchDeductible) {
+          totalHours -= 0.5; // Deduct 30 minutes for lunch
+        }
+
+        // Round the total hours
+        const wholeHours = Math.floor(totalHours);
+        const rawMinutes = (totalHours - wholeHours) * 60;
+        const roundedMinutes = roundMinutes(rawMinutes);
+
+        if (roundedMinutes === 60) {
+          return `${wholeHours + 1}:00`;
+        } else {
+          return `${wholeHours}:${roundedMinutes.toString().padStart(2, "0")}`;
+        }
+      }
+    }
+    if (empType === "staff" || empType === "sales") {
+      const inTimeValue = getCheckInTimeToday(employee);
+      const outTimeValue = getCheckOutTimeToday(employee);
+
+      if (inTimeValue && outTimeValue) {
+        let inDateTime = new Date(`${sharedDate}T${inTimeValue}:00`);
+        let outDateTime = new Date(`${sharedDate}T${outTimeValue}:00`);
+
+        // Adjust check-in time to 10:00 AM if earlier
+        const tenAm = new Date(`${sharedDate}T10:00:00`);
+        if (inDateTime < tenAm) {
+          inDateTime = tenAm;
+        }
+
+        // Adjust check-out time to 6:00 PM if it's later
+        // const sixPm = new Date(`${sharedDate}T18:00:00`);
+        // if (outDateTime > sixPm) {
+        //   outDateTime = sixPm;
+        // }
+
+        // Ensure outDateTime is after inDateTime
+        if (outDateTime <= inDateTime) {
+          outDateTime.setDate(outDateTime.getDate() + 1);
+        }
+
+        // Calculate total hours worked
+        const checkInMilliseconds = inDateTime.getTime();
+        const checkOutMilliseconds = outDateTime.getTime();
+        let totalHours =
+          (checkOutMilliseconds - checkInMilliseconds) / (1000 * 60 * 60);
+
+        // Round the total hours
+        const wholeHours = Math.floor(totalHours);
+        const rawMinutes = (totalHours - wholeHours) * 60;
+        const roundedMinutes = roundMinutes(rawMinutes);
+
+        if (roundedMinutes === 60) {
+          return `${wholeHours + 1}:00`;
+        } else {
+          return `${wholeHours}:${roundedMinutes.toString().padStart(2, "0")}`;
+        }
+      }
+    }
+    if (empType === "guard") {
+      const inTimeValue = getCheckInTimeToday(employee);
+      const outTimeValue = getCheckOutTimeToday(employee);
+
+      if (inTimeValue && outTimeValue) {
+        let inDateTime = new Date(`${sharedDate}T${inTimeValue}:00`);
+        const outDateTime = new Date(`${sharedDate}T${outTimeValue}:00`);
+
+        // Handle overnight shift by adjusting check-out date
+        if (outDateTime < inDateTime) {
+          outDateTime.setDate(outDateTime.getDate() + 1);
+        }
+
+        // Calculate total hours worked
+        const checkInMilliseconds = inDateTime.getTime();
+        const checkOutMilliseconds = outDateTime.getTime();
+        let totalHours =
+          (checkOutMilliseconds - checkInMilliseconds) / (1000 * 60 * 60);
+
+        // Round the total hours
+        const wholeHours = Math.floor(totalHours);
+        const rawMinutes = (totalHours - wholeHours) * 60;
+        const roundedMinutes = roundMinutes(rawMinutes);
+
+        if (roundedMinutes === 60) {
+          return `${wholeHours + 1}:00`;
+        } else {
+          return `${wholeHours}:${roundedMinutes.toString().padStart(2, "0")}`;
+        }
+      }
+    }
+    if (empType === "officeboy") {
+      const inTimeValue = getCheckInTimeToday(employee);
+      const outTimeValue = getCheckOutTimeToday(employee);
+
+      if (inTimeValue && outTimeValue) {
+        let inDateTime = new Date(`${sharedDate}T${inTimeValue}:00`);
+        let outDateTime = new Date(`${sharedDate}T${outTimeValue}:00`);
+
+        // Standard check-in time is 9:00 AM
+        const nineAm = new Date(`${sharedDate}T09:00:00`);
+        if (inDateTime < nineAm) {
+          inDateTime = nineAm;
+        }
+
+        // Calculate total hours worked
+        const checkInMilliseconds = inDateTime.getTime();
+        const checkOutMilliseconds = outDateTime.getTime();
+        let totalHours =
+          (checkOutMilliseconds - checkInMilliseconds) / (1000 * 60 * 60);
+
+        // Deduct 30 minutes for lunch if applicable
+        const checkInHour = inDateTime.getHours();
+        const checkOutHour = outDateTime.getHours();
+        const isLunchDeductible =
+          checkInHour < 14 &&
+          (checkOutHour > 14 ||
+            (checkOutHour === 14 && outDateTime.getMinutes() >= 30));
+
+        if (isLunchDeductible) {
+          totalHours -= 0.5; // Deduct 30 minutes for lunch
+        }
+
+        // Round the total hours
+        const wholeHours = Math.floor(totalHours);
+        const rawMinutes = (totalHours - wholeHours) * 60;
+        const roundedMinutes = roundMinutes(rawMinutes);
+
+        if (roundedMinutes === 60) {
+          return `${wholeHours + 1}:00`;
+        } else {
+          return `${wholeHours}:${roundedMinutes.toString().padStart(2, "0")}`;
+        }
+      }
+    }
+    return "0:00";
+  };
+
+  // Rounding function from AttendanceTable.js
+  const roundMinutes = (minutes) => {
+    if (minutes <= 10) return 0;
+    if (minutes <= 25) return 15;
+    if (minutes <= 40) return 30;
+    if (minutes <= 55) return 45;
+    return 60; // Minutes > 55 round to the next hour
   };
 
   const calculateTotalHours = (empId, empType) => {
@@ -317,14 +527,7 @@ const AllEmployee = () => {
     return "0:00";
   };
 
-  // Rounding function from AttendanceTable.js
-  const roundMinutes = (minutes) => {
-    if (minutes <= 10) return 0;
-    if (minutes <= 25) return 15;
-    if (minutes <= 40) return 30;
-    if (minutes <= 55) return 45;
-    return 60; // Minutes > 55 round to the next hour
-  };
+
 
   return (
     <Box p={8} mt={100} backgroundColor={"white"} borderRadius={"30px"}>
@@ -393,7 +596,7 @@ const AllEmployee = () => {
                 <Td>
                   <Input
                     type="time"
-                    value={inTime[employee._id] || ""}
+                    value={getCheckInTimeToday(employee) || inTime[employee._id] || ""}
                     onChange={(e) =>
                       handleInTimeChange(employee._id, e.target.value)
                     }
@@ -404,7 +607,7 @@ const AllEmployee = () => {
                 <Td>
                   <Input
                     type="time"
-                    value={outTime[employee._id] || ""}
+                    value={getCheckOutTimeToday(employee) || outTime[employee._id] || ""}
                     onChange={(e) =>
                       handleOutTimeChange(employee._id, e.target.value)
                     }
@@ -412,7 +615,7 @@ const AllEmployee = () => {
                     disabled={hasCheckedOutToday(employee)}
                   />
                 </Td>
-                <Td>{calculateTotalHours(employee._id, employee.empType)}</Td>
+                <Td>{hasCheckedInToday(employee) && hasCheckedOutToday(employee) ? calculateTotalHoursForAlreadyCheckedOut(employee._id, employee.empType,employee) : calculateTotalHours(employee._id, employee.empType)}</Td>
                 <Td>
                   <Button
                     colorScheme="blue"
