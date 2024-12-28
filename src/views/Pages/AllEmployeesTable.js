@@ -148,13 +148,14 @@ const AllEmployeesTable = () => {
     { label: 'Blood Group', key: 'bloodGroup' },
     { label: 'Qualification', key: 'qualification' },
     { label: 'Father\'s Name', key: 'fathersName' },
-    { label: 'Salary', key: 'currentSalary' },
+    { label: 'Salary', key: 'salary' },
     { label: 'Joining Date', key: 'joiningDate' },
   ];
 
   const csvData = filteredEmployees?.map((employee, index) => ({
     serial: index + 1,
     ...employee,
+    salary: employee?.salary ? employee?.salary : employee?.editedSalary[employee?.editedSalary?.length-1]?.amount
   }));
 
   return (
@@ -249,7 +250,7 @@ const AllEmployeesTable = () => {
                 <Td>{employee.bloodGroup}</Td>
                 <Td>{employee.qualification}</Td>
                 <Td>{employee.fathersName}</Td>
-                <Td>{employee.currentSalary ? employee.currentSalary : employee.salary}</Td>
+                <Td>{employee.salary ? employee.salary : employee?.editedSalary[employee?.editedSalary?.length-1]?.amount}</Td>
                 <Td>{employee.joiningDate ? new Date(employee.joiningDate).toLocaleDateString("en-US") : 'NA'}</Td>
                 
                  {

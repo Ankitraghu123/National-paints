@@ -15,9 +15,9 @@ import { giveLoan } from 'features/Employee/EmployeeSlice';
 
 const Loan = () => {
   const dispatch = useDispatch();
-  const employees = useSelector((state) => state.employee?.allEmployees);
+  const allEmployees = useSelector((state) => state.employee?.allEmployees);
   const toast = useToast(); 
-  
+  const employees = allEmployees?.filter((employee) => !employee.delete);
   const [selectedEmployee, setSelectedEmployee] = useState('');
   const [loanAmount, setLoanAmount] = useState('');
   const [monthlyDeduction, setMonthlyDeduction] = useState(''); // New state for monthly deduction
