@@ -181,7 +181,10 @@ const AttendanceTable = () => {
     const checkInHour = checkInDate.getUTCHours();
     const checkOutHour = checkOutDate.getUTCHours();
 
-    const isLunchDeductible = checkInHour < 14 && (checkOutHour > 14 || (checkOutHour === 14 && checkOutDate.getUTCMinutes() >= 30));
+    const isLunchDeductible =
+      checkInHour < 14 &&
+      (checkOutHour > 14 ||
+        (checkOutHour === 14 && checkOutDate.getUTCMinutes() >= 30));
 
     if (isLunchDeductible) {
       totalHours -= 0.5; // Deduct 30 minutes for lunch
@@ -457,7 +460,9 @@ const AttendanceTable = () => {
       });
 
       // Calculate totals
-      const totalWorkingDays = calculateTotalWorkingDays(employee.attendanceTime);
+      const totalWorkingDays = calculateTotalWorkingDays(
+        employee.attendanceTime
+      );
       const totalOvertime = calculateTotalOvertime(employee.attendanceTime);
       const totalHours = calculateTotalHours(employee.attendanceTime);
       const totalSalary = calculateTotalSalary(
@@ -510,16 +515,61 @@ const AttendanceTable = () => {
   }, [currentEmployees, daysInMonth, month, year]);
 
   // Ensure totalSalaryToBePaid is a number before calling toFixed
-  const formattedTotalSalaryToBePaid = totalSalaryToBePaid ? totalSalaryToBePaid.toFixed(2) : "0.00";
+  const formattedTotalSalaryToBePaid = totalSalaryToBePaid
+    ? totalSalaryToBePaid.toFixed(2)
+    : "0.00";
+
+  // const totalHoursWorked = useMemo(() => {
+  //   return currentEmployees?.reduce((acc, employee) => {
+  //     const totalHours = calculateTotalHours(employee.attendanceTime);
+  //     return acc + totalHours;
+  //   }, 0);
+  // }, [currentEmployees, daysInMonth, month, year]);
+
+  // const formattedTotalHoursWorked = totalHoursWorked
+  //   ? totalHoursWorked
+  //   : "0.00";
+
+  // const totalOvertime = useMemo(() => {
+  //   return currentEmployees?.reduce((acc, employee) => {
+  //     const totalOvertime = calculateTotalOvertime(employee.attendanceTime);
+  //     return acc + totalOvertime;
+  //   }, 0);
+  // }, [currentEmployees, daysInMonth, month, year]);
+
+  // const formattedTotalOvertime = totalOvertime
+  //   ? totalOvertime
+  //   : "0.00";
 
   return (
     <Box p={8} mt={100} backgroundColor={"white"} borderRadius={"30px"}>
       {/* Display total salary to be paid */}
-      <Box mb={4}>
-        <Text fontSize="lg" fontWeight="bold">
-          Total Salary to be Paid: ₹ {formattedTotalSalaryToBePaid}
-        </Text>
-      </Box>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          gap: "10px",
+        }}
+      >
+        <Box mb={4}>
+          <Text fontSize="lg" fontWeight="bold">
+            Total Salary to be Paid: ₹ {formattedTotalSalaryToBePaid}
+          </Text>
+        </Box>
+
+        {/* <Box mb={4}>
+          <Text fontSize="lg" fontWeight="bold">
+            Total Hours Worked: {formattedTotalHoursWorked}
+          </Text>
+        </Box>
+
+        <Box mb={4}>
+          <Text fontSize="lg" fontWeight="bold">
+            Total Overtime: {formattedTotalOvertime}
+          </Text>
+        </Box> */}
+      </div>
 
       {/* Year and Month Selection */}
       <Box display="flex" alignItems="center" gap={4} mb={4} id="table-col">

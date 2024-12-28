@@ -276,6 +276,7 @@ const SalesAttendanceTable = () => {
     if (!emp.salaryArray || emp.salaryArray.length === 0) {
       return false;
     }
+    
 
     const salaryFound = emp.salaryArray.some((salaryRecord) => {
       // console.log(salaryRecord);
