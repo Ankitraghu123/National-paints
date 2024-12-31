@@ -60,7 +60,17 @@ const PaySalary = () => {
     )
     .slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage);
 
-
+  const handlePaySalary = async (empId, month) => {
+    const confirmPayment = window.confirm(`Are you sure you want to pay the salary?`);
+    if (confirmPayment) {
+      dispatch(paySalary({ 
+        empId, 
+        month, 
+        bonus: bonus[empId] || 0, 
+        deduction: deduction[empId] || 0 
+      }));
+    }
+  };
 
   const handleBonusChange = (empId, value) => {
     setBonus((prevBonus) => ({
@@ -117,19 +127,6 @@ const PaySalary = () => {
     // Calculate leave salary
     
     return (baseSalary / daysInMonth) * effectiveLeaveDays;
-  };
-
-    const handlePaySalary = async (empId, month) => {
-    const confirmPayment = window.confirm(`Are you sure you want to pay the salary?`);
-    if (confirmPayment) {
-      dispatch(paySalary({ 
-        empId, 
-        month, 
-        bonus: bonus[empId] || 0, 
-        deduction: deduction[empId] || 0,
-        leaveSalary: leaveSalary
-      }));
-    }
   };
 
   // Calculate the total paid salaries for all employees
@@ -273,15 +270,13 @@ const PaySalary = () => {
                           500 -
                           salaryEntry.loanAmount +
                           (bonus[emp._id] || 0) -
-                          (deduction[emp._id] || 0) + 
-                          leaveSalary
+                          (deduction[emp._id] || 0)
                         ).toFixed(2)
                       : (
                           salaryEntry.amount -
                           salaryEntry.loanAmount +
                           (bonus[emp._id] || 0) -
-                          (deduction[emp._id] || 0) +
-                          leaveSalary
+                          (deduction[emp._id] || 0)
                         ).toFixed(2)}
                   </Td>
                   <Td>
