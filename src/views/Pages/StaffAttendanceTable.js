@@ -208,19 +208,18 @@ const StaffAttendanceTable = () => {
       if (consecutiveDailyLateDays >= 3) {
         return !attendanceRecord.removeHalfDay ? "Half day" : "P";
       }
-      
-      if ((checkInHour <= 14 && checkOutHour <= 14) || checkInHour > 14) {
-        return !attendanceRecord.removeHalfDay ? "Half day" : "P";
+      if ((checkInHour <= 14 && checkOutHour <= 14) || checkInHour >= 14 && checkOutHour >= 14) {
+        return !attendanceRecord?.removeHalfDay ? "Half day" : "P";
       } else if (checkInHour <= 13) {
         return "P";
       }
-    }
+  }
+  
+  if (attendanceRecord?.removeDay) {
+    return "P";
+  }
 
-    if (!attendanceRecord.removeDay) {
-      return "P";
-    }
-
-    return "A";
+  return "A";
   };
 
   const calculateTotalDays = (attendanceRecords) => {

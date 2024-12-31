@@ -112,21 +112,22 @@ const StaffEmployeeWiseAttendance = () => {
       } else {
         consecutiveDailyLateDays = 0;
       }
-        // console.log(checkInHour)
+      // console.log(checkInHour)
+      
       // Show "Half day" option only if late for 3 consecutive days
       if (consecutiveDailyLateDays >= 3) {
         return !attendanceRecord.removeHalfDay ? "Half day" : "P";
       }
-      if ((checkInHour <= 14 && checkOutHour <= 14) || checkInHour > 14) {
+      if ((checkInHour <= 14 && checkOutHour <= 14) || checkInHour >= 14 && checkOutHour >= 14) {
         return !attendanceRecord?.removeHalfDay ? "Half day" : "P";
       } else if (checkInHour <= 13) {
         return "P";
       }
   }
   
-  if (!attendanceRecord?.removeDay) {
+  if (attendanceRecord?.removeDay) {
     return "P";
-}
+  }
 
   return "A";
   };
