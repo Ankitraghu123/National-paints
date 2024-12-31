@@ -62,13 +62,14 @@ const PaySalary = () => {
 
   const handlePaySalary = async (empId, month, salaryEntry) => {
     const confirmPayment = window.confirm(`Are you sure you want to pay the salary?`);
+    
     if (confirmPayment) {
       dispatch(paySalary({ 
         empId, 
         month, 
         bonus: bonus[empId] || 0, 
         deduction: deduction[empId] || 0,
-        leave: leave[empId] || salaryEntry?.leave || 0,
+        leave: leave[empId] !== undefined ? leave[empId] : salaryEntry?.leave !== undefined ? salaryEntry.leave : 0
       }));
     }
   };
