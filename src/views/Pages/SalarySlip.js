@@ -239,7 +239,7 @@ const SalarySlip = () => {
                   <Input
                     name="salaryAmount"
                     type="number"
-                    value={editableEmployee.salaryAmount}
+                    value={editableEmployee.salaryAmount.toFixed(0)}
                     onChange={handleInputChange}
                   />
                 </Td>
@@ -251,7 +251,7 @@ const SalarySlip = () => {
                   <Input
                     name="leaveSalary"
                     type="number"
-                    value={editableEmployee.leaveSalary}
+                    value={editableEmployee.leaveSalary.toFixed(0)}
                     onChange={handleInputChange}
                   />
                 </Td>
@@ -263,7 +263,7 @@ const SalarySlip = () => {
                   <Input
                     name="medicalAllowance"
                     type="number"
-                    value={editableEmployee.medicalAllowance}
+                    value={editableEmployee.medicalAllowance.toFixed(0)}
                     onChange={handleInputChange}
                   />
                 </Td>
@@ -276,7 +276,7 @@ const SalarySlip = () => {
                   <Input
                     name="advanceTaken"
                     type="number"
-                    value={editableEmployee.advanceTaken}
+                    value={editableEmployee.advanceTaken.toFixed(0)}
                     onChange={handleInputChange}
                   />
                 </Td>
@@ -288,7 +288,7 @@ const SalarySlip = () => {
                   <Input
                     name="loanDeduction"
                     type="number"
-                    value={editableEmployee.loanDeduction}
+                    value={editableEmployee.loanDeduction.toFixed(0)}
                     onChange={handleInputChange}
                   />
                 </Td>
@@ -298,7 +298,7 @@ const SalarySlip = () => {
                 <Td>
                   <Input
                     type="number"
-                    value={editableEmployee.bonus}
+                    value={editableEmployee.bonus.toFixed(0)}
                     name="bonus"
                     onChange={handleInputChange}
                   />
@@ -306,7 +306,7 @@ const SalarySlip = () => {
                 <Td>
                   <Input
                     type="number"
-                    value={editableEmployee.deduction}
+                    value={editableEmployee.deduction.toFixed(0)}
                     name="deduction"
                     onChange={handleInputChange}
                   />
@@ -318,10 +318,10 @@ const SalarySlip = () => {
 
         <Flex className="flex" justifyContent="space-between" mb="4">
           <Text>
-            <strong>Total :</strong> {totalSalary}
+            <strong>Total :</strong> {totalSalary.toFixed(0)}
           </Text>
           <Text>
-            <strong>Deductions :</strong> {totalDeductions}
+            <strong>Deductions :</strong> {totalDeductions.toFixed(0)}
           </Text>
         </Flex>
 
@@ -333,7 +333,7 @@ const SalarySlip = () => {
           textAlign="right"
           mb="4"
         >
-          NET PAY: {netPay}
+          NET PAY: {netPay.toFixed(0)}
         </Text>
 
         <Text className="text-end" textAlign="right" fontSize="sm">
