@@ -67,7 +67,7 @@ const AllSalaries = () => {
 
     const handlePaySalary = async (empId, mon,leave,leavesTaken) => {
         
-          dispatch(paySalary({empId,month:mon}))
+          dispatch(paySalary({empId,month:mon,bonus:bonus[empId] || 0,deduction:deduction[empId] || 0,leave:leave}))
 
           const lastDay = new Date(year, month+2, 0)
           console.log(month)
@@ -251,8 +251,8 @@ const AllSalaries = () => {
               <Td>{salaryEntry?.advance ? 500 : 0 }</Td>
               <Td>
   {salaryEntry?.advance 
-    ? (salaryEntry.amount - 500 - salaryEntry.loanAmount + leaveSalary).toFixed(2) 
-    : (salaryEntry.amount - salaryEntry.loanAmount + leaveSalary).toFixed(2)}
+    ? (salaryEntry.amount - 500 - salaryEntry.loanAmount + leaveSalary + salaryEntry?.bonus - salaryEntry?.deduction).toFixed(0) 
+    : (salaryEntry.amount - salaryEntry.loanAmount + leaveSalary + salaryEntry?.bonus - salaryEntry?.deduction).toFixed(0)}
 </Td>
               <Td>
                 {salaryEntry?.isPaid ? (

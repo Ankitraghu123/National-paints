@@ -28,7 +28,7 @@ const PaySalary = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(50); // Default entries per page
   const [searchTerm, setSearchTerm] = useState(""); // New state for search input
-
+  const [leave, setLeave] = useState({});
   const employees = useSelector((state) => state.employee?.allEmployees);
   // const employees = allEmployees?.filter((employee) => employee.empType === 'labour');
   const { salaryPaid } = useSelector((state) => state.employee);
@@ -60,14 +60,15 @@ const PaySalary = () => {
     )
     .slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage);
 
-  const handlePaySalary = async (empId, month) => {
+  const handlePaySalary = async (empId, month, salaryEntry) => {
     const confirmPayment = window.confirm(`Are you sure you want to pay the salary?`);
     if (confirmPayment) {
       dispatch(paySalary({ 
         empId, 
         month, 
         bonus: bonus[empId] || 0, 
-        deduction: deduction[empId] || 0 
+        deduction: deduction[empId] || 0,
+        leave: leave[empId] || salaryEntry?.leave || 0,
       }));
     }
   };
@@ -82,6 +83,13 @@ const PaySalary = () => {
   const handleDeductionChange = (empId, value) => {
     setDeduction((prevDeduction) => ({
       ...prevDeduction,
+      [empId]: value === "" ? 0 : Number(value),
+    }));
+  };
+
+  const handleLeaveChange = (empId, value) => {
+    setLeave((prevLeave) => ({
+      ...prevLeave,
       [empId]: value === "" ? 0 : Number(value),
     }));
   };
@@ -123,7 +131,7 @@ const PaySalary = () => {
   
     // Calculate effective leave days based on the condition
     const effectiveLeaveDays = leavesTaken >= leave ? leave : leavesTaken;
-  
+
     // Calculate leave salary
     
     return (baseSalary / daysInMonth) * effectiveLeaveDays;
@@ -230,7 +238,7 @@ const PaySalary = () => {
               const leaveSalary = calculateLeaveSalary(
                 emp.salary,
                 daysInMonth,
-                salaryEntry?.leave,
+                leave[emp._id] !== undefined ? leave[emp._id] : salaryEntry?.leave || 0,
                 salaryEntry?.leavesTaken,
                 emp._id
               );
@@ -243,8 +251,15 @@ const PaySalary = () => {
                   <Td>{emp.empType}</Td>
                   <Td>{salaryEntry?.amount || "N/A"}</Td>
                   <Td>{salaryEntry?.leavesTaken ? salaryEntry?.leavesTaken : 0}</Td>
-                  <Td>{salaryEntry?.leave}</Td>
-                  <Td>{leaveSalary.toFixed()} </Td>
+                  <Td>
+                    <Input
+                      type="number"
+                      value={leave[emp._id] !== undefined ? leave[emp._id] : salaryEntry?.leave || 0}
+                      onChange={(e) => handleLeaveChange(emp._id, e.target.value)}
+                      onWheel={(e) => e.preventDefault()}
+                    />
+                  </Td>
+                  <Td>{leaveSalary.toFixed(0)} </Td>
                   <Td>{salaryEntry?.loanAmount}</Td>
                   <Td>{salaryEntry?.advance ? 500 : 0}</Td>
                   <Td>
@@ -270,20 +285,22 @@ const PaySalary = () => {
                           500 -
                           salaryEntry.loanAmount +
                           (bonus[emp._id] || 0) -
-                          (deduction[emp._id] || 0)
-                        ).toFixed(2)
+                        (deduction[emp._id] || 0) +
+                        leaveSalary
+                        ).toFixed(0)
                       : (
                           salaryEntry.amount -
                           salaryEntry.loanAmount +
                           (bonus[emp._id] || 0) -
-                          (deduction[emp._id] || 0)
-                        ).toFixed(2)}
+                          (deduction[emp._id] || 0) +
+                          leaveSalary
+                        ).toFixed(0)}
                   </Td>
                   <Td>
                     <Button
                       colorScheme="green"
                       onClick={() =>
-                        handlePaySalary(emp._id, salaryEntry?.month)
+                        handlePaySalary(emp._id, salaryEntry?.month, salaryEntry)
                       }
                     >
                       Pay
