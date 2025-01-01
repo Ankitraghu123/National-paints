@@ -44,7 +44,7 @@ const StaffAttendanceTable = () => {
   const employees = allEmployees?.filter(
     (employee) => employee.empType === "staff" && !employee.delete
   );
-  const today = new Date();
+  const today = new Date(year, month, 1);
   const { monthSalary } = useSelector((state) => state.employee);
 
   const { removedDay, restoredDay } = useSelector((state) => state.attendance);

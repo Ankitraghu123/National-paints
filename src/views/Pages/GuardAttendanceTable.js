@@ -44,7 +44,7 @@ const GuardAttendanceTable = () => {
   const { monthSalary } = useSelector((state) => state.employee);
   const { removedDay, restoredDay } = useSelector((state) => state.attendance);
 
-  const today = new Date();
+  const today = new Date(year, month, 1);
   useEffect(() => {
     dispatch(allEmployee());
     dispatch(allHoliday());
