@@ -43,7 +43,7 @@ const SalesAttendanceTable = () => {
   const employees = allEmployees?.filter(
     (employee) => employee.empType === "sales" && !employee.delete
   );
-  const today = new Date();
+  const today = new Date(year, month, 1);
   const { monthSalary } = useSelector((state) => state.employee);
 
   const {
