@@ -152,7 +152,7 @@ const PaidSalaries = () => {
   
     const calculateLeaveSalary = (baseSalary, daysInMonth, leave, leavesTaken) => {
        
-      if (!baseSalary || !daysInMonth || !leave || !leavesTaken) return 0;
+      if (!baseSalary || !daysInMonth || leave === undefined || leavesTaken === undefined || leave === null || leavesTaken === null) return 0;
     
       // Calculate effective leave days based on the condition
       const effectiveLeaveDays = leavesTaken >= leave ? leave : leavesTaken;
@@ -269,7 +269,7 @@ const PaidSalaries = () => {
               });
               const daysInMonth = new Date(year, month + 1, 0).getDate();
               const leaveSalary = calculateLeaveSalary(
-                emp.salary,
+                emp.salary ? emp.salary : emp.currentSalary ? emp.currentSalary : emp.editedSalary[employees.editedSalary.length - 1]?.amount ? emp.editedSalary[employees.editedSalary.length - 1]?.amount : 0,
                 daysInMonth,
                 salaryEntry?.leave,
                 salaryEntry?.leavesTaken,

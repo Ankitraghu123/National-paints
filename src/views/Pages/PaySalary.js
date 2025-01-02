@@ -128,13 +128,12 @@ const PaySalary = () => {
 
   const calculateLeaveSalary = (baseSalary, daysInMonth, leave, leavesTaken) => {
 
-    console.log(baseSalary, daysInMonth, leave, leavesTaken);
     if (!baseSalary || !daysInMonth || leave === undefined || leavesTaken === undefined || leave === null || leavesTaken === null) return 0;
     
     
     // Calculate effective leave days based on the condition
     const effectiveLeaveDays = leavesTaken >= leave ? leave : leavesTaken;
-    console.log(effectiveLeaveDays);
+
     // Calculate leave salary
     
     return (baseSalary / daysInMonth) * effectiveLeaveDays;
