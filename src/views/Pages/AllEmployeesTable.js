@@ -202,6 +202,7 @@ const AllEmployeesTable = () => {
               <Th>Employee Type</Th>
               <Th>Date of Birth</Th>
               <Th>Location</Th>
+              <Th>Salary</Th>
               <Th>Total Experience</Th>
               <Th>Previous Employer</Th>
               <Th>Bank Account Number</Th>
@@ -219,7 +220,6 @@ const AllEmployeesTable = () => {
               <Th>Blood Group</Th>
               <Th>Qualification</Th>
               <Th>Father's Name</Th>
-              <Th>Salary</Th>
               <Th>Joining Date</Th>
               {isHR() || isAdmin() ? <Th>Action</Th> : ''}
             </Tr>
@@ -233,6 +233,7 @@ const AllEmployeesTable = () => {
                 <Td>{employee.empType}</Td>
                 <Td>{employee.Dob ? new Date(employee.Dob).toLocaleDateString("en-US") : 'NA'}</Td>
                 <Td>{employee.location}</Td>
+                <Td>{employee.salary ? employee.salary : employee?.editedSalary[employee?.editedSalary?.length-1]?.amount}</Td>
                 <Td>{employee.totalExp}</Td>
                 <Td>{employee.previousEmployer}</Td>
                 <Td>{employee.bankAccountNumber}</Td>
@@ -250,7 +251,6 @@ const AllEmployeesTable = () => {
                 <Td>{employee.bloodGroup}</Td>
                 <Td>{employee.qualification}</Td>
                 <Td>{employee.fathersName}</Td>
-                <Td>{employee.salary ? employee.salary : employee?.editedSalary[employee?.editedSalary?.length-1]?.amount}</Td>
                 <Td>{employee.joiningDate ? new Date(employee.joiningDate).toLocaleDateString("en-US") : 'NA'}</Td>
                 
                  {
