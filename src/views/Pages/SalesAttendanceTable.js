@@ -296,7 +296,7 @@ const SalesAttendanceTable = () => {
 
   const calculateTotalLeaves = (attendanceRecords) => {
     let totalLeaves = 0;
-
+    const totalHalfDays = calculateTotalHalfDays(attendanceRecords);
     // Loop through each day of the month
     daysInMonth.forEach((day) => {
       const currentDate = new Date(year, month, day);
@@ -322,7 +322,7 @@ const SalesAttendanceTable = () => {
       }
     });
 
-    return totalLeaves;
+    return totalLeaves + (totalHalfDays * 0.5);
   };
 
   const calculateTotalHalfDays = (attendanceRecords) => {
