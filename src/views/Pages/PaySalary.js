@@ -127,12 +127,14 @@ const PaySalary = () => {
   const formattedTotalRemainingSalary = totalRemainingSalary ? totalRemainingSalary.toFixed(2) : "0.00";
 
   const calculateLeaveSalary = (baseSalary, daysInMonth, leave, leavesTaken) => {
-       
-    if (!baseSalary || !daysInMonth || !leave || !leavesTaken) return 0;
-  
+
+    console.log(baseSalary, daysInMonth, leave, leavesTaken);
+    if (!baseSalary || !daysInMonth || leave === undefined || leavesTaken === undefined || leave === null || leavesTaken === null) return 0;
+    
+    
     // Calculate effective leave days based on the condition
     const effectiveLeaveDays = leavesTaken >= leave ? leave : leavesTaken;
-
+    console.log(effectiveLeaveDays);
     // Calculate leave salary
     
     return (baseSalary / daysInMonth) * effectiveLeaveDays;
@@ -236,14 +238,15 @@ const PaySalary = () => {
                 );
               });
               const daysInMonth = new Date(year, month + 1, 0).getDate();
+              
               const leaveSalary = calculateLeaveSalary(
-                emp.salary,
+                emp.salary ? emp.salary : emp.currentSalary ? emp.currentSalary : emp.editedSalary[employees.editedSalary.length - 1]?.amount ? emp.editedSalary[employees.editedSalary.length - 1]?.amount : 0,
                 daysInMonth,
                 leave[emp._id] !== undefined ? leave[emp._id] : salaryEntry?.leave || 0,
                 salaryEntry?.leavesTaken,
                 emp._id
               );
-
+              
               return (
                 <Tr key={emp._id}>
                   <Td>{index + 1}</Td>
