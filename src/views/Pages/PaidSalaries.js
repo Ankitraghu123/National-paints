@@ -80,32 +80,39 @@ const PaidSalaries = () => {
           salary.isPaid
         );
       });
-
-      const handleUnpaySalary = async (empId, month) => {
-        dispatch(unpaySalary({ empId, month }));
-      };
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const leaveSalary = calculateLeaveSalary(
+        emp.salary ? emp.salary : emp.currentSalary ? emp.currentSalary : emp.editedSalary[employees.editedSalary.length - 1]?.amount ? emp.editedSalary[employees.editedSalary.length - 1]?.amount : 0,
+        daysInMonth,
+        salaryEntry?.leave,
+        salaryEntry?.leavesTaken,
+        emp._id
+      );
 
       return {
         "Employee Name": emp.name,
         "Employee Type": emp.empType,
         "Base Salary": salaryEntry?.amount || "N/A",
         "Loan Deduction": salaryEntry?.loanAmount || 0,
+        "Leave Allowed": salaryEntry?.leave,
+        "Leave Taken": salaryEntry?.leavesTaken,
+        "Leave Salary": leaveSalary.toFixed(0) || 0,
         "Advance Taken": salaryEntry?.advance ? 500 : 0,
-        Bonus: salaryEntry?.bonus || 0,
-        Deduction: salaryEntry?.deduction || 0,
+        "Bonus": salaryEntry?.bonus || 0,
+        "Deduction": salaryEntry?.deduction || 0,
         "Total Salary": salaryEntry?.advance
           ? (
               salaryEntry.amount -
               500 -
               salaryEntry.loanAmount +
               salaryEntry.bonus -
-              salaryEntry.deduction
+              salaryEntry.deduction + leaveSalary
             ).toFixed(0)
           : (
               salaryEntry.amount -
               salaryEntry.loanAmount +
               salaryEntry.bonus -
-              salaryEntry.deduction
+              salaryEntry.deduction + leaveSalary
             ).toFixed(0),
       };
     });
@@ -122,6 +129,18 @@ const PaidSalaries = () => {
   };
 
   // Calculate the total paid salaries for all employees
+  const calculateLeaveSalary = (baseSalary, daysInMonth, leave, leavesTaken) => {
+     
+    if (!baseSalary || !daysInMonth || leave === undefined || leavesTaken === undefined || leave === null || leavesTaken === null) return 0;
+  
+    // Calculate effective leave days based on the condition
+    const effectiveLeaveDays = leavesTaken >= leave ? leave : leavesTaken;
+  
+    // Calculate leave salary
+    
+    return (baseSalary / daysInMonth) * effectiveLeaveDays;
+  };
+
   const totalPaidSalaries = useMemo(() => {
     return selectedEmployees?.reduce((acc, employee) => {
       const salaryEntry = employee.salaryArray.find((salary) => {
@@ -134,34 +153,29 @@ const PaidSalaries = () => {
         );
       });
 
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const leaveSalary = calculateLeaveSalary(
+        employee.editedSalary[employee.editedSalary.length - 1]?.amount ? employee.editedSalary[employee.editedSalary.length - 1]?.amount : employee.currentSalary ? employee.currentSalary : employee.salary,
+        daysInMonth,
+        salaryEntry?.leave,
+        salaryEntry?.leavesTaken,
+        employee._id
+      );
+
       const paidSalary = salaryEntry
         ? salaryEntry.amount -
           salaryEntry.loanAmount +
           salaryEntry.bonus -
-          salaryEntry.deduction
+          salaryEntry.deduction + leaveSalary
         : 0;
 
       return acc + paidSalary;
     }, 0);
   }, [selectedEmployees, month, year]);
-
   // Ensure totalPaidSalaries is a number before calling toFixed
-  const formattedTotalPaidSalaries = totalPaidSalaries
-    ? totalPaidSalaries.toFixed(2)
-    : "0.00";
-  
-    const calculateLeaveSalary = (baseSalary, daysInMonth, leave, leavesTaken) => {
-       
-      if (!baseSalary || !daysInMonth || leave === undefined || leavesTaken === undefined || leave === null || leavesTaken === null) return 0;
-    
-      // Calculate effective leave days based on the condition
-      const effectiveLeaveDays = leavesTaken >= leave ? leave : leavesTaken;
-    
-      // Calculate leave salary
-      
-      return (baseSalary / daysInMonth) * effectiveLeaveDays;
-    };
+  const formattedTotalPaidSalaries = totalPaidSalaries ? totalPaidSalaries.toFixed(0): "0.00";
 
+  
   return (
     <Box p={8} mt={100} backgroundColor={"white"} borderRadius={"30px"}>
       {/* Year and Month Selection */}
