@@ -100,13 +100,13 @@ const PaidSalaries = () => {
               salaryEntry.loanAmount +
               salaryEntry.bonus -
               salaryEntry.deduction
-            ).toFixed(2)
+            ).toFixed(0)
           : (
               salaryEntry.amount -
               salaryEntry.loanAmount +
               salaryEntry.bonus -
               salaryEntry.deduction
-            ).toFixed(2),
+            ).toFixed(0),
       };
     });
 
