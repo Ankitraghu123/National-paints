@@ -302,14 +302,14 @@ const PaidSalaries = () => {
                           salaryEntry?.bonus -
                           salaryEntry?.deduction +
                           leaveSalary
-                        ).toFixed(2)
+                        ).toFixed(0)
                       : (
                           salaryEntry?.amount -
                           salaryEntry?.loanAmount +
                           salaryEntry?.bonus -
                           salaryEntry?.deduction +
                           leaveSalary
-                        ).toFixed(2)}
+                        ).toFixed(0)}
                   </Td>
                   <Td>
                     {
