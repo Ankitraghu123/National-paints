@@ -465,6 +465,7 @@ const OfficeBoyAttendanceTable = () => {
         "S. No.": index + 1,
         name: employee.name,
         employeeCode: employee.employeeCode,
+        totalDays: calculateTotalWorkingDays(employee.attendanceTime),
         totalHours,
         totalOvertime: calculateTotalOvertime(employee.attendanceTime),
         totalSalary: calculateTotalSalary(
@@ -591,6 +592,7 @@ const OfficeBoyAttendanceTable = () => {
                       acc[`Day ${index + 1}`] = hours;
                       return acc;
                     }, {}),
+                    totalDays: employee.totalDays,
                     totalHours: employee.totalHours,
                     totalOvertime: employee.totalOvertime,
                     totalSalary: employee.totalSalary,
