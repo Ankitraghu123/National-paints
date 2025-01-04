@@ -233,7 +233,7 @@ const AllEmployeesTable = () => {
                 <Td>{employee.empType}</Td>
                 <Td>{employee.Dob ? new Date(employee.Dob).toLocaleDateString("en-US") : 'NA'}</Td>
                 <Td>{employee.location}</Td>
-                <Td>{employee?.editedSalary[employee?.editedSalary?.length-1]?.amount ?  employee?.editedSalary[employee?.editedSalary?.length-1]?.amount : employee?.salary }</Td>
+                <Td>{employee?.editedSalary[employee?.editedSalary?.length-1]?.amount ?  employee?.editedSalary[employee?.editedSalary?.length-1]?.amount : employee?.currentSalary ? employee?.currentSalary : employee?.salary}</Td>
                 <Td>{employee.totalExp}</Td>
                 <Td>{employee.previousEmployer}</Td>
                 <Td>{employee.bankAccountNumber}</Td>
