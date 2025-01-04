@@ -94,7 +94,19 @@ const PaySalary = () => {
       [empId]: value === "" ? 0 : Number(value),
     }));
   };
+  
+  const calculateLeaveSalary = (baseSalary, daysInMonth, leave, leavesTaken, empId) => {
 
+    if (!baseSalary || !daysInMonth || leave === undefined || leavesTaken === undefined || leave === null || leavesTaken === null) return 0;
+    
+    
+    // Calculate effective leave days based on the condition
+    const effectiveLeaveDays = leavesTaken >= leave ? leave : leavesTaken;
+
+    // Calculate leave salary
+    
+    return (baseSalary / daysInMonth) * effectiveLeaveDays;
+  };
   // Calculate the total remaining salary for all employees
   const totalRemainingSalary = useMemo(() => {
     return selectedEmployees?.reduce((acc, employee) => {
@@ -107,6 +119,8 @@ const PaySalary = () => {
           salary.isSalaryApproved
         );
       });
+      
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
 
       if (salaryEntry) {
         const baseSalary = salaryEntry.amount || 0;
@@ -114,30 +128,24 @@ const PaySalary = () => {
         const advanceDeduction = salaryEntry.advance ? 500 : 0; // Assuming 500 is the advance amount
         const bonusAmount = bonus[employee._id] || 0;
         const deductionAmount = deduction[employee._id] || 0;
-
-        const remainingSalary = baseSalary - loanDeduction - advanceDeduction + bonusAmount - deductionAmount;
+        const leaveSalary = calculateLeaveSalary(
+          baseSalary,
+          daysInMonth,
+          leave[employee._id] !== undefined ? leave[employee._id] : salaryEntry?.leave || 0,
+          salaryEntry?.leavesTaken,
+          employee._id
+        );
+        const remainingSalary = baseSalary - loanDeduction - advanceDeduction + bonusAmount - deductionAmount + leaveSalary;
         return acc + remainingSalary;
       }
 
       return acc;
     }, 0);
-  }, [selectedEmployees, month, year, bonus, deduction]);
+  }, [selectedEmployees, month, year, bonus, deduction, leave]);
 
   // Ensure totalRemainingSalary is a number before calling toFixed
   const formattedTotalRemainingSalary = totalRemainingSalary ? totalRemainingSalary.toFixed(2) : "0.00";
 
-  const calculateLeaveSalary = (baseSalary, daysInMonth, leave, leavesTaken) => {
-
-    if (!baseSalary || !daysInMonth || leave === undefined || leavesTaken === undefined || leave === null || leavesTaken === null) return 0;
-    
-    
-    // Calculate effective leave days based on the condition
-    const effectiveLeaveDays = leavesTaken >= leave ? leave : leavesTaken;
-
-    // Calculate leave salary
-    
-    return (baseSalary / daysInMonth) * effectiveLeaveDays;
-  };
 
   // Calculate the total paid salaries for all employees
   return (
@@ -239,7 +247,8 @@ const PaySalary = () => {
               const daysInMonth = new Date(year, month + 1, 0).getDate();
               
               const leaveSalary = calculateLeaveSalary(
-                emp.salary ? emp.salary : emp.currentSalary ? emp.currentSalary : emp.editedSalary[employees.editedSalary.length - 1]?.amount ? emp.editedSalary[employees.editedSalary.length - 1]?.amount : 0,
+                emp.salary ? emp.salary : emp.currentSalary ? emp.currentSalary : 
+                (emp.editedSalary && emp.editedSalary.length > 0 ? emp.editedSalary[emp.editedSalary.length - 1]?.amount : 0),
                 daysInMonth,
                 leave[emp._id] !== undefined ? leave[emp._id] : salaryEntry?.leave || 0,
                 salaryEntry?.leavesTaken,
