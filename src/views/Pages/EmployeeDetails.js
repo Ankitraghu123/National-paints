@@ -57,7 +57,7 @@ const EmployeeDetails = () => {
             </Box>
             <Box>
               <Text fontWeight="bold" color="gray.700">Base Salary:</Text>
-              <Text color="gray.600">{employee?.salary}</Text>
+              <Text color="gray.600">{employee?.editedSalary && employee?.editedSalary.length > 0 ? employee?.editedSalary[employee?.editedSalary.length - 1]?.amount : employee?.salary}</Text>
             </Box>
             <Box>
               <Text fontWeight="bold" color="gray.700">Employee Type:</Text>
