@@ -230,7 +230,7 @@ const AllSalaries = () => {
 
         const daysInMonth = new Date(year, month + 1, 0).getDate();
         const leaveSalary = calculateLeaveSalary(
-          emp.salary ? emp.salary : emp.currentSalary ? emp.currentSalary : emp.editedSalary[employees.editedSalary.length - 1]?.amount ? emp.editedSalary[employees.editedSalary.length - 1]?.amount : 0,
+          emp.salary ? emp.salary : emp.currentSalary ? emp.currentSalary : emp.editedSalary && emp.editedSalary.length > 0 ? emp.editedSalary[emp.editedSalary.length - 1]?.amount : 0,
           daysInMonth,
           salaryEntry?.leave,
           salaryEntry?.leavesTaken,
