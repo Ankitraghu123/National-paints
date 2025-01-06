@@ -15,12 +15,12 @@ import {
   Flex,
   SimpleGrid,
 } from '@chakra-ui/react';
-import { FaUser, FaMoneyBill, FaRegCalendarAlt } from 'react-icons/fa';
+import { FaUser, FaMoneyBill, FaRegCalendarAlt, FaTrash } from 'react-icons/fa';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { employeeDetails } from 'features/Employee/EmployeeSlice';
 import { useEffect } from 'react';
-
+import { deleteSalary } from 'features/Employee/EmployeeSlice';
 // Function to calculate the amount left for each loan
 function calculateAmountLeft(loan, loanObjects) {
   const amountReceived = loan.loanArray.reduce((sum, loanObjId) => {
@@ -33,12 +33,26 @@ function calculateAmountLeft(loan, loanObjects) {
 const EmployeeDetails = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
-
+  const deletedSalary = useSelector((state) => state.employee?.deletedSalary);
   useEffect(() => {
     dispatch(employeeDetails(id));
-  }, [dispatch, id]);
+  }, [dispatch, deletedSalary]);
 
   const employee = useSelector((state) => state.employee?.employeeDetails);
+
+  const handleDeleteLoan = (loanId) => {
+    if (window.confirm("Are you sure you want to delete this loan?")) {
+      console.log(`Delete loan with ID: ${loanId}`);
+      // Add dispatch logic here if needed
+    }
+  };
+
+  const handleDeleteSalary = (salaryId, employeeId) => {
+    if (window.confirm("Are you sure you want to delete this salary?")) {
+
+      dispatch(deleteSalary({ salaryId, employeeId }));
+    }
+  };
 
   return (
     <Box p={8} mt={5} backgroundColor="gray.50" borderRadius="lg" boxShadow="lg">
@@ -97,9 +111,12 @@ const EmployeeDetails = () => {
                       borderRadius="md"
                       boxShadow="sm"
                     >
-                      <Text fontWeight="bold" fontSize="lg" color="teal.600">
-                        Loan {index + 1}
-                      </Text>
+                      <Flex justifyContent="space-between" alignItems="center">
+                        <Text fontWeight="bold" fontSize="lg" color="teal.600">
+                          Loan {index + 1}
+                        </Text>
+                        {/* <button onClick={() => handleDeleteLoan(loan._id)}><FaTrash color='red' /></button> */}
+                      </Flex>
                       <Divider borderColor="gray.300" my={2} />
                       <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
                         <Text color="gray.600">
@@ -125,7 +142,7 @@ const EmployeeDetails = () => {
                           }
                         </Text>
                         <Text color="teal.500" fontWeight="bold">
-                          <b>Amount Left:</b> {calculateAmountLeft(loan, employee?.loanObjects || [])}
+                          <b>Remaining Amount:</b> {calculateAmountLeft(loan, employee?.loanObjects || [])}
                         </Text>
                       </SimpleGrid>
                     </Box>
@@ -152,19 +169,22 @@ const EmployeeDetails = () => {
                       borderRadius="md"
                       boxShadow="sm"
                     >
-                      <Text fontWeight="bold" fontSize="lg" color="teal.600">
-                        Salary {index + 1}
-                      </Text>
+                      <Flex justifyContent="space-between" alignItems="center">
+                        <Text fontWeight="bold" fontSize="lg" color="teal.600">
+                          Salary for {new Date(salary?.month).toLocaleString('default', { month: 'long', year: 'numeric' })}
+                        </Text>
+                        <button onClick={() => handleDeleteSalary(salary._id,employee._id)}><FaTrash color='red' /></button>
+                      </Flex>
                       <Divider borderColor="gray.300" my={2} />
                       <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
                         <Text color="gray.600">
-                          <b>Month:</b> {new Date(salary?.month)?.toLocaleDateString()}
+                          <b>Month:</b> {new Date(salary?.month).toLocaleString('default', { month: 'long', year: 'numeric' })}
                         </Text>
                         <Text color="gray.600">
-                          <b>Net Pay:</b> {(salary?.amount + salary?.bonus - salary?.deduction - salary?.loanAmount).toFixed(2)}
+                          <b>Net Pay:</b> {(salary?.amount + salary?.bonus - salary?.deduction - salary?.loanAmount).toFixed(0)}
                         </Text>
                         <Text color="gray.600">
-                          <b>Base Salary:</b> {salary?.amount}
+                          <b>Base Salary:</b> {salary?.amount.toFixed(0)}
                         </Text>
                         <Text color="gray.600">
                           <b>Paid?</b> {salary?.isPaid ? 'Yes' : 'No'}
@@ -176,16 +196,16 @@ const EmployeeDetails = () => {
                           <b>Salary Approved?</b> {salary?.isSalaryApproved ? 'Yes' : 'No'}
                         </Text>
                         <Text color="gray.600">
-                          <b>Advance:</b> {salary?.advance ? 'Yes' : 'No'}
+                          <b>Advance:</b> {salary?.advance ? '500' : '00'}
                         </Text>
                         <Text color="gray.600">
-                          <b>Loan Deduction:</b> {salary?.loanAmount}
+                          <b>Loan Deduction:</b> {salary?.loanAmount.toFixed(0)}
                         </Text>
                         <Text color="gray.600">
-                          <b>Bonus:</b> {salary?.bonus ?? '0'}
+                          <b>Bonus:</b> {salary?.bonus.toFixed(0)}
                         </Text>
                         <Text color="gray.600">
-                          <b>Deduction:</b> {salary?.deduction ?? '0'}
+                          <b>Deduction:</b> {salary?.deduction.toFixed(0)}
                         </Text>
                       </SimpleGrid>
                     </Box>

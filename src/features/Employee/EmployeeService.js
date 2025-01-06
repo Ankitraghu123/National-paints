@@ -133,6 +133,11 @@ const DeleteTourDetails = async (id)=> {
     return response.data
 }
 
-const EmployeeService = {AddEmployee,AllEmployee,GetEmployeeAttendance,GetUnApprovedEmployees,GetUnpaidEmployees,approveEmployee,editEmployee,tranferToPaidEmployee,putSalary,paySalary,SingleEmployee,generateSalarySlip,payAdvance,GiveLoan,EditSalary,DeleteEmployee,rejectEmployee,GetAgainEmployee,DeactivateEmployee,pullSalary,unpayAdvance,EmployeeDetails,unpaySalary,AddTourDetails,AllTourDetails,DeleteTourDetails}
+const DeleteSalary = async (data)=> {
+    const response = await axios.delete(`${base_url}employee/delete-salary/${data.salaryId}/${data.employeeId}`)
+    return response.data
+}
+
+const EmployeeService = {AddEmployee,AllEmployee,GetEmployeeAttendance,GetUnApprovedEmployees,GetUnpaidEmployees,approveEmployee,editEmployee,tranferToPaidEmployee,putSalary,paySalary,SingleEmployee,generateSalarySlip,payAdvance,GiveLoan,EditSalary,DeleteEmployee,rejectEmployee,GetAgainEmployee,DeactivateEmployee,pullSalary,unpayAdvance,EmployeeDetails,unpaySalary,AddTourDetails,AllTourDetails,DeleteTourDetails,DeleteSalary}
 
 export default EmployeeService

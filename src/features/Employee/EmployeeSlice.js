@@ -298,6 +298,17 @@ export const deleteTourDetails = createAsyncThunk(
   }
 );
 
+export const deleteSalary = createAsyncThunk(
+  "employee/delete-salary",
+  async (data, thunkApi) => {
+    try {
+      return await EmployeeService.DeleteSalary(data);
+    } catch (err) {
+      return thunkApi.rejectWithValue(err);
+    }
+  }
+);
+
 const initialState = {
   employee: "",
   isError: false,
@@ -708,6 +719,11 @@ export const EmployeeSlice = createSlice({
         state.isError = true;
         state.isSuccess = false;
         state.deletedTourDetails = null;
+      })
+      .addCase(deleteSalary.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.deletedSalary = action.payload;
       });
   },
 });
