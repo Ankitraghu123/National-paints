@@ -27,6 +27,7 @@ import MainPanel from "../components/Layout/MainPanel";
 import PanelContainer from "../components/Layout/PanelContainer";
 import PanelContent from "../components/Layout/PanelContent";
 import bgAdmin from "assets/img/admin-background.png";
+import { FaExclamationTriangle } from "react-icons/fa";
 
 export default function Dashboard(props) {
   const { ...rest } = props;
@@ -133,6 +134,7 @@ export default function Dashboard(props) {
           base: "100%",
           xl: "calc(100% - 275px)",
         }}>
+        <div style={{ textAlign: "center", width: "100%" , backgroundColor: "red", fontSize: "20px", color: "white"}}>It's a gentle reminder to complete the payment to continue using the service.</div>
         <Portal>
           <AdminNavbar
             onOpen={onOpen}
