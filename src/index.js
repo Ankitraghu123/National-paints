@@ -19,9 +19,6 @@ ReactDOM.render(
           <Route path="/reception-login" component={ReceptionLogin} />
           {/* Use PrivateRoute for routes that need authentication */}
           <PrivateRoute path="/admin" component={AdminLayout} />
-
-
-
           <Redirect from="/" to="/admin/dashboard" />
         </Switch>
       </HashRouter>
