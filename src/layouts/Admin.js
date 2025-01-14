@@ -134,7 +134,6 @@ export default function Dashboard(props) {
           base: "100%",
           xl: "calc(100% - 275px)",
         }}>
-        <div style={{ textAlign: "center", width: "100%" , backgroundColor: "red", fontSize: "20px", color: "white"}}>It's a gentle reminder to complete the payment to continue using the service.</div>
         <Portal>
           <AdminNavbar
             onOpen={onOpen}
