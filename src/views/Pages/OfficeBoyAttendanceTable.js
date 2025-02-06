@@ -24,6 +24,7 @@ import { RxCrossCircled } from "react-icons/rx";
 import { TiTick } from "react-icons/ti";
 import { removeDay } from "features/Attendance/AttendanceSlice";
 import { restoreDay } from "features/Attendance/AttendanceSlice";
+import { month } from "react-big-calendar/lib/utils/dates";
 
 const OfficeBoyAttendanceTable = () => {
   const dispatch = useDispatch();
@@ -641,11 +642,12 @@ const OfficeBoyAttendanceTable = () => {
                 {daysInMonth.map((day) => {
                   const attendanceRecord = employee.attendanceTime.find(
                     (record) => {
-                      const recordDate = new Date(record.date).getDate();
+                      const recordDate = record.date;
+                      const newmonth =  (month+1).toString().padStart(2,0)
                       return (
-                        recordDate === day &&
+                        recordDate.split("-",3)[2] === day.toString().padStart(2,0) &&
                         new Date(record.date).getFullYear() === year &&
-                        new Date(record.date).getMonth() === month
+                        recordDate.split("-",3)[1] === newmonth
                       );
                     }
                   );
