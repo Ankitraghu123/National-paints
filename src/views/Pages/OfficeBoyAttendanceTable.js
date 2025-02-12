@@ -233,29 +233,28 @@ const OfficeBoyAttendanceTable = () => {
   };
   const calculateTotalOvertime = (attendanceRecords) => {
     let totalOvertimeHours = 0;
-
-    // Loop through each day in the month
+    const localDateOptions = { timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit" };
+  
     daysInMonth?.forEach((day) => {
-      // console.log(day)
       const currentDate = new Date(year, month, day);
-      const dayString = currentDate.toISOString().split("T")[0]; // Format as YYYY-MM-DD
-
+      const dayString = currentDate.toLocaleDateString("en-CA"); // Format as YYYY-MM-DD in local time
+  
       // Find attendance record for the current day
       const attendanceRecord = attendanceRecords?.find((record) => {
-        const recordDate = new Date(record.date)?.toISOString().split("T")[0];
+        let recordDate = new Date(record.date).toLocaleDateString("en-CA");
         return recordDate === dayString;
       });
-
+  
       // Calculate overtime for the day if attendance exists
       if (attendanceRecord) {
         const dailyOvertime = calculateOvertimeHours(attendanceRecord);
         const [hours, minutes] = dailyOvertime.split(":").map(Number);
-
+  
         // Convert hours and minutes into fractional hours and sum up
         totalOvertimeHours += hours + minutes / 60;
       }
     });
-
+  
     // Format total overtime into "hours:minutes"
     return formatHours(totalOvertimeHours);
   };
